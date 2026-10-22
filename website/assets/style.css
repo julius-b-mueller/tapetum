@@ -102,3 +102,11 @@ footer a { color: var(--dim); margin: 0 .5rem }
   .nav-cta { display: none }
   .pair { grid-template-columns: 1fr }
 }
+.guide { display: grid; gap: 1rem; margin-bottom: 1rem }
+.phase { background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--blue); border-radius: var(--r); padding: 1.3rem 1.4rem .4rem }
+.phase.amber { border-left-color: var(--amber) }
+.phase h3 { font-size: 1.2rem; margin-bottom: 1rem; display: flex; align-items: center; gap: .6rem; flex-wrap: wrap }
+.phase .tag { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--cyan); background: var(--bg3); border: 1px solid var(--border); border-radius: 999px; padding: .05rem .6rem }
+.phase.amber .tag { color: var(--amber) }
+.phase.amber .steps li::before { border-color: var(--amber); color: var(--amber) }
+.phase .steps li { font-size: .95rem }
