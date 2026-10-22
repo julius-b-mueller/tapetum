@@ -110,19 +110,30 @@ pub fn is_saved_copy(show: &Path) -> bool {
     !is_internal(show) && show.file_stem().is_some_and(|s| s == NAME)
 }
 
-/// The files `save_to` writes into `dir` that are there already.
+/// The files `save_to` writes into `dir` that are there already (links too,
+/// even those pointing nowhere).
 pub fn existing_in(dir: &Path) -> Vec<PathBuf> {
-    ["olga", "igz", tapetum_project::EXTENSION].iter().map(|e| file(dir, e)).filter(|p| p.exists()).collect()
+    ["olga", "igz", tapetum_project::EXTENSION].iter().map(|e| file(dir, e)).filter(|p| std::fs::symlink_metadata(p).is_ok()).collect()
+}
+
+/// Writes `bytes` as a plain file of its own: a symbolic link at `path` is
+/// replaced, never written through (the chosen folder, say Downloads, may
+/// hold a link named like the example pointing at some other file).
+fn write_plain(path: &Path, bytes: &[u8]) -> std::io::Result<()> {
+    if std::fs::symlink_metadata(path).is_ok_and(|m| m.file_type().is_symlink()) {
+        std::fs::remove_file(path)?;
+    }
+    std::fs::write(path, bytes)
 }
 
 /// Writes the example into `dir` (the project as it is now, with what was
 /// changed while trying it) and returns the show there.
 pub fn save_to(dir: &Path, current_project: &Path) -> std::io::Result<PathBuf> {
     let files = current();
-    std::fs::write(file(dir, "olga"), files.olga)?;
-    std::fs::write(file(dir, "igz"), files.igz)?;
+    write_plain(&file(dir, "olga"), files.olga)?;
+    write_plain(&file(dir, "igz"), files.igz)?;
     let project = std::fs::read(current_project).unwrap_or_else(|_| files.project.to_vec());
-    std::fs::write(file(dir, tapetum_project::EXTENSION), &project)?;
+    write_plain(&file(dir, tapetum_project::EXTENSION), &project)?;
     // The mirrors send to the port Tapetum listens on now.
     let port = serde_json::from_slice::<tapetum_project::Project>(&project).map_or(bk_artnet::DEFAULT_PORT, |p| p.artnet.listen_port);
     if port != bk_artnet::DEFAULT_PORT {
@@ -229,6 +240,26 @@ mod tests {
         ensure_free_port(&show, std::net::Ipv4Addr::UNSPECIFIED);
         assert!(mirror_ports(&show).iter().all(|&p| p == moved));
         drop(other);
+        std::fs::remove_dir_all(&base).unwrap();
+    }
+
+
+    #[cfg(unix)]
+    #[test]
+    fn saving_replaces_links_instead_of_writing_through() {
+        let base = std::env::temp_dir().join(format!("tapetum-example-link-{}", std::process::id()));
+        let (folder, elsewhere) = (base.join("folder"), base.join("elsewhere.txt"));
+        std::fs::create_dir_all(&folder).unwrap();
+        std::fs::write(&elsewhere, b"keep me").unwrap();
+        std::os::unix::fs::symlink(&elsewhere, file(&folder, "olga")).unwrap();
+        std::os::unix::fs::symlink(base.join("nowhere"), file(&folder, "igz")).unwrap();
+        assert_eq!(existing_in(&folder).len(), 2, "both links are asked about");
+
+        let show = save_to(&folder, Path::new("/nonexistent")).unwrap();
+        assert_eq!(std::fs::read(&elsewhere).unwrap(), b"keep me");
+        assert!(!base.join("nowhere").exists());
+        assert!(std::fs::symlink_metadata(&show).unwrap().is_file());
+        assert!(bk_olga::load(&show).is_ok());
         std::fs::remove_dir_all(&base).unwrap();
     }
 
