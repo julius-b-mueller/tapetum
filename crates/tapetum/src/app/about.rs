@@ -44,6 +44,12 @@ pub fn menu(ui: &mut egui::Ui) {
             open_other_show();
             ui.close();
         }
+        if ui.button(tr("Beispiel öffnen", "Open the example")).clicked() {
+            if let Some(show) = crate::example::open_internal() {
+                restart_with(&show);
+            }
+            ui.close();
+        }
         if ui.button(tr("Über Tapetum …", "About Tapetum …")).clicked() {
             ui.ctx().data_mut(|d| d.insert_temp(about_id(), true));
             ui.close();
@@ -56,16 +62,22 @@ pub fn menu(ui: &mut egui::Ui) {
 /// Picks a show and starts Tapetum anew with it (everything is saved as it changes).
 fn open_other_show() {
     std::thread::spawn(|| {
-        let Some(show) = crate::pick_show() else { return };
-        let mut s = UserSettings::load();
-        s.last_show = Some(show.clone());
-        s.save();
-        if let Ok(exe) = std::env::current_exe()
-            && std::process::Command::new(exe).arg(&show).spawn().is_ok()
-        {
-            std::process::exit(0);
+        if let Some(show) = crate::pick_show() {
+            restart_with(&show);
         }
     });
+}
+
+/// Starts Tapetum anew with this show and remembers it for the next start.
+pub fn restart_with(show: &std::path::Path) {
+    let mut s = UserSettings::load();
+    s.last_show = Some(show.to_path_buf());
+    s.save();
+    if let Ok(exe) = std::env::current_exe()
+        && std::process::Command::new(exe).arg(show).spawn().is_ok()
+    {
+        std::process::exit(0);
+    }
 }
 
 pub fn window(ctx: &egui::Context, logo: egui::TextureId) {
@@ -99,6 +111,10 @@ pub fn window(ctx: &egui::Context, logo: egui::TextureId) {
             ui.label(tr(
                 "Tapetum wurde vollständig mit KI programmiert („vibecoded“, mit Claude von Anthropic). Das Logo wurde mit ChatGPT generiert.",
                 "Tapetum was written entirely with AI (“vibe-coded”, with Claude by Anthropic). The logo was generated with ChatGPT.",
+            ));
+            ui.label(tr(
+                "Im Beispiel: Pergola-Bank und Figur aus dem IngeTrazo-Modell „banca-pergola-yanque“ von Marco Sumari Tellez (CC BY 4.0), in ein Theater gesetzt.",
+                "In the example: pergola bench and figure from the IngeTrazo model “banca-pergola-yanque” by Marco Sumari Tellez (CC BY 4.0), placed in a theatre.",
             ));
             ui.add_space(4.0);
             ui.label(tr(

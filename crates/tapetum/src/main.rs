@@ -7,6 +7,7 @@
 mod i18n;
 mod app;
 mod bk_link;
+mod example;
 mod routing;
 mod stage;
 
@@ -145,12 +146,14 @@ fn main() -> Result<()> {
             if v.about {
                 app::open_about_at_start();
             }
-            // Started without a show (double click, dock): the last one, or ask.
+            // Started without a show (double click, dock): the last one, else the example.
             let mut settings = i18n::UserSettings::load();
-            let show = v.show.or_else(|| settings.last_show.clone().filter(|p| p.is_file())).or_else(pick_show);
+            let show = v.show.or_else(|| settings.last_show.clone().filter(|p| p.is_file())).or_else(example::open_internal).or_else(pick_show);
             let Some(show) = show else { return Ok(()) };
-            if settings.last_show.as_ref() != Some(&show) {
-                settings.last_show = Some(show.clone());
+            // Remembered as an absolute path, but not for test runs (screenshots, benchmarks).
+            let remembered = std::path::absolute(&show).unwrap_or_else(|_| show.clone());
+            if v.screenshot.is_none() && !v.bench && settings.last_show.as_ref() != Some(&remembered) {
+                settings.last_show = Some(remembered);
                 settings.save();
             }
             app::run(app::Options { show, bind: v.bind, port: v.port, screenshot: v.screenshot, select: v.select, select_object: v.select_object, scene: v.scene, orbit: v.orbit, fit: v.fit.map(|f| f == "top"), bench: v.bench })

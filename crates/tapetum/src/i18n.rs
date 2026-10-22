@@ -73,7 +73,8 @@ pub struct UserSettings {
     pub last_show: Option<PathBuf>,
 }
 
-fn settings_path() -> Option<PathBuf> {
+/// Tapetum's folder for per-user files (settings, the built-in example).
+pub fn config_dir() -> Option<PathBuf> {
     let home = std::env::var_os(if cfg!(windows) { "APPDATA" } else { "HOME" }).map(PathBuf::from)?;
     Some(if cfg!(windows) {
         home.join("Tapetum")
@@ -81,8 +82,11 @@ fn settings_path() -> Option<PathBuf> {
         home.join("Library/Application Support/Tapetum")
     } else {
         std::env::var_os("XDG_CONFIG_HOME").map_or_else(|| home.join(".config"), PathBuf::from).join("tapetum")
-    }
-    .join("settings.json"))
+    })
+}
+
+fn settings_path() -> Option<PathBuf> {
+    Some(config_dir()?.join("settings.json"))
 }
 
 impl UserSettings {

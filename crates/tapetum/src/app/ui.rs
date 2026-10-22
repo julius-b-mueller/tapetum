@@ -147,6 +147,7 @@ pub fn panel(
                 });
             });
             egui::ScrollArea::vertical().show(ui, |ui| {
+                example_banner(ui, &state.show_path, &state.project_path);
                 ui.label(state.show_path.file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_default());
                 if let Some(s) = &state.status {
                     ui.colored_label(egui::Color32::LIGHT_YELLOW, s);
@@ -1129,4 +1130,87 @@ fn quality_hint(q: Quality) -> &'static str {
         Quality::Medium => tr("Für die meisten Rechner: weiche Lichtstrahlen (TAA), Strahlen enden an Bühnenobjekten und werfen dort Schatten.", "For most computers: smooth beams (TAA), beams end at stage objects and cast shadows there."),
         Quality::High => tr("Für starke Grafikkarten: feinere Strahlen, Schatten auch für jede einzelne Zelle, 3D in voller (Retina-)Auflösung.", "For strong graphics cards: finer beams, shadows for every single cell too, 3D at full (Retina) resolution."),
     }
+}
+
+const EXAMPLE_ACCENT: egui::Color32 = egui::Color32::from_rgb(255, 194, 77);
+
+/// On the built-in example: save it into a folder to try it with BlinderKitten
+/// and IngeTrazo. On a saved copy: where its files are and what to do with them.
+fn example_banner(ui: &mut egui::Ui, show: &std::path::Path, project: &std::path::Path) {
+    let internal = crate::example::is_internal(show);
+    if !internal && !crate::example::is_saved_copy(show) {
+        return;
+    }
+    let dismissed = egui::Id::new("example_banner_dismissed");
+    if ui.ctx().data(|d| d.get_temp::<bool>(dismissed).unwrap_or(false)) {
+        return;
+    }
+    egui::Frame::group(ui.style()).stroke(egui::Stroke::new(1.5, EXAMPLE_ACCENT)).fill(egui::Color32::from_rgba_unmultiplied(255, 194, 77, 18)).show(ui, |ui| {
+        ui.set_width(ui.available_width());
+        let name = crate::example::NAME;
+        if internal {
+            ui.colored_label(EXAMPLE_ACCENT, egui::RichText::new(tr("Beispiel", "Example")).strong().size(15.0));
+            ui.label(tr(
+                "Ein kleines Theater mit Lampen und Cues. Speichere es in einen Ordner deiner Wahl – dann kannst du die Show in BlinderKitten und das Bühnenbild in IngeTrazo öffnen und alles live ausprobieren.",
+                "A small theatre with fixtures and cues. Save it into a folder of your choice – then you can open the show in BlinderKitten and the set in IngeTrazo and try everything live.",
+            ));
+            ui.add_space(2.0);
+            let button = egui::Button::new(egui::RichText::new(tr("Beispiel speichern unter …", "Save the example to …")).strong().color(egui::Color32::BLACK)).fill(EXAMPLE_ACCENT);
+            if ui.add(button).clicked() {
+                save_example(project.to_path_buf());
+            }
+        } else {
+            ui.horizontal(|ui| {
+                ui.colored_label(EXAMPLE_ACCENT, egui::RichText::new(tr("Beispiel gespeichert", "Example saved")).strong().size(15.0));
+                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                    if ui.small_button("×").on_hover_text(tr("Ausblenden", "Hide")).clicked() {
+                        ui.ctx().data_mut(|d| d.insert_temp(dismissed, true));
+                    }
+                });
+            });
+            if let Some(dir) = show.parent() {
+                ui.weak(dir.display().to_string());
+            }
+            ui.label(trf!(
+                "Öffne jetzt aus diesem Ordner:\n• {name}.olga mit BlinderKitten\n• {name}.igz mit IngeTrazo\nÄnderungen in beiden Programmen siehst du hier sofort.",
+                "Now open from this folder:\n• {name}.olga with BlinderKitten\n• {name}.igz with IngeTrazo\nChanges in both programs show here at once.",
+                name = name
+            ));
+            let button = egui::Button::new(egui::RichText::new(tr("Im Dateimanager zeigen", "Show in file manager")).strong().color(egui::Color32::BLACK)).fill(EXAMPLE_ACCENT);
+            if ui.add(button).clicked() {
+                crate::example::reveal(show);
+            }
+        }
+    });
+    ui.add_space(4.0);
+}
+
+/// Asks for a folder, writes the example there and opens it from there.
+fn save_example(project: std::path::PathBuf) {
+    std::thread::spawn(move || {
+        let Some(dir) = rfd::FileDialog::new().set_title(tr("Ordner für das Beispiel wählen", "Choose a folder for the example")).pick_folder() else { return };
+        let existing = crate::example::existing_in(&dir);
+        if !existing.is_empty() {
+            let names: Vec<String> = existing.iter().filter_map(|p| p.file_name()).map(|n| n.to_string_lossy().into_owned()).collect();
+            let answer = rfd::MessageDialog::new()
+                .set_level(rfd::MessageLevel::Warning)
+                .set_title(tr("Dateien ersetzen?", "Replace files?"))
+                .set_description(trf!("In diesem Ordner gibt es schon:\n{}\n\nErsetzen?", "This folder already has:\n{}\n\nReplace them?", names.join("\n")))
+                .set_buttons(rfd::MessageButtons::YesNo)
+                .show();
+            if answer != rfd::MessageDialogResult::Yes {
+                return;
+            }
+        }
+        match crate::example::save_to(&dir, &project) {
+            Ok(show) => super::about::restart_with(&show),
+            Err(e) => {
+                rfd::MessageDialog::new()
+                    .set_level(rfd::MessageLevel::Error)
+                    .set_title(tr("Speichern fehlgeschlagen", "Saving failed"))
+                    .set_description(e.to_string())
+                    .show();
+            }
+        }
+    });
 }

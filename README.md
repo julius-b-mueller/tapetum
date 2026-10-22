@@ -35,7 +35,7 @@ Website and downloads: **https://tapetum.org/**
    - macOS: open the `.dmg` and drag Tapetum to *Applications*. The app is unsigned: on first launch macOS warns; scroll down in *System Settings → Privacy & Security* and click *Open Anyway*.
    - Windows: run the installer (no administrator rights needed) or unpack the portable `.zip`. If SmartScreen warns, click *More info → Run anyway*. Allow incoming UDP on port 6454 in the firewall when asked.
    - Linux: `.AppImage` (make it executable), `.deb` or `.rpm`.
-2. **Start Tapetum** and choose your BlinderKitten show (`.olga`). Next time it opens the last show by itself; *☰ → Open another show …* switches.
+2. **Start Tapetum.** The first time, it opens an **example** – a small theatre with fixtures, cues and a set. Click *Save the example to …* at the top of the sidebar and choose a folder: Tapetum puts `Tapetum-Demo.olga` (the BlinderKitten show), `Tapetum-Demo.igz` (the IngeTrazo set) and its project there. *Show in file manager* takes you to them – open the `.olga` with BlinderKitten and the `.igz` with IngeTrazo and carry on with step 3. Your own show: *☰ → Open another show …*; Tapetum opens the last show by itself next time, *☰ → Open the example* goes back to the example.
 3. **Connect BlinderKitten** – the sidebar walks you through it (*Set up BlinderKitten*):
    1. In BlinderKitten: *File → Preferences → OSC Remote Control* → tick *Enabled* (once, for all shows).
    2. Open the same show in BlinderKitten.
@@ -117,7 +117,7 @@ cargo test --workspace
 cargo deny check          # licenses, sources and advisories of all dependencies
 ```
 
-Linux needs `libudev-dev libx11-dev libxkbcommon-dev libwayland-dev`. Packages: `scripts/bundle-macos.sh --dmg [--x64]`, `scripts/bundle-appimage.sh`, `scripts/windows-installer.nsi`; the GitHub workflow builds all of them for a version tag (`0.2.0`). After changing dependencies, `python3 scripts/gen-licenses.py` updates the license list shown in the app.
+Linux needs `libudev-dev libx11-dev libxkbcommon-dev libwayland-dev`. The built-in example is made by `python3 scripts/gen-example.py` (into `crates/tapetum/assets/example/`). Packages: `scripts/bundle-macos.sh --dmg [--x64]`, `scripts/bundle-appimage.sh`, `scripts/windows-installer.nsi`; the GitHub workflow builds all of them for a version tag (`0.2.0`). After changing dependencies, `python3 scripts/gen-licenses.py` updates the license list shown in the app.
 
 Crates: `bk-olga` (show file and BlinderKitten's naming), `bk-artnet` (receiver), `tapetum-project` (project file), `tapetum` (the app, Bevy + egui).
 
@@ -133,5 +133,5 @@ Tapetum is free software under the [MIT License](LICENSE). The open source licen
 
 - Code: written with Claude (Anthropic), directed by Julius B. Müller.
 - Logo: generated with ChatGPT.
-- Test model `banca-pergola-yanque.igz` by Marco Sumari Tellez, CC BY 4.0 (see `crates/tapetum/tests/data/README.md`).
+- Pergola bench and figure (in the built-in example and the tests): IngeTrazo model `banca-pergola-yanque.igz` by Marco Sumari Tellez, CC BY 4.0 (see `crates/tapetum/tests/data/README.md`). The theatre around it is modelled in `scripts/gen-example.py`.
 - Thanks to the authors of BlinderKitten, IngeTrazo, Bevy, egui and every library Tapetum uses.
