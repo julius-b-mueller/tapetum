@@ -61,6 +61,27 @@ pub fn open_internal() -> Option<PathBuf> {
     Some(file(&dir, "olga"))
 }
 
+/// Before the example in Tapetum's folder opens: if another program holds its
+/// Art-Net port, project and mirror interfaces move to a free one, so it works
+/// at once all the same.
+pub fn ensure_free_port(show: &Path, bind: std::net::Ipv4Addr) {
+    let project_path = tapetum_project::Project::path_for_show(show);
+    let Ok(mut project) = tapetum_project::Project::load_or_default(&project_path) else { return };
+    let port = bk_artnet::free_port_after(bind, project.artnet.listen_port, crate::app::PORT_GRACE);
+    if port != project.artnet.listen_port && set_mirror_port(show, port).is_ok() {
+        project.artnet.listen_port = port;
+        let _ = project.save(&project_path);
+    }
+}
+
+/// Points the show's Tapetum interfaces at `port` (BlinderKitten has it closed).
+fn set_mirror_port(show: &Path, port: u16) -> anyhow::Result<()> {
+    let mut doc: serde_json::Value = serde_json::from_slice(&std::fs::read(show)?)?;
+    bk_olga::mirror::add_mirrors(&mut doc, port)?;
+    std::fs::write(show, serde_json::to_string_pretty(&doc)?)?;
+    Ok(())
+}
+
 /// Is this show the example in Tapetum's own folder?
 pub fn is_internal(show: &Path) -> bool {
     [&DE, &EN].into_iter().filter_map(internal_dir).any(|d| show.parent().is_some_and(|p| p == d))
@@ -83,7 +104,12 @@ pub fn save_to(dir: &Path, current_project: &Path) -> std::io::Result<PathBuf> {
     std::fs::write(file(dir, "olga"), files.olga)?;
     std::fs::write(file(dir, "igz"), files.igz)?;
     let project = std::fs::read(current_project).unwrap_or_else(|_| files.project.to_vec());
-    std::fs::write(file(dir, tapetum_project::EXTENSION), project)?;
+    std::fs::write(file(dir, tapetum_project::EXTENSION), &project)?;
+    // The mirrors send to the port Tapetum listens on now.
+    let port = serde_json::from_slice::<tapetum_project::Project>(&project).map_or(bk_artnet::DEFAULT_PORT, |p| p.artnet.listen_port);
+    if port != bk_artnet::DEFAULT_PORT {
+        set_mirror_port(&file(dir, "olga"), port).map_err(std::io::Error::other)?;
+    }
     Ok(file(dir, "olga"))
 }
 
@@ -145,4 +171,42 @@ mod tests {
         assert_eq!(project.scenes.len(), 3);
         std::fs::remove_dir_all(&dir).unwrap();
     }
+
+    #[test]
+    fn taken_port_moves_example_and_saved_copy() {
+        let base = std::env::temp_dir().join(format!("tapetum-example-port-{}", std::process::id()));
+        let (here, there) = (base.join("internal"), base.join("saved"));
+        std::fs::create_dir_all(&here).unwrap();
+        std::fs::create_dir_all(&there).unwrap();
+        let files = &DE;
+        for (ext, bytes) in [("olga", files.olga), ("igz", files.igz)] {
+            std::fs::write(file(&here, ext), bytes).unwrap();
+        }
+        // Another program holds the port the project wants.
+        let other = std::net::UdpSocket::bind("0.0.0.0:0").unwrap();
+        let taken = other.local_addr().unwrap().port();
+        let project_path = file(&here, tapetum_project::EXTENSION);
+        let mut project: tapetum_project::Project = serde_json::from_slice(files.project).unwrap();
+        project.artnet.listen_port = taken;
+        project.save(&project_path).unwrap();
+
+        let show = file(&here, "olga");
+        ensure_free_port(&show, std::net::Ipv4Addr::UNSPECIFIED);
+        let moved = tapetum_project::Project::load_or_default(&project_path).unwrap().artnet.listen_port;
+        assert_ne!(moved, taken);
+        let mirror_ports = |show: &Path| -> Vec<u16> {
+            let s = bk_olga::load(show).unwrap();
+            s.interfaces.iter().filter(|i| bk_olga::mirror::is_mirror_name(&i.name)).filter_map(|i| match &i.kind {
+                bk_olga::InterfaceKind::ArtNet(a) => Some(a.port),
+                _ => None,
+            }).collect()
+        };
+        assert!(mirror_ports(&show).iter().all(|&p| p == moved) && !mirror_ports(&show).is_empty());
+
+        let saved = save_to(&there, &project_path).unwrap();
+        assert!(mirror_ports(&saved).iter().all(|&p| p == moved));
+        drop(other);
+        std::fs::remove_dir_all(&base).unwrap();
+    }
+
 }

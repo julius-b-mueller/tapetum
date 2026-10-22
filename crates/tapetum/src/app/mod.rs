@@ -68,11 +68,18 @@ pub struct Options {
     pub fit: Option<bool>,
 }
 
+/// How long a taken Art-Net port may take to become free at start: the Tapetum
+/// that just restarted into this one is still quitting.
+pub const PORT_GRACE: std::time::Duration = std::time::Duration::from_millis(1500);
+
 pub fn run(opts: Options) -> Result<()> {
     let show = bk_olga::load(&opts.show)?;
     let project_path = Project::path_for_show(&opts.show);
     let project = Project::load_or_default(&project_path)?;
-    let port = opts.port.unwrap_or(project.artnet.listen_port);
+    // A port given on the command line is taken as it is; the project's, if
+    // another program holds it, gives way to the next free one (the sidebar
+    // then offers to move the Tapetum interfaces in BK there).
+    let port = opts.port.unwrap_or_else(|| bk_artnet::free_port_after(opts.bind, project.artnet.listen_port, PORT_GRACE));
     let receiver = Context::with_context(bk_artnet::Receiver::start(opts.bind, port), || {
         trf!("Art-Net-Port {}:{port} ist belegt", "Art-Net port {}:{port} is in use", opts.bind, port = port)
     })?;

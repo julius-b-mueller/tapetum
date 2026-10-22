@@ -94,6 +94,29 @@ impl DmxStore {
     }
 }
 
+/// Whether no other program listens on `bind:port`. Binds it once without
+/// address reuse: that fails while anyone else holds the port, even when they,
+/// like `Receiver`, allow sharing it (and then the Art-Net would go to them).
+pub fn port_is_free(bind: Ipv4Addr, port: u16) -> bool {
+    std::net::UdpSocket::bind(SocketAddrV4::new(bind, port)).is_ok()
+}
+
+/// `preferred` if it is free, else the next free port above it (or
+/// `preferred` again if none is free for a while).
+pub fn free_port(bind: Ipv4Addr, preferred: u16) -> u16 {
+    (preferred..=preferred.saturating_add(200)).find(|&p| port_is_free(bind, p)).unwrap_or(preferred)
+}
+
+/// Like `free_port`, but gives `preferred` up to `grace` to become free first:
+/// a Tapetum that is just restarting still holds it for a moment.
+pub fn free_port_after(bind: Ipv4Addr, preferred: u16, grace: Duration) -> u16 {
+    let until = Instant::now() + grace;
+    while !port_is_free(bind, preferred) && Instant::now() < until {
+        std::thread::sleep(Duration::from_millis(100));
+    }
+    free_port(bind, preferred)
+}
+
 pub struct Receiver {
     pub store: Arc<DmxStore>,
     pub local_addr: SocketAddr,
@@ -191,5 +214,20 @@ mod tests {
             std::thread::sleep(Duration::from_millis(5));
         }
         assert_eq!(rx.store.get(5).unwrap()[511], 42);
+    }
+
+    #[test]
+    fn taken_port_is_skipped() {
+        // Another program holding a port (here: a plain socket on a free one).
+        let other = UdpSocket::bind("0.0.0.0:0").unwrap();
+        let port = other.local_addr().unwrap().port();
+        assert!(!port_is_free(Ipv4Addr::UNSPECIFIED, port));
+        let next = free_port(Ipv4Addr::UNSPECIFIED, port);
+        assert!(next > port && port_is_free(Ipv4Addr::UNSPECIFIED, next));
+        drop(other);
+        assert!(port_is_free(Ipv4Addr::UNSPECIFIED, port));
+        // One that shares the port, like another Tapetum: taken all the same.
+        let shared = Receiver::start(Ipv4Addr::UNSPECIFIED, 0).unwrap();
+        assert!(!port_is_free(Ipv4Addr::UNSPECIFIED, shared.local_addr.port()));
     }
 }

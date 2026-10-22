@@ -150,6 +150,9 @@ fn main() -> Result<()> {
             let mut settings = i18n::UserSettings::load();
             let show = v.show.or_else(|| settings.last_show.clone().filter(|p| p.is_file())).or_else(example::open_internal).or_else(pick_show);
             let Some(show) = show else { return Ok(()) };
+            if example::is_internal(&show) {
+                example::ensure_free_port(&show, v.bind);
+            }
             // Remembered as an absolute path, but not for test runs (screenshots, benchmarks).
             let remembered = std::path::absolute(&show).unwrap_or_else(|_| show.clone());
             if v.screenshot.is_none() && !v.bench && settings.last_show.as_ref() != Some(&remembered) {

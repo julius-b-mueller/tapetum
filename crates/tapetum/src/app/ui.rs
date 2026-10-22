@@ -385,7 +385,13 @@ pub fn panel(
     }
 
     match setup_action {
-        Some(SetupAction::Edit(edit, offline)) => link.start(&state, edit, offline),
+        Some(SetupAction::Edit(edit, offline)) => {
+            // Mirrors set up for the port Tapetum listens on: that one is the project's from now on.
+            if let Edit::AddMirrors { listen_port } = edit {
+                project.artnet.listen_port = listen_port;
+            }
+            link.start(&state, edit, offline);
+        }
         Some(SetupAction::ChangePort(port)) => match dmx.restart(port) {
             Ok(()) => {
                 project.artnet.listen_port = port;
@@ -999,6 +1005,18 @@ fn setup_section(ui: &mut egui::Ui, state: &ShowState, link: &BkLink, bk: Option
             }
 
             step(ui, all_mirrored && mirror_port_ok, tr("3. Tapetum-Interfaces anlegen", "3. Add the Tapetum interfaces"));
+            let wanted = state.project.artnet.listen_port;
+            if wanted != listen_port {
+                ui.colored_label(
+                    BAD,
+                    trf!(
+                        "Port {wanted} ist von einem anderen Programm belegt. Tapetum empfängt deshalb auf Port {listen_port}.",
+                        "Port {wanted} is taken by another program, so Tapetum receives on port {listen_port}.",
+                        wanted = wanted,
+                        listen_port = listen_port
+                    ),
+                );
+            }
             for (orig, m) in &mirrors {
                 match m {
                     Some(m) => hint(ui, format!("{orig} » {m}")),
@@ -1010,7 +1028,13 @@ fn setup_section(ui: &mut egui::Ui, state: &ShowState, link: &BkLink, bk: Option
             }
             ui.add_enabled_ui(!link.busy(), |ui| {
                 ui.horizontal_wrapped(|ui| {
-                    let label = if any_mirror { tr("Tapetum-Interfaces aktualisieren", "Update the Tapetum interfaces") } else { tr("Tapetum-Interfaces in BK anlegen", "Add the Tapetum interfaces in BK") };
+                    let label = if any_mirror && !mirror_port_ok {
+                        trf!("Tapetum-Interfaces auf Port {listen_port} umstellen", "Move the Tapetum interfaces to port {listen_port}", listen_port = listen_port)
+                    } else if any_mirror {
+                        tr("Tapetum-Interfaces aktualisieren", "Update the Tapetum interfaces").to_string()
+                    } else {
+                        tr("Tapetum-Interfaces in BK anlegen", "Add the Tapetum interfaces in BK").to_string()
+                    };
                     let tip = tr(
                         "Legt für jedes DMX-Interface ein Art-Net-Interface „Tapetum …“ an, das an Tapetum \
                          sendet, und trägt dort einen Pass-through ein. Patch und Hardware \
@@ -1074,8 +1098,8 @@ fn setup_section(ui: &mut egui::Ui, state: &ShowState, link: &BkLink, bk: Option
                     ),
                 );
                 hint(ui, tr("Entweder in BK bei diesen Interfaces Input und „Force src port“ ausschalten, oder den Visualizer auf einen anderen Port legen:", "Either turn off Input and “Force src port” for these interfaces in BK, or move Tapetum to another port:"));
-                if ui.add_enabled(!link.busy(), egui::Button::new(tr("Visualizer auf Port 6455 umstellen", "Move Tapetum to port 6455"))).clicked() {
-                    action = Some(SetupAction::ChangePort(6455));
+                if ui.add_enabled(!link.busy(), egui::Button::new(tr("Tapetum auf einen freien Port umstellen", "Move Tapetum to a free port"))).clicked() {
+                    action = Some(SetupAction::ChangePort(bk_artnet::free_port(std::net::Ipv4Addr::UNSPECIFIED, listen_port.saturating_add(1))));
                 }
             }
         });
