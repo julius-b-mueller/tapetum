@@ -11,7 +11,9 @@
                         set changes bound to cues
 
 German and English differ only in the names. The theatre is modelled here;
-nothing is downloaded. Standard library only.
+nothing is downloaded. Standard library only; the show gets its Tapetum mirror
+interfaces from Tapetum itself (`tapetum mirror --offline`, via cargo), so it
+works without the setup step.
 Run after changing it:
 
     python3 scripts/gen-example.py
@@ -21,6 +23,7 @@ import io
 import json
 import math
 import hashlib
+import subprocess
 import zipfile
 from pathlib import Path
 
@@ -428,11 +431,14 @@ def write_olga(lang):
     # Only what the example needs: no presets, effects or programmer state from the test show.
     for key in ("preset", "effect", "programmer"):
         show[key].pop("items", None)
-    # Art-Net to a typical node address instead of the test show's own network.
+    # The show's own interfaces send nothing into the network (their output is off,
+    # a typical node address stays as a placeholder); BlinderKitten still passes
+    # everything through to the Tapetum mirrors added below.
     for itf in show["interfaces"]["items"]:
         out = itf.get("containers", {}).get("artNet", {}).get("containers", {}).get("output")
         if out:
             set_param(out, "/remoteHost", "2.0.0.10")
+            set_param(out, "/enabled", False)
     names = n["fixtures"]
     pl = placements()
     for fx in show["fixture"]["items"]:
@@ -521,11 +527,19 @@ def write_project(lang):
     (OUT / lang / f"{NAME}.tapetum").write_text(json.dumps(project, indent=1, ensure_ascii=False) + "\n")
 
 
+def add_mirrors(lang):
+    """The Art-Net mirrors with pass-through, exactly as "Add the Tapetum interfaces" makes them."""
+    show = OUT / lang / f"{NAME}.olga"
+    subprocess.run(["cargo", "run", "-q", "--release", "-p", "tapetum", "--", "mirror", str(show), "--offline"], cwd=ROOT, check=True)
+    show.with_name(show.name + ".bak").unlink(missing_ok=True)
+
+
 if __name__ == "__main__":
     for lang in NAMES:
         (OUT / lang).mkdir(parents=True, exist_ok=True)
         write_igz(lang)
         write_olga(lang)
         write_project(lang)
+        add_mirrors(lang)
     for f in sorted(OUT.rglob("*.*")):
         print(f"{f.relative_to(ROOT)}  {f.stat().st_size // 1024} KB")

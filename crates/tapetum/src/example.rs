@@ -122,6 +122,15 @@ mod tests {
         let show = bk_olga::load(&show_path).unwrap();
         assert_eq!(show.fixtures.len(), 13);
         assert!(show.fixtures.iter().all(|f| f.has_placement), "every fixture hangs somewhere");
+        // Ready for Tapetum: every DMX interface has its mirror, no setup step needed.
+        for (i, itf) in show.interfaces.iter().enumerate() {
+            if !matches!(itf.kind, bk_olga::InterfaceKind::NonDmx(_)) && !bk_olga::mirror::is_mirror_name(&itf.name) {
+                assert!(show.mirror_of(i).is_some(), "{} has no mirror", itf.name);
+                if let bk_olga::InterfaceKind::ArtNet(out) = &itf.kind {
+                    assert!(!out.enabled, "{} sends into the network", itf.name);
+                }
+            }
+        }
         let project = tapetum_project::Project::load_or_default(&tapetum_project::Project::path_for_show(&show_path)).unwrap();
         assert_eq!(project.objects.len(), 1, "one IngeTrazo file, nothing else");
         let model = crate::stage::load(&dir.join(&project.objects[0].model), 1.0, tapetum_project::UpAxis::Z).unwrap();
