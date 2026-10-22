@@ -113,8 +113,8 @@ pub fn window(ctx: &egui::Context, logo: egui::TextureId) {
                 "Tapetum was written entirely with AI (“vibe-coded”, with Claude by Anthropic). The logo was generated with ChatGPT.",
             ));
             ui.label(tr(
-                "Im Beispiel: Pergola-Bank und Figur aus dem IngeTrazo-Modell „banca-pergola-yanque“ von Marco Sumari Tellez (CC BY 4.0), in ein Theater gesetzt.",
-                "In the example: pergola bench and figure from the IngeTrazo model “banca-pergola-yanque” by Marco Sumari Tellez (CC BY 4.0), placed in a theatre.",
+                "Im Beispiel: Pergola-Bank und Figur (viermal) aus dem IngeTrazo-Modell „banca-pergola-yanque“ von Marco Sumari Tellez (CC BY 4.0), in ein Theater gesetzt.",
+                "In the example: pergola bench and figure (four times) from the IngeTrazo model “banca-pergola-yanque” by Marco Sumari Tellez (CC BY 4.0), placed in a theatre.",
             ));
             ui.add_space(4.0);
             ui.label(tr(

@@ -106,6 +106,58 @@
    "cue_id": 6.0,
    "transition": 4.0,
    "objects": {
+    "1/uid:demo-person-1": {
+     "offset": [
+      0.25,
+      0.2,
+      0.0
+     ],
+     "rotation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "visible": true
+    },
+    "1/uid:demo-person-2": {
+     "offset": [
+      -2.0,
+      0.1,
+      0.0
+     ],
+     "rotation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "visible": true
+    },
+    "1/uid:demo-person-3": {
+     "offset": [
+      -7.5,
+      0.0,
+      0.0
+     ],
+     "rotation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "visible": true
+    },
+    "1/uid:demo-person-4": {
+     "offset": [
+      5.7,
+      0.0,
+      0.0
+     ],
+     "rotation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "visible": true
+    },
     "1/uid:demo-table": {
      "offset": [
       -3.1,

@@ -54,11 +54,25 @@ pub fn open_internal() -> Option<PathBuf> {
             std::fs::write(&path, bytes).ok()?;
         }
     }
+    // The project keeps what was changed while trying the example out, until a
+    // new Tapetum brings a changed example: then it starts afresh.
     let project = file(&dir, tapetum_project::EXTENSION);
-    if !project.exists() {
+    let stamp = dir.join(".example-version");
+    let version = fingerprint(files);
+    if !project.exists() || std::fs::read_to_string(&stamp).ok().as_deref() != Some(version.as_str()) {
         std::fs::write(&project, files.project).ok()?;
+        std::fs::write(&stamp, &version).ok()?;
     }
     Some(file(&dir, "olga"))
+}
+
+/// Changes whenever any of the example's files does (FNV-1a over all three).
+fn fingerprint(files: &Files) -> String {
+    let mut h: u64 = 0xcbf2_9ce4_8422_2325;
+    for byte in [files.olga, files.igz, files.project].concat() {
+        h = (h ^ u64::from(byte)).wrapping_mul(0x0100_0000_01b3);
+    }
+    format!("{h:016x}")
 }
 
 /// Before the example in Tapetum's folder opens: if another program holds its
@@ -68,7 +82,11 @@ pub fn ensure_free_port(show: &Path, bind: std::net::Ipv4Addr) {
     let project_path = tapetum_project::Project::path_for_show(show);
     let Ok(mut project) = tapetum_project::Project::load_or_default(&project_path) else { return };
     let port = bk_artnet::free_port_after(bind, project.artnet.listen_port, crate::app::PORT_GRACE);
-    if port != project.artnet.listen_port && set_mirror_port(show, port).is_ok() {
+    // The show is written afresh on every start, with mirrors on the default port.
+    if port != bk_artnet::DEFAULT_PORT && set_mirror_port(show, port).is_err() {
+        return;
+    }
+    if port != project.artnet.listen_port {
         project.artnet.listen_port = port;
         let _ = project.save(&project_path);
     }
@@ -205,6 +223,11 @@ mod tests {
 
         let saved = save_to(&there, &project_path).unwrap();
         assert!(mirror_ports(&saved).iter().all(|&p| p == moved));
+
+        // Next start: the show is the original again, the project keeps the moved port.
+        std::fs::write(&show, files.olga).unwrap();
+        ensure_free_port(&show, std::net::Ipv4Addr::UNSPECIFIED);
+        assert!(mirror_ports(&show).iter().all(|&p| p == moved));
         drop(other);
         std::fs::remove_dir_all(&base).unwrap();
     }

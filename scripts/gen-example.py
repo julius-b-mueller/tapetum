@@ -3,8 +3,8 @@
 
   Tapetum-Demo.igz      a small theatre as an IngeTrazo document (format 2, a ZIP
                         with document.json + textures/), with the pergola bench of
-                        crates/tapetum/tests/data (CC BY 4.0, Marco Sumari Tellez)
-                        and IngeTrazo's CC0 person silhouette (scripts/example-assets)
+                        crates/tapetum/tests/data and its face-me figure, four times
+                        (CC BY 4.0, Marco Sumari Tellez)
   Tapetum-Demo.olga     a BlinderKitten show: the fixtures of the test show, hung in
                         that theatre, with a short show of cues
   Tapetum-Demo.tapetum  Tapetum's project: the .igz, fixture settings, scenes with
@@ -22,7 +22,6 @@ import copy
 import io
 import json
 import math
-import hashlib
 import subprocess
 import zipfile
 from pathlib import Path
@@ -41,7 +40,7 @@ NAMES = {
         "house": "Zuschauerraum Boden", "seats": "Zuschauerreihen", "stage": "Bühne mit Seitenbühnen", "cyc": "Rundhorizont",
         "portal": "Portal", "curtain": "Vorhang", "masking": "Gassen und Soffitten", "truss": "Traversen",
         "podest": "Podest", "columns": "Säulen", "table": "Tisch", "chairs": "Stühle", "lantern": "Laterne",
-        "crates": "Kisten", "bench": "Bank", "person": "Person", "silhouette": "Silhouette",
+        "crates": "Kisten", "bench": "Bank", "person": "Person",
         "fixtures": {31: "Seite L", 32: "Seite R", 41: "Wash L", 42: "Wash R", 51: "Laterne"},
         "groups": {3: "Seite", 4: "Wash", 5: "Laterne"},
         "cues": ["Einlass", "Prolog", "Abend", "Nacht", "Morgen", "Fest", "Finale", "Blackout"],
@@ -52,7 +51,7 @@ NAMES = {
         "house": "Auditorium floor", "seats": "Rows of seats", "stage": "Stage with side stages", "cyc": "Cyclorama",
         "portal": "Proscenium", "curtain": "Curtain", "masking": "Legs and borders", "truss": "Trusses",
         "podest": "Platform", "columns": "Columns", "table": "Table", "chairs": "Chairs", "lantern": "Lantern",
-        "crates": "Crates", "bench": "Bench", "person": "Person", "silhouette": "Silhouette",
+        "crates": "Crates", "bench": "Bench", "person": "Person",
         "fixtures": {31: "Side L", 32: "Side R", 41: "Wash L", 42: "Wash R", 51: "Lantern"},
         "groups": {3: "Side", 4: "Wash", 5: "Lantern"},
         "cues": ["Pre-show", "Prologue", "Evening", "Night", "Morning", "Party", "Finale", "Blackout"],
@@ -241,13 +240,9 @@ def bench_transform(groups):
             mesh(g)
 
 
-# IngeTrazo's face-me silhouette (CC0), a few times, as it places one: real heights.
-SILHOUETTE = ROOT / "scripts/example-assets/person_silhouette.png"
-SILHOUETTES = ((1.78, (2.4, -0.5, 0.0)), (1.70, (-2.0, 0.7, 0.0)), (1.65, (4.3, 3.1, 0.0)))
-
-
-def png_size(data):
-    return int.from_bytes(data[16:20], "big"), int.from_bytes(data[20:24], "big")
+# Where the bench model's face-me figure stands, then three more of it (its
+# picture is part of that CC BY document); the first one is the model's own.
+PEOPLE = ((-0.65, -0.6), (2.4, -0.5), (-2.0, 0.7), (4.3, 3.1))
 
 
 def figure(name, uid, embed, w, h, x, y, z):
@@ -270,13 +265,11 @@ def write_igz(lang):
     person = [g for g in scene["groups"] if g.get("billboard")]
     rest = [g for g in scene["groups"] if not g.get("billboard")]
     bench_transform(rest)
-    for g in person:
-        g["name"], g["uid"] = n["person"], "demo-person"
-    png = SILHOUETTE.read_bytes()
-    embed = f"textures/{hashlib.sha256(png).hexdigest()[:16]}-person_silhouette.png"
-    textures[embed] = png
-    pw, ph = png_size(png)
-    figures = [figure(f"{n['silhouette']} {i + 1}", f"demo-silhouette-{i + 1}", embed, h * pw / ph, h, *pos) for i, (h, pos) in enumerate(SILHOUETTES)]
+    (own,) = person
+    own["name"], own["uid"] = f"{n['person']} 1", "demo-person-1"
+    texture = own["faces"][0]["texture"]
+    figures = [figure(f"{n['person']} {i + 1}", f"demo-person-{i + 1}", texture["embed"], texture["sw"], texture["sh"], x, y, 0.0)
+               for i, (x, y) in enumerate(PEOPLE) if i > 0]
     bank = {"name": n["bench"], "uid": "demo-bench", "component": False, "edges": [], "faces": [], "children": rest}
     scene["groups"] = [g.json() for g in theatre(n)] + [bank] + person + figures
     buf = io.BytesIO()
@@ -500,7 +493,9 @@ def scenes(names):
         obj("demo-crates"): state(visible=False),
         obj("demo-table"): state(-4.6, 3.2), obj("demo-chairs"): state(-4.6, 3.2),
     }
-    party = {  # the table centre stage, everything else off to the side stages
+    party = {  # the table centre stage, two people side by side in front of it, all else off to the side stages
+        obj("demo-person-1"): state(0.25, 0.2), obj("demo-person-2"): state(-2.0, 0.1),
+        obj("demo-person-3"): state(-7.5), obj("demo-person-4"): state(5.7),
         obj("demo-table"): state(-3.1, 2.0), obj("demo-chairs"): state(-3.1, 2.0),
         obj("demo-bench"): state(9.6), obj("demo-columns"): state(6.5),
         obj("demo-podest"): state(-6.2), obj("demo-crates"): state(-6.3), obj("demo-lantern"): state(-7.2),
