@@ -4,6 +4,8 @@ description = "Tapetum – 3D lighting visualizer for BlinderKitten"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+homepage.workspace = true
+repository.workspace = true
 publish = false
 
 [[bin]]

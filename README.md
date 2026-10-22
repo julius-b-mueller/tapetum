@@ -8,7 +8,7 @@ Native app written in Rust, for macOS (Apple Silicon and Intel), Windows and Lin
 
 > **Transparency:** Tapetum was written entirely with AI (“vibe-coded” with Claude by Anthropic) – every line of code, including this README. The logo was generated with ChatGPT. It is tested in practice, but please check it before you rely on it in a show.
 
-Website and downloads: **https://julius-b-mueller.github.io/tapetum/**
+Website and downloads: **https://tapetum.org/**
 
 ---
 

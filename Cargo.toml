@@ -6,6 +6,8 @@ members = ["crates/bk-olga", "crates/bk-artnet", "crates/tapetum-project", "crat
 version = "1.0.0"
 edition = "2024"
 license = "MIT"
+homepage = "https://tapetum.org"
+repository = "https://github.com/julius-b-mueller/tapetum"
 
 [workspace.dependencies]
 bk-olga = { path = "crates/bk-olga" }

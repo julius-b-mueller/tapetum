@@ -10,6 +10,7 @@ use crate::i18n::{Language, UserSettings, tr};
 /// Versions Tapetum was tested with.
 pub const TESTED_BLINDERKITTEN: &str = "1.0.1b98";
 pub const TESTED_INGETRAZO: &str = "0.5.7";
+pub const WEBSITE: &str = "https://tapetum.org";
 pub const REPOSITORY: &str = "https://github.com/julius-b-mueller/tapetum";
 
 const LICENSES: &str = include_str!("../../assets/third-party-licenses.txt");
@@ -83,6 +84,7 @@ pub fn window(ctx: &egui::Context, logo: egui::TextureId) {
                 ui.vertical(|ui| {
                     ui.heading(format!("Tapetum {}", env!("CARGO_PKG_VERSION")));
                     ui.label(tr("3D-Lichtvisualisierung für BlinderKitten", "3D lighting visualizer for BlinderKitten"));
+                    ui.hyperlink(WEBSITE);
                     ui.hyperlink(REPOSITORY);
                 });
             });
