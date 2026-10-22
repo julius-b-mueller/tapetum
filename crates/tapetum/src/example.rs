@@ -131,8 +131,9 @@ mod tests {
                 assert!(model.objects.iter().any(|o| o.key == part), "scene object {key} is in the .igz");
             }
         }
-        assert_eq!(model.objects.iter().filter(|o| o.billboard).count(), 3, "three face-me figures");
-        assert_eq!(show.conductor().map(|c| c.cues.len()), Some(4));
+        assert_eq!(model.objects.iter().filter(|o| o.billboard).count(), 4, "four face-me figures");
+        assert_eq!(show.conductor().map(|c| c.cues.len()), Some(8));
+        assert_eq!(project.scenes.len(), 3);
         std::fs::remove_dir_all(&dir).unwrap();
     }
 }

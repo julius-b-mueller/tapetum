@@ -56,19 +56,19 @@
   {
    "id": 1,
    "name": "Morning",
-   "cue_id": 3.0,
+   "cue_id": 5.0,
    "transition": 3.0,
    "objects": {
     "1/uid:demo-crates": {
      "offset": [
-      0,
-      0,
-      0
+      0.0,
+      0.0,
+      0.0
      ],
      "rotation": [
-      0,
-      0,
-      0
+      0.0,
+      0.0,
+      0.0
      ],
      "visible": false
     },
@@ -76,12 +76,12 @@
      "offset": [
       -4.6,
       3.2,
-      0
+      0.0
      ],
      "rotation": [
-      0,
-      0,
-      0
+      0.0,
+      0.0,
+      0.0
      ],
      "visible": true
     },
@@ -89,16 +89,122 @@
      "offset": [
       -4.6,
       3.2,
-      0
+      0.0
      ],
      "rotation": [
-      0,
-      0,
-      0
+      0.0,
+      0.0,
+      0.0
      ],
      "visible": true
     }
    }
+  },
+  {
+   "id": 2,
+   "name": "Party",
+   "cue_id": 6.0,
+   "transition": 4.0,
+   "objects": {
+    "1/uid:demo-table": {
+     "offset": [
+      -3.1,
+      2.0,
+      0.0
+     ],
+     "rotation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "visible": true
+    },
+    "1/uid:demo-chairs": {
+     "offset": [
+      -3.1,
+      2.0,
+      0.0
+     ],
+     "rotation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "visible": true
+    },
+    "1/uid:demo-bench": {
+     "offset": [
+      9.6,
+      0.0,
+      0.0
+     ],
+     "rotation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "visible": true
+    },
+    "1/uid:demo-columns": {
+     "offset": [
+      6.5,
+      0.0,
+      0.0
+     ],
+     "rotation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "visible": true
+    },
+    "1/uid:demo-podest": {
+     "offset": [
+      -6.2,
+      0.0,
+      0.0
+     ],
+     "rotation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "visible": true
+    },
+    "1/uid:demo-crates": {
+     "offset": [
+      -6.3,
+      0.0,
+      0.0
+     ],
+     "rotation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "visible": true
+    },
+    "1/uid:demo-lantern": {
+     "offset": [
+      -7.2,
+      0.0,
+      0.0
+     ],
+     "rotation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "visible": true
+    }
+   }
+  },
+  {
+   "id": 3,
+   "name": "Finale",
+   "cue_id": 7.0,
+   "transition": 4.0,
+   "objects": {}
   }
  ]
 }

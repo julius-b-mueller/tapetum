@@ -4,12 +4,14 @@
   Tapetum-Demo.igz      a small theatre as an IngeTrazo document (format 2, a ZIP
                         with document.json + textures/), with the pergola bench of
                         crates/tapetum/tests/data (CC BY 4.0, Marco Sumari Tellez)
+                        and IngeTrazo's CC0 person silhouette (scripts/example-assets)
   Tapetum-Demo.olga     a BlinderKitten show: the fixtures of the test show, hung in
-                        that theatre, with a few cues
-  Tapetum-Demo.tapetum  Tapetum's project: the .igz, fixture settings, a scene
+                        that theatre, with a short show of cues
+  Tapetum-Demo.tapetum  Tapetum's project: the .igz, fixture settings, scenes with
+                        set changes bound to cues
 
-German and English differ only in the names. Everything is modelled here (the
-figures' silhouettes are drawn here too, with Pillow); nothing is downloaded.
+German and English differ only in the names. The theatre is modelled here;
+nothing is downloaded. Standard library only.
 Run after changing it:
 
     python3 scripts/gen-example.py
@@ -22,8 +24,6 @@ import hashlib
 import zipfile
 from pathlib import Path
 
-from PIL import Image, ImageDraw
-
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "crates/tapetum/assets/example"
 NAME = "Tapetum-Demo"
@@ -35,26 +35,26 @@ STAGE_FRONT, STAGE_BACK = -4.4, 7.2
 
 NAMES = {
     "de": {
-        "house": "Zuschauerraum Boden", "seats": "Zuschauerreihen", "stage": "Bühne", "cyc": "Rundhorizont",
+        "house": "Zuschauerraum Boden", "seats": "Zuschauerreihen", "stage": "Bühne mit Seitenbühnen", "cyc": "Rundhorizont",
         "portal": "Portal", "curtain": "Vorhang", "masking": "Gassen und Soffitten", "truss": "Traversen",
         "podest": "Podest", "columns": "Säulen", "table": "Tisch", "chairs": "Stühle", "lantern": "Laterne",
-        "crates": "Kisten", "bench": "Bank", "person": "Person", "woman": "Frau im Mantel", "man": "Mann mit Hut",
+        "crates": "Kisten", "bench": "Bank", "person": "Person", "silhouette": "Silhouette",
         "fixtures": {31: "Seite L", 32: "Seite R", 41: "Wash L", 42: "Wash R", 51: "Laterne"},
         "groups": {3: "Seite", 4: "Wash", 5: "Laterne"},
-        "cues": ["Einlass", "Abend", "Morgen", "Blackout"],
-        "chapters": ["1 - Einlass", "2 - Abend", "3 - Morgen", ""],
-        "scene": "Morgen",
+        "cues": ["Einlass", "Prolog", "Abend", "Nacht", "Morgen", "Fest", "Finale", "Blackout"],
+        "chapters": ["1 - Einlass", "", "2 - Abend", "", "3 - Morgen", "4 - Fest", "5 - Finale", ""],
+        "scenes": ["Morgen", "Fest", "Finale"],
     },
     "en": {
-        "house": "Auditorium floor", "seats": "Rows of seats", "stage": "Stage", "cyc": "Cyclorama",
+        "house": "Auditorium floor", "seats": "Rows of seats", "stage": "Stage with side stages", "cyc": "Cyclorama",
         "portal": "Proscenium", "curtain": "Curtain", "masking": "Legs and borders", "truss": "Trusses",
         "podest": "Platform", "columns": "Columns", "table": "Table", "chairs": "Chairs", "lantern": "Lantern",
-        "crates": "Crates", "bench": "Bench", "person": "Person", "woman": "Woman in a coat", "man": "Man with a hat",
+        "crates": "Crates", "bench": "Bench", "person": "Person", "silhouette": "Silhouette",
         "fixtures": {31: "Side L", 32: "Side R", 41: "Wash L", 42: "Wash R", 51: "Lantern"},
         "groups": {3: "Side", 4: "Wash", 5: "Lantern"},
-        "cues": ["Pre-show", "Evening", "Morning", "Blackout"],
-        "chapters": ["1 - Pre-show", "2 - Evening", "3 - Morning", ""],
-        "scene": "Morning",
+        "cues": ["Pre-show", "Prologue", "Evening", "Night", "Morning", "Party", "Finale", "Blackout"],
+        "chapters": ["1 - Pre-show", "", "2 - Evening", "", "3 - Morning", "4 - Party", "5 - Finale", ""],
+        "scenes": ["Morning", "Party", "Finale"],
     },
 }
 
@@ -141,7 +141,7 @@ def theatre(n):
                 x = k * 0.56
                 seats.box(x - 0.24, x + 0.24, y - 0.59, y - 0.5, z + 0.42, z + 1.0)
                 seats.box(x - 0.24, x + 0.24, y - 0.5, y, z + 0.38, z + 0.5)
-    group("stage", "demo-stage", (0.30, 0.28, 0.27)).box(-9, 9, STAGE_FRONT, STAGE_BACK, -1.0, 0.0)
+    group("stage", "demo-stage", (0.30, 0.28, 0.27)).box(-12, 12, STAGE_FRONT, STAGE_BACK, -1.0, 0.0)
     group("cyc", "demo-cyc", (0.82, 0.82, 0.85)).face((-9, 6.9, 0), (9, 6.9, 0), (9, 6.9, 9), (-9, 6.9, 9))
     portal = group("portal", "demo-portal", (0.09, 0.02, 0.025))
     portal.box(-11, -6.4, -5.0, -4.6, -1, 9.5)
@@ -238,43 +238,13 @@ def bench_transform(groups):
             mesh(g)
 
 
-def silhouette(kind):
-    """A flat figure, drawn at 4x and scaled down for smooth edges: (png bytes, width, height in m)."""
-    w_m, h_m = {"woman": (0.62, 1.66), "man": (0.66, 1.78)}[kind]
-    W, H = 1200, int(1200 * h_m / w_m)
-    img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    d = ImageDraw.Draw(img)
-    ink = (24, 27, 36, 255)
-    X = lambda u: u * W
-    Y = lambda v: (1 - v) * H          # v: height share from the floor
-    if kind == "woman":
-        d.ellipse([X(.40), Y(.985), X(.60), Y(.865)], fill=ink)                                    # head
-        d.polygon([(X(.45), Y(.87)), (X(.55), Y(.87)), (X(.56), Y(.83)), (X(.44), Y(.83))], fill=ink)  # neck
-        d.polygon([(X(.27), Y(.80)), (X(.73), Y(.80)), (X(.70), Y(.62)), (X(.82), Y(.18)),
-                   (X(.18), Y(.18)), (X(.30), Y(.62))], fill=ink)                                  # coat
-        d.rounded_rectangle([X(.22), Y(.80), X(.36), Y(.78)], 20, fill=ink)
-        d.polygon([(X(.27), Y(.80)), (X(.17), Y(.50)), (X(.22), Y(.47)), (X(.33), Y(.72))], fill=ink)  # arms
-        d.polygon([(X(.73), Y(.80)), (X(.83), Y(.50)), (X(.78), Y(.47)), (X(.67), Y(.72))], fill=ink)
-        d.polygon([(X(.38), Y(.19)), (X(.47), Y(.19)), (X(.46), Y(.02)), (X(.39), Y(.02))], fill=ink)  # legs
-        d.polygon([(X(.53), Y(.19)), (X(.62), Y(.19)), (X(.61), Y(.02)), (X(.54), Y(.02))], fill=ink)
-        d.ellipse([X(.33), Y(.035), X(.47), Y(0)], fill=ink)
-        d.ellipse([X(.53), Y(.035), X(.67), Y(0)], fill=ink)
-    else:
-        d.ellipse([X(.40), Y(.95), X(.60), Y(.83)], fill=ink)                                      # head
-        d.rectangle([X(.39), Y(1.0), X(.61), Y(.93)], fill=ink)                                    # hat
-        d.ellipse([X(.28), Y(.945), X(.72), Y(.915)], fill=ink)                                    # brim
-        d.polygon([(X(.45), Y(.84)), (X(.55), Y(.84)), (X(.56), Y(.80)), (X(.44), Y(.80))], fill=ink)
-        d.polygon([(X(.22), Y(.79)), (X(.78), Y(.79)), (X(.74), Y(.44)), (X(.26), Y(.44))], fill=ink)  # jacket
-        d.polygon([(X(.22), Y(.79)), (X(.13), Y(.47)), (X(.20), Y(.45)), (X(.30), Y(.70))], fill=ink)  # arms
-        d.polygon([(X(.78), Y(.79)), (X(.87), Y(.47)), (X(.80), Y(.45)), (X(.70), Y(.70))], fill=ink)
-        d.polygon([(X(.28), Y(.45)), (X(.49), Y(.45)), (X(.47), Y(.02)), (X(.34), Y(.02))], fill=ink)  # legs
-        d.polygon([(X(.51), Y(.45)), (X(.72), Y(.45)), (X(.66), Y(.02)), (X(.53), Y(.02))], fill=ink)
-        d.ellipse([X(.28), Y(.04), X(.48), Y(0)], fill=ink)
-        d.ellipse([X(.52), Y(.04), X(.72), Y(0)], fill=ink)
-    img = img.resize((W // 4, H // 4), Image.LANCZOS)
-    buf = io.BytesIO()
-    img.save(buf, "PNG", optimize=True)
-    return buf.getvalue(), w_m, h_m
+# IngeTrazo's face-me silhouette (CC0), a few times, as it places one: real heights.
+SILHOUETTE = ROOT / "scripts/example-assets/person_silhouette.png"
+SILHOUETTES = ((1.78, (2.4, -0.5, 0.0)), (1.70, (-2.0, 0.7, 0.0)), (1.65, (4.3, 3.1, 0.0)))
+
+
+def png_size(data):
+    return int.from_bytes(data[16:20], "big"), int.from_bytes(data[20:24], "big")
 
 
 def figure(name, uid, embed, w, h, x, y, z):
@@ -299,12 +269,11 @@ def write_igz(lang):
     bench_transform(rest)
     for g in person:
         g["name"], g["uid"] = n["person"], "demo-person"
-    figures = []
-    for kind, uid, pos in (("woman", "demo-woman", (2.1, -0.7, 0.0)), ("man", "demo-man", (-3.6, 4.4, 0.8))):
-        png, w, h = silhouette(kind)
-        embed = f"textures/{hashlib.sha256(png).hexdigest()[:16]}-{kind}.png"
-        textures[embed] = png
-        figures.append(figure(n[kind], uid, embed, w, h, *pos))
+    png = SILHOUETTE.read_bytes()
+    embed = f"textures/{hashlib.sha256(png).hexdigest()[:16]}-person_silhouette.png"
+    textures[embed] = png
+    pw, ph = png_size(png)
+    figures = [figure(f"{n['silhouette']} {i + 1}", f"demo-silhouette-{i + 1}", embed, h * pw / ph, h, *pos) for i, (h, pos) in enumerate(SILHOUETTES)]
     bank = {"name": n["bench"], "uid": "demo-bench", "component": False, "edges": [], "faces": [], "children": rest}
     scene["groups"] = [g.json() for g in theatre(n)] + [bank] + person + figures
     buf = io.BytesIO()
@@ -379,14 +348,33 @@ def rgbw(r, g, b, w=0.0):
     return [(RED, r), (GREEN, g), (BLUE, b), (WHITE, w)]
 
 
+def head(fid, target):
+    """Pan and tilt (BK's 0..1) that point a hanging moving head at `target`, by its
+    ±270° / ±102° ranges; at pan = tilt = 0 it points down (bk-olga/src/placement.rs)."""
+    p = placements()[fid][0]
+    d = [t - q for t, q in zip(target, p)]
+    n = math.sqrt(sum(c * c for c in d))
+    tilt = math.degrees(math.acos(-d[2] / n))
+    pan = math.degrees(math.atan2(d[0], d[1]))
+    return [(PAN, (pan + 270) / 540), (TILT, (tilt + 102) / 204)]
+
+
+TABLE_CENTRE = (0.0, 0.6, 0.8)    # where the table stands in the party scene
+
 # Cues of the main cuelist: (id, fade, [(group or fixture id, kind, values)]); names in NAMES.
+# BlinderKitten tracks: what a cue does not set keeps its value from the cue before.
 CUES = [
     (1, 0.0, [
         (2, "Group", rgbw(1.0, 0.32, 0.0)),
         (3, "Group", [(INT, 0.45)] + rgbw(1.0, 0.7, 0.4, 1.0)),
         (5, "Group", [(INT, 0.8)]),
     ]),
-    (2, 4.0, [
+    (2, 6.0, [
+        (2, "Group", rgbw(0.0, 0.1, 1.0)),
+        (3, "Group", [(INT, 0.3)] + rgbw(0.4, 0.5, 1.0, 0.0)),
+        (5, "Group", [(INT, 1.0)]),
+    ]),
+    (3, 4.0, [
         (1, "Group", [(INT, 1.0), (ZOOM, 0.78), (STROBE, 0.0), (PAN, 0.667)] + rgbw(0.12, 0.0, 1.0)),
         (11, "Fixture", [(TILT, 0.659)]), (12, "Fixture", [(TILT, 0.588)]),
         (13, "Fixture", [(TILT, 0.416)]), (14, "Fixture", [(TILT, 0.345)]),
@@ -395,19 +383,44 @@ CUES = [
         (4, "Group", [(INT, 1.0), (STROBE, 0.0)] + rgbw(0.0, 0.08, 1.0)),
         (5, "Group", [(INT, 1.0)]),
     ]),
-    (3, 5.0, [
+    (4, 5.0, [
+        (11, "Fixture", [(INT, 0.0)]), (14, "Fixture", [(INT, 0.0)]),
+        (12, "Fixture", [(INT, 0.9), (ZOOM, 0.92)] + head(12, (0.3, 0.9, 0.5)) + rgbw(0.6, 0.7, 1.0, 1.0)),
+        (13, "Fixture", [(INT, 0.6), (ZOOM, 0.92)] + head(13, (-0.65, -0.6, 1.0)) + rgbw(0.6, 0.7, 1.0, 1.0)),
+        (2, "Group", rgbw(0.0, 0.03, 0.4)),
+        (3, "Group", [(INT, 0.0)]),
+        (4, "Group", [(INT, 0.3)]),
+    ]),
+    (5, 5.0, [
         (1, "Group", [(INT, 0.7), (ZOOM, 0.55), (PAN, 0.5), (TILT, 0.5)] + rgbw(1.0, 0.8, 0.5, 1.0)),
         (2, "Group", rgbw(0.25, 0.65, 1.0, 0.3)),
         (3, "Group", [(INT, 1.0)] + rgbw(1.0, 0.85, 0.6, 1.0)),
         (4, "Group", [(INT, 0.8)] + rgbw(1.0, 0.45, 0.0)),
         (5, "Group", [(INT, 0.0)]),
     ]),
-    (4, 3.0, [
-        (1, "Group", [(INT, 0.0)]), (2, "Group", rgbw(0.0, 0.0, 0.0)),
+    (6, 3.0, [
+        (1, "Group", [(INT, 1.0), (ZOOM, 0.6)]),
+        (11, "Fixture", head(11, TABLE_CENTRE) + rgbw(1.0, 0.0, 0.0)),
+        (12, "Fixture", head(12, TABLE_CENTRE) + rgbw(1.0, 0.8, 0.0)),
+        (13, "Fixture", head(13, TABLE_CENTRE) + rgbw(1.0, 0.0, 1.0)),
+        (14, "Fixture", head(14, TABLE_CENTRE) + rgbw(0.0, 0.9, 1.0)),
+        (2, "Group", rgbw(1.0, 0.0, 0.6)),
+        (3, "Group", [(INT, 1.0)] + rgbw(1.0, 0.75, 0.45, 1.0)),
+        (4, "Group", [(INT, 1.0)] + rgbw(1.0, 0.5, 0.0)),
+        (5, "Group", [(INT, 1.0)]),
+    ]),
+    (7, 4.0, [
+        (1, "Group", [(INT, 1.0), (ZOOM, 0.3), (PAN, 0.5), (TILT, 0.5)] + rgbw(1.0, 0.9, 0.75, 1.0)),
+        (2, "Group", rgbw(1.0, 0.55, 0.1, 0.5)),
+        (3, "Group", [(INT, 1.0)] + rgbw(1.0, 0.85, 0.6, 1.0)),
+        (4, "Group", [(INT, 1.0)] + rgbw(1.0, 0.6, 0.2, 1.0)),
+        (5, "Group", [(INT, 1.0)]),
+    ]),
+    (8, 3.0, [
+        (1, "Group", [(INT, 0.0)]), (2, "Group", rgbw(0.0, 0.0, 0.0, 0.0)),
         (3, "Group", [(INT, 0.0)]), (4, "Group", [(INT, 0.0)]), (5, "Group", [(INT, 0.0)]),
     ]),
 ]
-
 
 def write_olga(lang):
     n = NAMES[lang]
@@ -474,8 +487,24 @@ def write_olga(lang):
 
 # ── Tapetum project ───────────────────────────────────────────────────────────
 
-def write_project(lang):
+def scenes(names):
     obj = lambda uid: f"1/uid:{uid}"
+    state = lambda dx=0.0, dy=0.0, visible=True: {"offset": [dx, dy, 0.0], "rotation": [0.0, 0.0, 0.0], "visible": visible}
+    morning = {  # the crates are gone, table and chairs move up stage left
+        obj("demo-crates"): state(visible=False),
+        obj("demo-table"): state(-4.6, 3.2), obj("demo-chairs"): state(-4.6, 3.2),
+    }
+    party = {  # the table centre stage, everything else off to the side stages
+        obj("demo-table"): state(-3.1, 2.0), obj("demo-chairs"): state(-3.1, 2.0),
+        obj("demo-bench"): state(9.6), obj("demo-columns"): state(6.5),
+        obj("demo-podest"): state(-6.2), obj("demo-crates"): state(-6.3), obj("demo-lantern"): state(-7.2),
+    }
+    # The finale: everything back where it stands in the files.
+    return [{"id": i + 1, "name": name, "cue_id": cue, "transition": t, "objects": objects}
+            for i, (name, cue, t, objects) in enumerate(zip(names, (5.0, 6.0, 7.0), (3.0, 4.0, 4.0), (morning, party, {})))]
+
+
+def write_project(lang):
     project = {
         "render": {"ambient": 0.25, "exposure_ev": 5.6, "bloom": True,
                    "haze": {"enabled": True, "density": 0.16, "anisotropy": 0.6, "color": [1, 1, 1], "extent": [30, 12, 30]}},
@@ -487,12 +516,7 @@ def write_project(lang):
             "elationPaladinBrick": {"beam_angle": 75.0},
             "channel": {"beam_angle": 360.0, "lumens": 1800.0, "white_kelvin": 2700.0, "body_scale": 0.3},
         },
-        # The set change for the morning: crates gone, table and chairs centre stage.
-        "scenes": [{"id": 1, "name": NAMES[lang]["scene"], "cue_id": 3.0, "transition": 3.0, "objects": {
-            obj("demo-crates"): {"offset": [0, 0, 0], "rotation": [0, 0, 0], "visible": False},
-            obj("demo-table"): {"offset": [-4.6, 3.2, 0], "rotation": [0, 0, 0], "visible": True},
-            obj("demo-chairs"): {"offset": [-4.6, 3.2, 0], "rotation": [0, 0, 0], "visible": True},
-        }}],
+        "scenes": scenes(NAMES[lang]["scenes"]),
     }
     (OUT / lang / f"{NAME}.tapetum").write_text(json.dumps(project, indent=1, ensure_ascii=False) + "\n")
 

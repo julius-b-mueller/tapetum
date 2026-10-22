@@ -184,6 +184,9 @@ pub fn run(opts: Options) -> Result<()> {
         });
     }
     if let Some((path, frames)) = opts.screenshot {
+        // Never wait for focus: unfocused, the app only updates on events and
+        // would neither take the picture nor quit afterwards.
+        app.insert_resource(bevy::winit::WinitSettings { focused_mode: bevy::winit::UpdateMode::Continuous, unfocused_mode: bevy::winit::UpdateMode::Continuous });
         // Render offscreen: macOS stops presenting occluded windows, which
         // would make window screenshots black when the app is in the background.
         app.add_systems(PostStartup, render_offscreen);

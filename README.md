@@ -133,5 +133,5 @@ Tapetum is free software under the [MIT License](LICENSE). The open source licen
 
 - Code: written with Claude (Anthropic), directed by Julius B. Müller.
 - Logo: generated with ChatGPT.
-- Pergola bench and figure (in the built-in example and the tests): IngeTrazo model `banca-pergola-yanque.igz` by Marco Sumari Tellez, CC BY 4.0 (see `crates/tapetum/tests/data/README.md`). The theatre around it is modelled in `scripts/gen-example.py`.
+- Pergola bench and figure (in the built-in example and the tests): IngeTrazo model `banca-pergola-yanque.igz` by Marco Sumari Tellez, CC BY 4.0 (see `crates/tapetum/tests/data/README.md`). The theatre around it is modelled in `scripts/gen-example.py`. Its silhouettes are IngeTrazo's `person_silhouette.png` (CC0, public domain; see `scripts/example-assets/README.md`).
 - Thanks to the authors of BlinderKitten, IngeTrazo, Bevy, egui and every library Tapetum uses.
