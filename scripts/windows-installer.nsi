@@ -1,6 +1,6 @@
 ; Installer for Tapetum. Needs NSIS 3.
 ;
-;   makensis /DVERSION=1.0.0 /DARCH=x64 scripts\windows-installer.nsi
+;   makensis /DVERSION=1.1.0 /DARCH=x64 scripts\windows-installer.nsi
 ;
 ; Expects target\release\tapetum.exe and writes target\bundle\Tapetum-windows-<arch>-setup.exe.
 ; Installs for the current user, so it needs no administrator rights.
