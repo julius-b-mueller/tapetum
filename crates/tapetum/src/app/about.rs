@@ -100,11 +100,11 @@ pub fn window(ctx: &egui::Context, logo: egui::TextureId) {
             ));
             ui.add_space(4.0);
             ui.label(tr(
-                "Freie Software unter der GNU General Public License, Version 3 oder neuer. Ohne jede Gewährleistung.",
-                "Free software under the GNU General Public License, version 3 or later. Without any warranty.",
+                "Freie Software unter der MIT-Lizenz. Ohne jede Gewährleistung.",
+                "Free software under the MIT License. Without any warranty.",
             ));
             ui.separator();
-            egui::CollapsingHeader::new(tr("Lizenz von Tapetum (GPL-3.0)", "Tapetum's license (GPL-3.0)")).id_salt("own_license").show(ui, |ui| {
+            egui::CollapsingHeader::new(tr("Lizenz von Tapetum (MIT)", "Tapetum's license (MIT)")).id_salt("own_license").show(ui, |ui| {
                 lines(ui, "own", OWN_LICENSE);
             });
             egui::CollapsingHeader::new(tr("Open-Source-Lizenzen der verwendeten Bibliotheken", "Open source licenses of the libraries used"))

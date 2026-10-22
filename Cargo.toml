@@ -5,7 +5,7 @@ members = ["crates/bk-olga", "crates/bk-artnet", "crates/tapetum-project", "crat
 [workspace.package]
 version = "1.0.0"
 edition = "2024"
-license = "GPL-3.0-or-later"
+license = "MIT"
 
 [workspace.dependencies]
 bk-olga = { path = "crates/bk-olga" }

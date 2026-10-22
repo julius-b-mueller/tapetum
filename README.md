@@ -129,7 +129,7 @@ Show, project and model files can come from anywhere. Tapetum only reads them: i
 
 ## License and credits
 
-Tapetum is free software under the [GNU General Public License v3.0 or later](LICENSE). The open source licenses of all libraries are listed in the app (*☰ → About Tapetum*) and in [`crates/tapetum/assets/third-party-licenses.txt`](crates/tapetum/assets/third-party-licenses.txt).
+Tapetum is free software under the [MIT License](LICENSE). The open source licenses of all libraries are listed in the app (*☰ → About Tapetum*) and in [`crates/tapetum/assets/third-party-licenses.txt`](crates/tapetum/assets/third-party-licenses.txt).
 
 - Code: written with Claude (Anthropic), directed by Julius B. Müller.
 - Logo: generated with ChatGPT.
