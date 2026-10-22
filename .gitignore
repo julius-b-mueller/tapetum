@@ -1,0 +1,15 @@
+/target
+.DS_Store
+*.tapetum.tmp
+*.bkviz.tmp
+
+# Local shows and sets (never part of the repository)
+/*.olga
+/*.olga.bak
+/*.tapetum
+/*.bkviz
+/*.igz
+/*.igz.bak
+/*_autosave/
+/tapetum-gobos/
+/bkviz-gobos/

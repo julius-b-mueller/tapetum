@@ -1,0 +1,8 @@
+# Known advisories that don't reach Tapetum; reviewed 2026-10-22.
+[advisories]
+ignore = [
+    # ruzstd decompression bomb: only Bevy's own embedded tonemapping LUTs go
+    # through it; user files (images) are decoded by the `image` crate. Needs
+    # a Bevy release with ruzstd >= 0.9.1 to go away.
+    "RUSTSEC-2026-0344",
+]

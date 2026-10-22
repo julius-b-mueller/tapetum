@@ -1,0 +1,1892 @@
+{
+ "DESCRIPTION": "Group",
+ "FULL_PATH": "/group",
+ "ACCESS": 0,
+ "CONTENTS": {
+  "1_MH": {
+   "DESCRIPTION": "1 - MH",
+   "FULL_PATH": "/group/1_MH",
+   "ACCESS": 0,
+   "CONTENTS": {
+    "enabled": {
+     "DESCRIPTION": "Enabled",
+     "FULL_PATH": "/group/1_MH/enabled",
+     "ACCESS": 3,
+     "TYPE": "T",
+     "VALUE": [
+      true
+     ],
+     "RANGE": [
+      {
+       "MIN": 0,
+       "MAX": 1
+      }
+     ],
+     "EXTENDED_TYPE": [
+      "Boolean"
+     ]
+    },
+    "id": {
+     "DESCRIPTION": "ID",
+     "FULL_PATH": "/group/1_MH/id",
+     "ACCESS": 3,
+     "TYPE": "i",
+     "VALUE": [
+      1
+     ],
+     "RANGE": [
+      {
+       "MIN": 1,
+       "MAX": 2147483647
+      }
+     ],
+     "EXTENDED_TYPE": [
+      "Integer"
+     ]
+    },
+    "name": {
+     "DESCRIPTION": "Name",
+     "FULL_PATH": "/group/1_MH/name",
+     "ACCESS": 3,
+     "TYPE": "s",
+     "VALUE": [
+      "MH"
+     ],
+     "EXTENDED_TYPE": [
+      "String"
+     ]
+    },
+    "selections": {
+     "DESCRIPTION": "Selections",
+     "FULL_PATH": "/group/1_MH/selections",
+     "ACCESS": 0,
+     "CONTENTS": {
+      "getFromProg": {
+       "DESCRIPTION": "Get from prog.",
+       "FULL_PATH": "/group/1_MH/selections/getFromProg",
+       "ACCESS": 3,
+       "TYPE": "N"
+      },
+      "setInProg": {
+       "DESCRIPTION": "Set in prog.",
+       "FULL_PATH": "/group/1_MH/selections/setInProg",
+       "ACCESS": 3,
+       "TYPE": "N"
+      },
+      "selection": {
+       "DESCRIPTION": "Selection",
+       "FULL_PATH": "/group/1_MH/selections/selection",
+       "ACCESS": 0,
+       "CONTENTS": {
+        "enabled": {
+         "DESCRIPTION": "Enabled",
+         "FULL_PATH": "/group/1_MH/selections/selection/enabled",
+         "ACCESS": 3,
+         "TYPE": "T",
+         "VALUE": [
+          true
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 1
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Boolean"
+         ]
+        },
+        "action": {
+         "DESCRIPTION": "Action",
+         "FULL_PATH": "/group/1_MH/selections/selection/action",
+         "ACCESS": 3,
+         "TYPE": "s",
+         "VALUE": [
+          "+"
+         ],
+         "RANGE": [
+          {
+           "VALS": [
+            "+",
+            "-"
+           ]
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Enum"
+         ]
+        },
+        "targetType": {
+         "DESCRIPTION": "Target type",
+         "FULL_PATH": "/group/1_MH/selections/selection/targetType",
+         "ACCESS": 3,
+         "TYPE": "s",
+         "VALUE": [
+          "Fixture"
+         ],
+         "RANGE": [
+          {
+           "VALS": [
+            "Fixture",
+            "Group"
+           ]
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Enum"
+         ]
+        },
+        "id": {
+         "DESCRIPTION": "ID",
+         "FULL_PATH": "/group/1_MH/selections/selection/id",
+         "ACCESS": 3,
+         "TYPE": "i",
+         "VALUE": [
+          11
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 2147483647
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Integer"
+         ]
+        },
+        "thru": {
+         "DESCRIPTION": "Thru",
+         "FULL_PATH": "/group/1_MH/selections/selection/thru",
+         "ACCESS": 3,
+         "TYPE": "T",
+         "VALUE": [
+          true
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 1
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Boolean"
+         ]
+        },
+        "lastID": {
+         "DESCRIPTION": "Last ID",
+         "FULL_PATH": "/group/1_MH/selections/selection/lastID",
+         "ACCESS": 3,
+         "TYPE": "i",
+         "VALUE": [
+          14
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 2147483647
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Integer"
+         ]
+        }
+       },
+       "TYPE": "BaseItem"
+      },
+      "selection 1": {
+       "DESCRIPTION": "Selection",
+       "FULL_PATH": "/group/1_MH/selections/selection",
+       "ACCESS": 0,
+       "CONTENTS": {
+        "enabled": {
+         "DESCRIPTION": "Enabled",
+         "FULL_PATH": "/group/1_MH/selections/selection/enabled",
+         "ACCESS": 3,
+         "TYPE": "T",
+         "VALUE": [
+          true
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 1
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Boolean"
+         ]
+        },
+        "action": {
+         "DESCRIPTION": "Action",
+         "FULL_PATH": "/group/1_MH/selections/selection/action",
+         "ACCESS": 3,
+         "TYPE": "s",
+         "VALUE": [
+          "-"
+         ],
+         "RANGE": [
+          {
+           "VALS": [
+            "+",
+            "-"
+           ]
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Enum"
+         ]
+        },
+        "targetType": {
+         "DESCRIPTION": "Target type",
+         "FULL_PATH": "/group/1_MH/selections/selection/targetType",
+         "ACCESS": 3,
+         "TYPE": "s",
+         "VALUE": [
+          "Fixture"
+         ],
+         "RANGE": [
+          {
+           "VALS": [
+            "Fixture",
+            "Group"
+           ]
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Enum"
+         ]
+        },
+        "id": {
+         "DESCRIPTION": "ID",
+         "FULL_PATH": "/group/1_MH/selections/selection/id",
+         "ACCESS": 3,
+         "TYPE": "i",
+         "VALUE": [
+          12
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 2147483647
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Integer"
+         ]
+        },
+        "thru": {
+         "DESCRIPTION": "Thru",
+         "FULL_PATH": "/group/1_MH/selections/selection/thru",
+         "ACCESS": 3,
+         "TYPE": "T",
+         "VALUE": [
+          false
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 1
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Boolean"
+         ]
+        },
+        "lastID": {
+         "DESCRIPTION": "Last ID",
+         "FULL_PATH": "/group/1_MH/selections/selection/lastID",
+         "ACCESS": 3,
+         "TYPE": "i",
+         "VALUE": [
+          14
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 2147483647
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Integer"
+         ]
+        }
+       },
+       "TYPE": "BaseItem"
+      },
+      "selection 2": {
+       "DESCRIPTION": "Selection",
+       "FULL_PATH": "/group/1_MH/selections/selection",
+       "ACCESS": 0,
+       "CONTENTS": {
+        "enabled": {
+         "DESCRIPTION": "Enabled",
+         "FULL_PATH": "/group/1_MH/selections/selection/enabled",
+         "ACCESS": 3,
+         "TYPE": "T",
+         "VALUE": [
+          false
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 1
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Boolean"
+         ]
+        },
+        "action": {
+         "DESCRIPTION": "Action",
+         "FULL_PATH": "/group/1_MH/selections/selection/action",
+         "ACCESS": 3,
+         "TYPE": "s",
+         "VALUE": [
+          "+"
+         ],
+         "RANGE": [
+          {
+           "VALS": [
+            "+",
+            "-"
+           ]
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Enum"
+         ]
+        },
+        "targetType": {
+         "DESCRIPTION": "Target type",
+         "FULL_PATH": "/group/1_MH/selections/selection/targetType",
+         "ACCESS": 3,
+         "TYPE": "s",
+         "VALUE": [
+          "Fixture"
+         ],
+         "RANGE": [
+          {
+           "VALS": [
+            "Fixture",
+            "Group"
+           ]
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Enum"
+         ]
+        },
+        "id": {
+         "DESCRIPTION": "ID",
+         "FULL_PATH": "/group/1_MH/selections/selection/id",
+         "ACCESS": 3,
+         "TYPE": "i",
+         "VALUE": [
+          21
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 2147483647
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Integer"
+         ]
+        },
+        "thru": {
+         "DESCRIPTION": "Thru",
+         "FULL_PATH": "/group/1_MH/selections/selection/thru",
+         "ACCESS": 3,
+         "TYPE": "T",
+         "VALUE": [
+          false
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 1
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Boolean"
+         ]
+        },
+        "lastID": {
+         "DESCRIPTION": "Last ID",
+         "FULL_PATH": "/group/1_MH/selections/selection/lastID",
+         "ACCESS": 3,
+         "TYPE": "i",
+         "VALUE": [
+          14
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 2147483647
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Integer"
+         ]
+        }
+       },
+       "TYPE": "BaseItem"
+      }
+     },
+     "TYPE": "Manager",
+     "EXTENDED_TYPE": [
+      "CommandSelection"
+     ],
+     "BASE_TYPE": "CommandSelection"
+    }
+   },
+   "TYPE": "Group"
+  },
+  "2_Brick": {
+   "DESCRIPTION": "2 - Brick",
+   "FULL_PATH": "/group/2_Brick",
+   "ACCESS": 0,
+   "CONTENTS": {
+    "enabled": {
+     "DESCRIPTION": "Enabled",
+     "FULL_PATH": "/group/2_Brick/enabled",
+     "ACCESS": 3,
+     "TYPE": "T",
+     "VALUE": [
+      true
+     ],
+     "RANGE": [
+      {
+       "MIN": 0,
+       "MAX": 1
+      }
+     ],
+     "EXTENDED_TYPE": [
+      "Boolean"
+     ]
+    },
+    "id": {
+     "DESCRIPTION": "ID",
+     "FULL_PATH": "/group/2_Brick/id",
+     "ACCESS": 3,
+     "TYPE": "i",
+     "VALUE": [
+      2
+     ],
+     "RANGE": [
+      {
+       "MIN": 1,
+       "MAX": 2147483647
+      }
+     ],
+     "EXTENDED_TYPE": [
+      "Integer"
+     ]
+    },
+    "name": {
+     "DESCRIPTION": "Name",
+     "FULL_PATH": "/group/2_Brick/name",
+     "ACCESS": 3,
+     "TYPE": "s",
+     "VALUE": [
+      "Brick"
+     ],
+     "EXTENDED_TYPE": [
+      "String"
+     ]
+    },
+    "selections": {
+     "DESCRIPTION": "Selections",
+     "FULL_PATH": "/group/2_Brick/selections",
+     "ACCESS": 0,
+     "CONTENTS": {
+      "getFromProg": {
+       "DESCRIPTION": "Get from prog.",
+       "FULL_PATH": "/group/2_Brick/selections/getFromProg",
+       "ACCESS": 3,
+       "TYPE": "N"
+      },
+      "setInProg": {
+       "DESCRIPTION": "Set in prog.",
+       "FULL_PATH": "/group/2_Brick/selections/setInProg",
+       "ACCESS": 3,
+       "TYPE": "N"
+      },
+      "selection": {
+       "DESCRIPTION": "Selection",
+       "FULL_PATH": "/group/2_Brick/selections/selection",
+       "ACCESS": 0,
+       "CONTENTS": {
+        "enabled": {
+         "DESCRIPTION": "Enabled",
+         "FULL_PATH": "/group/2_Brick/selections/selection/enabled",
+         "ACCESS": 3,
+         "TYPE": "T",
+         "VALUE": [
+          true
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 1
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Boolean"
+         ]
+        },
+        "action": {
+         "DESCRIPTION": "Action",
+         "FULL_PATH": "/group/2_Brick/selections/selection/action",
+         "ACCESS": 3,
+         "TYPE": "s",
+         "VALUE": [
+          "+"
+         ],
+         "RANGE": [
+          {
+           "VALS": [
+            "+",
+            "-"
+           ]
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Enum"
+         ]
+        },
+        "targetType": {
+         "DESCRIPTION": "Target type",
+         "FULL_PATH": "/group/2_Brick/selections/selection/targetType",
+         "ACCESS": 3,
+         "TYPE": "s",
+         "VALUE": [
+          "Fixture"
+         ],
+         "RANGE": [
+          {
+           "VALS": [
+            "Fixture",
+            "Group"
+           ]
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Enum"
+         ]
+        },
+        "id": {
+         "DESCRIPTION": "ID",
+         "FULL_PATH": "/group/2_Brick/selections/selection/id",
+         "ACCESS": 3,
+         "TYPE": "i",
+         "VALUE": [
+          21
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 2147483647
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Integer"
+         ]
+        },
+        "thru": {
+         "DESCRIPTION": "Thru",
+         "FULL_PATH": "/group/2_Brick/selections/selection/thru",
+         "ACCESS": 3,
+         "TYPE": "T",
+         "VALUE": [
+          true
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 1
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Boolean"
+         ]
+        },
+        "lastID": {
+         "DESCRIPTION": "Last ID",
+         "FULL_PATH": "/group/2_Brick/selections/selection/lastID",
+         "ACCESS": 3,
+         "TYPE": "i",
+         "VALUE": [
+          24
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 2147483647
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Integer"
+         ]
+        }
+       },
+       "TYPE": "BaseItem"
+      }
+     },
+     "TYPE": "Manager",
+     "EXTENDED_TYPE": [
+      "CommandSelection"
+     ],
+     "BASE_TYPE": "CommandSelection"
+    }
+   },
+   "TYPE": "Group"
+  },
+  "3_Seite": {
+   "DESCRIPTION": "3 - Seite",
+   "FULL_PATH": "/group/3_Seite",
+   "ACCESS": 0,
+   "CONTENTS": {
+    "enabled": {
+     "DESCRIPTION": "Enabled",
+     "FULL_PATH": "/group/3_Seite/enabled",
+     "ACCESS": 3,
+     "TYPE": "T",
+     "VALUE": [
+      true
+     ],
+     "RANGE": [
+      {
+       "MIN": 0,
+       "MAX": 1
+      }
+     ],
+     "EXTENDED_TYPE": [
+      "Boolean"
+     ]
+    },
+    "id": {
+     "DESCRIPTION": "ID",
+     "FULL_PATH": "/group/3_Seite/id",
+     "ACCESS": 3,
+     "TYPE": "i",
+     "VALUE": [
+      3
+     ],
+     "RANGE": [
+      {
+       "MIN": 1,
+       "MAX": 2147483647
+      }
+     ],
+     "EXTENDED_TYPE": [
+      "Integer"
+     ]
+    },
+    "name": {
+     "DESCRIPTION": "Name",
+     "FULL_PATH": "/group/3_Seite/name",
+     "ACCESS": 3,
+     "TYPE": "s",
+     "VALUE": [
+      "Seite"
+     ],
+     "EXTENDED_TYPE": [
+      "String"
+     ]
+    },
+    "selections": {
+     "DESCRIPTION": "Selections",
+     "FULL_PATH": "/group/3_Seite/selections",
+     "ACCESS": 0,
+     "CONTENTS": {
+      "getFromProg": {
+       "DESCRIPTION": "Get from prog.",
+       "FULL_PATH": "/group/3_Seite/selections/getFromProg",
+       "ACCESS": 3,
+       "TYPE": "N"
+      },
+      "setInProg": {
+       "DESCRIPTION": "Set in prog.",
+       "FULL_PATH": "/group/3_Seite/selections/setInProg",
+       "ACCESS": 3,
+       "TYPE": "N"
+      },
+      "selection": {
+       "DESCRIPTION": "Selection",
+       "FULL_PATH": "/group/3_Seite/selections/selection",
+       "ACCESS": 0,
+       "CONTENTS": {
+        "enabled": {
+         "DESCRIPTION": "Enabled",
+         "FULL_PATH": "/group/3_Seite/selections/selection/enabled",
+         "ACCESS": 3,
+         "TYPE": "T",
+         "VALUE": [
+          true
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 1
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Boolean"
+         ]
+        },
+        "action": {
+         "DESCRIPTION": "Action",
+         "FULL_PATH": "/group/3_Seite/selections/selection/action",
+         "ACCESS": 3,
+         "TYPE": "s",
+         "VALUE": [
+          "+"
+         ],
+         "RANGE": [
+          {
+           "VALS": [
+            "+",
+            "-"
+           ]
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Enum"
+         ]
+        },
+        "targetType": {
+         "DESCRIPTION": "Target type",
+         "FULL_PATH": "/group/3_Seite/selections/selection/targetType",
+         "ACCESS": 3,
+         "TYPE": "s",
+         "VALUE": [
+          "Fixture"
+         ],
+         "RANGE": [
+          {
+           "VALS": [
+            "Fixture",
+            "Group"
+           ]
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Enum"
+         ]
+        },
+        "id": {
+         "DESCRIPTION": "ID",
+         "FULL_PATH": "/group/3_Seite/selections/selection/id",
+         "ACCESS": 3,
+         "TYPE": "i",
+         "VALUE": [
+          31
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 2147483647
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Integer"
+         ]
+        },
+        "thru": {
+         "DESCRIPTION": "Thru",
+         "FULL_PATH": "/group/3_Seite/selections/selection/thru",
+         "ACCESS": 3,
+         "TYPE": "T",
+         "VALUE": [
+          true
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 1
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Boolean"
+         ]
+        },
+        "lastID": {
+         "DESCRIPTION": "Last ID",
+         "FULL_PATH": "/group/3_Seite/selections/selection/lastID",
+         "ACCESS": 3,
+         "TYPE": "i",
+         "VALUE": [
+          32
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 2147483647
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Integer"
+         ]
+        }
+       },
+       "TYPE": "BaseItem"
+      }
+     },
+     "TYPE": "Manager",
+     "EXTENDED_TYPE": [
+      "CommandSelection"
+     ],
+     "BASE_TYPE": "CommandSelection"
+    }
+   },
+   "TYPE": "Group"
+  },
+  "4_Wasser": {
+   "DESCRIPTION": "4 - Wasser",
+   "FULL_PATH": "/group/4_Wasser",
+   "ACCESS": 0,
+   "CONTENTS": {
+    "enabled": {
+     "DESCRIPTION": "Enabled",
+     "FULL_PATH": "/group/4_Wasser/enabled",
+     "ACCESS": 3,
+     "TYPE": "T",
+     "VALUE": [
+      true
+     ],
+     "RANGE": [
+      {
+       "MIN": 0,
+       "MAX": 1
+      }
+     ],
+     "EXTENDED_TYPE": [
+      "Boolean"
+     ]
+    },
+    "id": {
+     "DESCRIPTION": "ID",
+     "FULL_PATH": "/group/4_Wasser/id",
+     "ACCESS": 3,
+     "TYPE": "i",
+     "VALUE": [
+      4
+     ],
+     "RANGE": [
+      {
+       "MIN": 1,
+       "MAX": 2147483647
+      }
+     ],
+     "EXTENDED_TYPE": [
+      "Integer"
+     ]
+    },
+    "name": {
+     "DESCRIPTION": "Name",
+     "FULL_PATH": "/group/4_Wasser/name",
+     "ACCESS": 3,
+     "TYPE": "s",
+     "VALUE": [
+      "Wasser"
+     ],
+     "EXTENDED_TYPE": [
+      "String"
+     ]
+    },
+    "selections": {
+     "DESCRIPTION": "Selections",
+     "FULL_PATH": "/group/4_Wasser/selections",
+     "ACCESS": 0,
+     "CONTENTS": {
+      "getFromProg": {
+       "DESCRIPTION": "Get from prog.",
+       "FULL_PATH": "/group/4_Wasser/selections/getFromProg",
+       "ACCESS": 3,
+       "TYPE": "N"
+      },
+      "setInProg": {
+       "DESCRIPTION": "Set in prog.",
+       "FULL_PATH": "/group/4_Wasser/selections/setInProg",
+       "ACCESS": 3,
+       "TYPE": "N"
+      },
+      "selection": {
+       "DESCRIPTION": "Selection",
+       "FULL_PATH": "/group/4_Wasser/selections/selection",
+       "ACCESS": 0,
+       "CONTENTS": {
+        "enabled": {
+         "DESCRIPTION": "Enabled",
+         "FULL_PATH": "/group/4_Wasser/selections/selection/enabled",
+         "ACCESS": 3,
+         "TYPE": "T",
+         "VALUE": [
+          true
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 1
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Boolean"
+         ]
+        },
+        "action": {
+         "DESCRIPTION": "Action",
+         "FULL_PATH": "/group/4_Wasser/selections/selection/action",
+         "ACCESS": 3,
+         "TYPE": "s",
+         "VALUE": [
+          "+"
+         ],
+         "RANGE": [
+          {
+           "VALS": [
+            "+",
+            "-"
+           ]
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Enum"
+         ]
+        },
+        "targetType": {
+         "DESCRIPTION": "Target type",
+         "FULL_PATH": "/group/4_Wasser/selections/selection/targetType",
+         "ACCESS": 3,
+         "TYPE": "s",
+         "VALUE": [
+          "Fixture"
+         ],
+         "RANGE": [
+          {
+           "VALS": [
+            "Fixture",
+            "Group"
+           ]
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Enum"
+         ]
+        },
+        "id": {
+         "DESCRIPTION": "ID",
+         "FULL_PATH": "/group/4_Wasser/selections/selection/id",
+         "ACCESS": 3,
+         "TYPE": "i",
+         "VALUE": [
+          41
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 2147483647
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Integer"
+         ]
+        },
+        "thru": {
+         "DESCRIPTION": "Thru",
+         "FULL_PATH": "/group/4_Wasser/selections/selection/thru",
+         "ACCESS": 3,
+         "TYPE": "T",
+         "VALUE": [
+          true
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 1
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Boolean"
+         ]
+        },
+        "lastID": {
+         "DESCRIPTION": "Last ID",
+         "FULL_PATH": "/group/4_Wasser/selections/selection/lastID",
+         "ACCESS": 3,
+         "TYPE": "i",
+         "VALUE": [
+          42
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 2147483647
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Integer"
+         ]
+        }
+       },
+       "TYPE": "BaseItem"
+      }
+     },
+     "TYPE": "Manager",
+     "EXTENDED_TYPE": [
+      "CommandSelection"
+     ],
+     "BASE_TYPE": "CommandSelection"
+    }
+   },
+   "TYPE": "Group"
+  },
+  "5_Lichterkette": {
+   "DESCRIPTION": "5 - Lichterkette",
+   "FULL_PATH": "/group/5_Lichterkette",
+   "ACCESS": 0,
+   "CONTENTS": {
+    "enabled": {
+     "DESCRIPTION": "Enabled",
+     "FULL_PATH": "/group/5_Lichterkette/enabled",
+     "ACCESS": 3,
+     "TYPE": "T",
+     "VALUE": [
+      true
+     ],
+     "RANGE": [
+      {
+       "MIN": 0,
+       "MAX": 1
+      }
+     ],
+     "EXTENDED_TYPE": [
+      "Boolean"
+     ]
+    },
+    "id": {
+     "DESCRIPTION": "ID",
+     "FULL_PATH": "/group/5_Lichterkette/id",
+     "ACCESS": 3,
+     "TYPE": "i",
+     "VALUE": [
+      5
+     ],
+     "RANGE": [
+      {
+       "MIN": 1,
+       "MAX": 2147483647
+      }
+     ],
+     "EXTENDED_TYPE": [
+      "Integer"
+     ]
+    },
+    "name": {
+     "DESCRIPTION": "Name",
+     "FULL_PATH": "/group/5_Lichterkette/name",
+     "ACCESS": 3,
+     "TYPE": "s",
+     "VALUE": [
+      "Lichterkette"
+     ],
+     "EXTENDED_TYPE": [
+      "String"
+     ]
+    },
+    "selections": {
+     "DESCRIPTION": "Selections",
+     "FULL_PATH": "/group/5_Lichterkette/selections",
+     "ACCESS": 0,
+     "CONTENTS": {
+      "getFromProg": {
+       "DESCRIPTION": "Get from prog.",
+       "FULL_PATH": "/group/5_Lichterkette/selections/getFromProg",
+       "ACCESS": 3,
+       "TYPE": "N"
+      },
+      "setInProg": {
+       "DESCRIPTION": "Set in prog.",
+       "FULL_PATH": "/group/5_Lichterkette/selections/setInProg",
+       "ACCESS": 3,
+       "TYPE": "N"
+      },
+      "selection": {
+       "DESCRIPTION": "Selection",
+       "FULL_PATH": "/group/5_Lichterkette/selections/selection",
+       "ACCESS": 0,
+       "CONTENTS": {
+        "enabled": {
+         "DESCRIPTION": "Enabled",
+         "FULL_PATH": "/group/5_Lichterkette/selections/selection/enabled",
+         "ACCESS": 3,
+         "TYPE": "T",
+         "VALUE": [
+          true
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 1
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Boolean"
+         ]
+        },
+        "action": {
+         "DESCRIPTION": "Action",
+         "FULL_PATH": "/group/5_Lichterkette/selections/selection/action",
+         "ACCESS": 3,
+         "TYPE": "s",
+         "VALUE": [
+          "+"
+         ],
+         "RANGE": [
+          {
+           "VALS": [
+            "+",
+            "-"
+           ]
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Enum"
+         ]
+        },
+        "targetType": {
+         "DESCRIPTION": "Target type",
+         "FULL_PATH": "/group/5_Lichterkette/selections/selection/targetType",
+         "ACCESS": 3,
+         "TYPE": "s",
+         "VALUE": [
+          "Fixture"
+         ],
+         "RANGE": [
+          {
+           "VALS": [
+            "Fixture",
+            "Group"
+           ]
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Enum"
+         ]
+        },
+        "id": {
+         "DESCRIPTION": "ID",
+         "FULL_PATH": "/group/5_Lichterkette/selections/selection/id",
+         "ACCESS": 3,
+         "TYPE": "i",
+         "VALUE": [
+          51
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 2147483647
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Integer"
+         ]
+        },
+        "thru": {
+         "DESCRIPTION": "Thru",
+         "FULL_PATH": "/group/5_Lichterkette/selections/selection/thru",
+         "ACCESS": 3,
+         "TYPE": "T",
+         "VALUE": [
+          false
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 1
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Boolean"
+         ]
+        },
+        "lastID": {
+         "DESCRIPTION": "Last ID",
+         "FULL_PATH": "/group/5_Lichterkette/selections/selection/lastID",
+         "ACCESS": 3,
+         "TYPE": "i",
+         "VALUE": [
+          0
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 2147483647
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Integer"
+         ]
+        }
+       },
+       "TYPE": "BaseItem"
+      }
+     },
+     "TYPE": "Manager",
+     "EXTENDED_TYPE": [
+      "CommandSelection"
+     ],
+     "BASE_TYPE": "CommandSelection"
+    }
+   },
+   "TYPE": "Group"
+  },
+  "11_MHsLinks": {
+   "DESCRIPTION": "11 - MHs Links",
+   "FULL_PATH": "/group/11_MHsLinks",
+   "ACCESS": 0,
+   "CONTENTS": {
+    "enabled": {
+     "DESCRIPTION": "Enabled",
+     "FULL_PATH": "/group/11_MHsLinks/enabled",
+     "ACCESS": 3,
+     "TYPE": "T",
+     "VALUE": [
+      true
+     ],
+     "RANGE": [
+      {
+       "MIN": 0,
+       "MAX": 1
+      }
+     ],
+     "EXTENDED_TYPE": [
+      "Boolean"
+     ]
+    },
+    "id": {
+     "DESCRIPTION": "ID",
+     "FULL_PATH": "/group/11_MHsLinks/id",
+     "ACCESS": 3,
+     "TYPE": "i",
+     "VALUE": [
+      11
+     ],
+     "RANGE": [
+      {
+       "MIN": 1,
+       "MAX": 2147483647
+      }
+     ],
+     "EXTENDED_TYPE": [
+      "Integer"
+     ]
+    },
+    "name": {
+     "DESCRIPTION": "Name",
+     "FULL_PATH": "/group/11_MHsLinks/name",
+     "ACCESS": 3,
+     "TYPE": "s",
+     "VALUE": [
+      "MHs Links"
+     ],
+     "EXTENDED_TYPE": [
+      "String"
+     ]
+    },
+    "selections": {
+     "DESCRIPTION": "Selections",
+     "FULL_PATH": "/group/11_MHsLinks/selections",
+     "ACCESS": 0,
+     "CONTENTS": {
+      "getFromProg": {
+       "DESCRIPTION": "Get from prog.",
+       "FULL_PATH": "/group/11_MHsLinks/selections/getFromProg",
+       "ACCESS": 3,
+       "TYPE": "N"
+      },
+      "setInProg": {
+       "DESCRIPTION": "Set in prog.",
+       "FULL_PATH": "/group/11_MHsLinks/selections/setInProg",
+       "ACCESS": 3,
+       "TYPE": "N"
+      },
+      "selection": {
+       "DESCRIPTION": "Selection",
+       "FULL_PATH": "/group/11_MHsLinks/selections/selection",
+       "ACCESS": 0,
+       "CONTENTS": {
+        "enabled": {
+         "DESCRIPTION": "Enabled",
+         "FULL_PATH": "/group/11_MHsLinks/selections/selection/enabled",
+         "ACCESS": 3,
+         "TYPE": "T",
+         "VALUE": [
+          true
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 1
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Boolean"
+         ]
+        },
+        "action": {
+         "DESCRIPTION": "Action",
+         "FULL_PATH": "/group/11_MHsLinks/selections/selection/action",
+         "ACCESS": 3,
+         "TYPE": "s",
+         "VALUE": [
+          "+"
+         ],
+         "RANGE": [
+          {
+           "VALS": [
+            "+",
+            "-"
+           ]
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Enum"
+         ]
+        },
+        "targetType": {
+         "DESCRIPTION": "Target type",
+         "FULL_PATH": "/group/11_MHsLinks/selections/selection/targetType",
+         "ACCESS": 3,
+         "TYPE": "s",
+         "VALUE": [
+          "Fixture"
+         ],
+         "RANGE": [
+          {
+           "VALS": [
+            "Fixture",
+            "Group"
+           ]
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Enum"
+         ]
+        },
+        "id": {
+         "DESCRIPTION": "ID",
+         "FULL_PATH": "/group/11_MHsLinks/selections/selection/id",
+         "ACCESS": 3,
+         "TYPE": "i",
+         "VALUE": [
+          11
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 2147483647
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Integer"
+         ]
+        },
+        "thru": {
+         "DESCRIPTION": "Thru",
+         "FULL_PATH": "/group/11_MHsLinks/selections/selection/thru",
+         "ACCESS": 3,
+         "TYPE": "T",
+         "VALUE": [
+          false
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 1
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Boolean"
+         ]
+        },
+        "lastID": {
+         "DESCRIPTION": "Last ID",
+         "FULL_PATH": "/group/11_MHsLinks/selections/selection/lastID",
+         "ACCESS": 3,
+         "TYPE": "i",
+         "VALUE": [
+          0
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 2147483647
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Integer"
+         ]
+        }
+       },
+       "TYPE": "BaseItem"
+      },
+      "selection1": {
+       "DESCRIPTION": "Selection 1",
+       "FULL_PATH": "/group/11_MHsLinks/selections/selection1",
+       "ACCESS": 0,
+       "CONTENTS": {
+        "enabled": {
+         "DESCRIPTION": "Enabled",
+         "FULL_PATH": "/group/11_MHsLinks/selections/selection1/enabled",
+         "ACCESS": 3,
+         "TYPE": "T",
+         "VALUE": [
+          true
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 1
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Boolean"
+         ]
+        },
+        "action": {
+         "DESCRIPTION": "Action",
+         "FULL_PATH": "/group/11_MHsLinks/selections/selection1/action",
+         "ACCESS": 3,
+         "TYPE": "s",
+         "VALUE": [
+          "+"
+         ],
+         "RANGE": [
+          {
+           "VALS": [
+            "+",
+            "-"
+           ]
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Enum"
+         ]
+        },
+        "targetType": {
+         "DESCRIPTION": "Target type",
+         "FULL_PATH": "/group/11_MHsLinks/selections/selection1/targetType",
+         "ACCESS": 3,
+         "TYPE": "s",
+         "VALUE": [
+          "Fixture"
+         ],
+         "RANGE": [
+          {
+           "VALS": [
+            "Fixture",
+            "Group"
+           ]
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Enum"
+         ]
+        },
+        "id": {
+         "DESCRIPTION": "ID",
+         "FULL_PATH": "/group/11_MHsLinks/selections/selection1/id",
+         "ACCESS": 3,
+         "TYPE": "i",
+         "VALUE": [
+          12
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 2147483647
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Integer"
+         ]
+        },
+        "thru": {
+         "DESCRIPTION": "Thru",
+         "FULL_PATH": "/group/11_MHsLinks/selections/selection1/thru",
+         "ACCESS": 3,
+         "TYPE": "T",
+         "VALUE": [
+          false
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 1
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Boolean"
+         ]
+        },
+        "lastID": {
+         "DESCRIPTION": "Last ID",
+         "FULL_PATH": "/group/11_MHsLinks/selections/selection1/lastID",
+         "ACCESS": 3,
+         "TYPE": "i",
+         "VALUE": [
+          0
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 2147483647
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Integer"
+         ]
+        }
+       },
+       "TYPE": "BaseItem"
+      }
+     },
+     "TYPE": "Manager",
+     "EXTENDED_TYPE": [
+      "CommandSelection"
+     ],
+     "BASE_TYPE": "CommandSelection"
+    }
+   },
+   "TYPE": "Group"
+  },
+  "12_MHsRechts": {
+   "DESCRIPTION": "12 - MHs Rechts",
+   "FULL_PATH": "/group/12_MHsRechts",
+   "ACCESS": 0,
+   "CONTENTS": {
+    "enabled": {
+     "DESCRIPTION": "Enabled",
+     "FULL_PATH": "/group/12_MHsRechts/enabled",
+     "ACCESS": 3,
+     "TYPE": "T",
+     "VALUE": [
+      true
+     ],
+     "RANGE": [
+      {
+       "MIN": 0,
+       "MAX": 1
+      }
+     ],
+     "EXTENDED_TYPE": [
+      "Boolean"
+     ]
+    },
+    "id": {
+     "DESCRIPTION": "ID",
+     "FULL_PATH": "/group/12_MHsRechts/id",
+     "ACCESS": 3,
+     "TYPE": "i",
+     "VALUE": [
+      12
+     ],
+     "RANGE": [
+      {
+       "MIN": 1,
+       "MAX": 2147483647
+      }
+     ],
+     "EXTENDED_TYPE": [
+      "Integer"
+     ]
+    },
+    "name": {
+     "DESCRIPTION": "Name",
+     "FULL_PATH": "/group/12_MHsRechts/name",
+     "ACCESS": 3,
+     "TYPE": "s",
+     "VALUE": [
+      "MHs Rechts"
+     ],
+     "EXTENDED_TYPE": [
+      "String"
+     ]
+    },
+    "selections": {
+     "DESCRIPTION": "Selections",
+     "FULL_PATH": "/group/12_MHsRechts/selections",
+     "ACCESS": 0,
+     "CONTENTS": {
+      "getFromProg": {
+       "DESCRIPTION": "Get from prog.",
+       "FULL_PATH": "/group/12_MHsRechts/selections/getFromProg",
+       "ACCESS": 3,
+       "TYPE": "N"
+      },
+      "setInProg": {
+       "DESCRIPTION": "Set in prog.",
+       "FULL_PATH": "/group/12_MHsRechts/selections/setInProg",
+       "ACCESS": 3,
+       "TYPE": "N"
+      },
+      "selection": {
+       "DESCRIPTION": "Selection",
+       "FULL_PATH": "/group/12_MHsRechts/selections/selection",
+       "ACCESS": 0,
+       "CONTENTS": {
+        "enabled": {
+         "DESCRIPTION": "Enabled",
+         "FULL_PATH": "/group/12_MHsRechts/selections/selection/enabled",
+         "ACCESS": 3,
+         "TYPE": "T",
+         "VALUE": [
+          true
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 1
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Boolean"
+         ]
+        },
+        "action": {
+         "DESCRIPTION": "Action",
+         "FULL_PATH": "/group/12_MHsRechts/selections/selection/action",
+         "ACCESS": 3,
+         "TYPE": "s",
+         "VALUE": [
+          "+"
+         ],
+         "RANGE": [
+          {
+           "VALS": [
+            "+",
+            "-"
+           ]
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Enum"
+         ]
+        },
+        "targetType": {
+         "DESCRIPTION": "Target type",
+         "FULL_PATH": "/group/12_MHsRechts/selections/selection/targetType",
+         "ACCESS": 3,
+         "TYPE": "s",
+         "VALUE": [
+          "Fixture"
+         ],
+         "RANGE": [
+          {
+           "VALS": [
+            "Fixture",
+            "Group"
+           ]
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Enum"
+         ]
+        },
+        "id": {
+         "DESCRIPTION": "ID",
+         "FULL_PATH": "/group/12_MHsRechts/selections/selection/id",
+         "ACCESS": 3,
+         "TYPE": "i",
+         "VALUE": [
+          13
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 2147483647
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Integer"
+         ]
+        },
+        "thru": {
+         "DESCRIPTION": "Thru",
+         "FULL_PATH": "/group/12_MHsRechts/selections/selection/thru",
+         "ACCESS": 3,
+         "TYPE": "T",
+         "VALUE": [
+          false
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 1
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Boolean"
+         ]
+        },
+        "lastID": {
+         "DESCRIPTION": "Last ID",
+         "FULL_PATH": "/group/12_MHsRechts/selections/selection/lastID",
+         "ACCESS": 3,
+         "TYPE": "i",
+         "VALUE": [
+          0
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 2147483647
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Integer"
+         ]
+        }
+       },
+       "TYPE": "BaseItem"
+      },
+      "selection1": {
+       "DESCRIPTION": "Selection 1",
+       "FULL_PATH": "/group/12_MHsRechts/selections/selection1",
+       "ACCESS": 0,
+       "CONTENTS": {
+        "enabled": {
+         "DESCRIPTION": "Enabled",
+         "FULL_PATH": "/group/12_MHsRechts/selections/selection1/enabled",
+         "ACCESS": 3,
+         "TYPE": "T",
+         "VALUE": [
+          true
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 1
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Boolean"
+         ]
+        },
+        "action": {
+         "DESCRIPTION": "Action",
+         "FULL_PATH": "/group/12_MHsRechts/selections/selection1/action",
+         "ACCESS": 3,
+         "TYPE": "s",
+         "VALUE": [
+          "+"
+         ],
+         "RANGE": [
+          {
+           "VALS": [
+            "+",
+            "-"
+           ]
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Enum"
+         ]
+        },
+        "targetType": {
+         "DESCRIPTION": "Target type",
+         "FULL_PATH": "/group/12_MHsRechts/selections/selection1/targetType",
+         "ACCESS": 3,
+         "TYPE": "s",
+         "VALUE": [
+          "Fixture"
+         ],
+         "RANGE": [
+          {
+           "VALS": [
+            "Fixture",
+            "Group"
+           ]
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Enum"
+         ]
+        },
+        "id": {
+         "DESCRIPTION": "ID",
+         "FULL_PATH": "/group/12_MHsRechts/selections/selection1/id",
+         "ACCESS": 3,
+         "TYPE": "i",
+         "VALUE": [
+          14
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 2147483647
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Integer"
+         ]
+        },
+        "thru": {
+         "DESCRIPTION": "Thru",
+         "FULL_PATH": "/group/12_MHsRechts/selections/selection1/thru",
+         "ACCESS": 3,
+         "TYPE": "T",
+         "VALUE": [
+          false
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 1
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Boolean"
+         ]
+        },
+        "lastID": {
+         "DESCRIPTION": "Last ID",
+         "FULL_PATH": "/group/12_MHsRechts/selections/selection1/lastID",
+         "ACCESS": 3,
+         "TYPE": "i",
+         "VALUE": [
+          0
+         ],
+         "RANGE": [
+          {
+           "MIN": 0,
+           "MAX": 2147483647
+          }
+         ],
+         "EXTENDED_TYPE": [
+          "Integer"
+         ]
+        }
+       },
+       "TYPE": "BaseItem"
+      }
+     },
+     "TYPE": "Manager",
+     "EXTENDED_TYPE": [
+      "CommandSelection"
+     ],
+     "BASE_TYPE": "CommandSelection"
+    }
+   },
+   "TYPE": "Group"
+  }
+ },
+ "TYPE": "Manager",
+ "EXTENDED_TYPE": [
+  "Group"
+ ],
+ "BASE_TYPE": "Group"
+}

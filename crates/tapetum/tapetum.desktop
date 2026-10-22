@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Tapetum
+GenericName=Lighting visualizer
+GenericName[de]=Lichtvisualisierung
+Comment=3D lighting visualizer for BlinderKitten
+Comment[de]=3D-Lichtvisualisierung für BlinderKitten
+Exec=tapetum %f
+Icon=tapetum
+Terminal=false
+Categories=Graphics;3DGraphics;AudioVideo;
+Keywords=BlinderKitten;DMX;Art-Net;lighting;theatre;IngeTrazo;

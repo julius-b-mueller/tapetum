@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tapetum – 3D-Lichtvisualisierung für BlinderKitten</title>
+  <meta name="description" content="Tapetum zeigt deine BlinderKitten-Show in 3D: Lichtstrahlen im Haze, Farben, Gobos und Moving Heads im Bühnenbild aus IngeTrazo. Frei, für macOS, Windows und Linux.">
+  <link rel="canonical" href="https://julius-b-mueller.github.io/tapetum/">
+  <meta name="theme-color" content="#05070d">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Tapetum">
+  <meta property="og:url" content="https://julius-b-mueller.github.io/tapetum/">
+  <meta property="og:title" content="Tapetum – 3D-Lichtvisualisierung für BlinderKitten">
+  <meta property="og:description" content="Lichtstrahlen im Haze, Gobos und Moving Heads im Bühnenbild aus IngeTrazo – live aus BlinderKitten.">
+  <meta property="og:image" content="https://julius-b-mueller.github.io/tapetum/assets/open-graph.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://julius-b-mueller.github.io/tapetum/assets/open-graph.jpg">
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="assets/site.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Tapetum",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "macOS, Windows, Linux",
+    "softwareVersion": "0.1.0",
+    "license": "https://www.gnu.org/licenses/gpl-3.0.html",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+    "url": "https://julius-b-mueller.github.io/tapetum/",
+    "downloadUrl": "https://github.com/julius-b-mueller/tapetum/releases/latest",
+    "author": { "@type": "Person", "name": "Julius B. Müller" }
+  }
+  </script>
+</head>
+
+<body>
+  <nav>
+    <a class="nav-logo" href="index.html"><img src="assets/favicon.png" alt="">Tapetum</a>
+    <div class="nav-links">
+      <a href="#blinderkitten">BlinderKitten</a>
+      <a href="#ingetrazo">IngeTrazo</a>
+      <a href="#features" data-de="Funktionen" data-en="Features">Funktionen</a>
+      <a href="about.html" data-de="Über" data-en="About">Über</a>
+    </div>
+    <div class="lang">
+      <button class="lang-btn" data-lang="de" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    </div>
+    <a class="nav-cta" href="#download" data-de="Herunterladen" data-en="Download">Herunterladen</a>
+  </nav>
+
+  <main>
+    <div class="hero">
+      <img class="logo" src="assets/icon.png" alt="Tapetum">
+      <h1>Tapetum<br><span data-de="Licht sehen, bevor es leuchtet." data-en="See the light before it shines.">Licht sehen, bevor es leuchtet.</span></h1>
+      <p class="lead de">3D-Lichtvisualisierung für <strong>BlinderKitten</strong>: Lichtstrahlen im Haze, Farben, Gobos und Moving Heads – live, im Bühnenbild, das du in <strong>IngeTrazo</strong> gezeichnet hast. Frei und quelloffen, für macOS, Windows und Linux.</p>
+      <p class="lead en">3D lighting visualizer for <strong>BlinderKitten</strong>: beams in haze, colours, gobos and moving heads – live, on the set you drew in <strong>IngeTrazo</strong>. Free and open source, for macOS, Windows and Linux.</p>
+      <div class="buttons">
+        <a class="btn-primary" href="#download" data-de="Kostenlos herunterladen" data-en="Download for free">Kostenlos herunterladen</a>
+        <a class="btn-secondary" href="https://github.com/julius-b-mueller/tapetum">GitHub</a>
+      </div>
+    </div>
+
+    <div class="shot"><img src="assets/screenshot.jpg" alt="Tapetum: farbige Moving Heads mit Stern-Gobos im Haze, eine Pergola-Bank aus IngeTrazo im Lichtkegel"></div>
+    <p class="caption" data-de="Gerendert in Tapetum, Qualität „Hoch“. Bank: IngeTrazo-Modell von Marco Sumari Tellez (CC BY 4.0)." data-en="Rendered in Tapetum, quality “High”. Bench: IngeTrazo model by Marco Sumari Tellez (CC BY 4.0).">Gerendert in Tapetum, Qualität „Hoch“. Bank: IngeTrazo-Modell von Marco Sumari Tellez (CC BY 4.0).</p>
+
+    <section id="integration">
+      <h2 data-de="Gemacht für BlinderKitten und IngeTrazo" data-en="Made for BlinderKitten and IngeTrazo">Gemacht für BlinderKitten und IngeTrazo</h2>
+      <p class="sub de">Kein Export, kein Abgleich von Hand, keine zweite Patchliste: Tapetum liest die Dateien, mit denen du ohnehin arbeitest, und folgt jeder Änderung.</p>
+      <p class="sub en">No export, no syncing by hand, no second patch list: Tapetum reads the files you work with anyway and follows every change.</p>
+      <div class="pair">
+        <div class="card" id="blinderkitten">
+          <div class="icon">🎛️</div>
+          <h3>BlinderKitten</h3>
+          <ul class="de">
+            <li><strong>Show-Datei direkt:</strong> Fixtures, Typen, Kanäle, Patch, Positionen, Gruppen und Cuelists aus der <code>.olga</code> – neu geladen, sobald BK speichert.</li>
+            <li><strong>Ein Klick fürs Art-Net:</strong> Tapetum legt in BK Spiegel-Interfaces mit Pass-through an. Patch und Hardware bleiben, wie sie sind.</li>
+            <li><strong>Live über die Remote Control:</strong> neue Gruppen erscheinen sofort, die aktuelle Cue der Main-Cuelist wird verfolgt.</li>
+            <li><strong>Zurück nach BK:</strong> verschobene und gedrehte Lampen, Pan/Tilt/Zoom-Bereiche („Physical range“).</li>
+            <li><strong>Auswahl wie in BK:</strong> Klick wählt ein Gerät, Rechtsklick seine BK-Gruppe.</li>
+          </ul>
+          <ul class="en">
+            <li><strong>Show file directly:</strong> fixtures, types, channels, patch, positions, groups and cuelists from the <code>.olga</code> – reloaded as soon as BK saves.</li>
+            <li><strong>One click for Art-Net:</strong> Tapetum adds mirror interfaces with pass-through in BK. Patch and hardware stay as they are.</li>
+            <li><strong>Live via Remote Control:</strong> new groups appear at once, the current cue of the main cuelist is followed.</li>
+            <li><strong>Back to BK:</strong> moved and turned fixtures, pan/tilt/zoom ranges (“Physical range”).</li>
+            <li><strong>Selection as in BK:</strong> a click selects a fixture, a right click its BK group.</li>
+          </ul>
+        </div>
+        <div class="card amber" id="ingetrazo">
+          <div class="icon">📐</div>
+          <h3>IngeTrazo</h3>
+          <ul class="de">
+            <li><strong><code>.igz</code> direkt lesen:</strong> jede Gruppe und Komponente wird ein eigenes Objekt, Materialien und Texturen kommen mit.</li>
+            <li><strong>Speichern in IngeTrazo genügt:</strong> das Bühnenbild lädt sich selbst neu. Tapetum ändert die Datei nie.</li>
+            <li><strong>Vorderansicht = Zuschauersicht:</strong> beide schauen entlang +Y; Personen und Bäume (Face-me) drehen sich zur Kamera.</li>
+            <li><strong>Material überschreibbar:</strong> Farbe, Reflexionsgrad, opak oder transluzent – Gaze, Glas, Operafolie mit Schattenspiel.</li>
+            <li><strong>Umbauten als Szenen,</strong> gekoppelt an Cues der Main-Cuelist, mit weichem Übergang.</li>
+          </ul>
+          <ul class="en">
+            <li><strong>Reads <code>.igz</code> directly:</strong> every group and component becomes an object of its own, materials and textures come along.</li>
+            <li><strong>Saving in IngeTrazo is enough:</strong> the set reloads by itself. Tapetum never changes the file.</li>
+            <li><strong>Front view = audience view:</strong> both look along +Y; people and trees (face-me) turn to the camera.</li>
+            <li><strong>Materials can be overridden:</strong> colour, reflectance, opaque or translucent – gauze, glass, opera foil with shadow play.</li>
+            <li><strong>Set changes as scenes,</strong> bound to cues of the main cuelist, with smooth transitions.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="start">
+      <h2 data-de="In fünf Minuten startklar" data-en="Ready in five minutes">In fünf Minuten startklar</h2>
+      <ol class="steps de">
+        <li><strong>Tapetum installieren</strong> und starten, die BlinderKitten-Show (<code>.olga</code>) wählen.</li>
+        <li>In BlinderKitten einmalig <em>File → Preferences → OSC Remote Control → Enabled</em> anhaken und dieselbe Show öffnen.</li>
+        <li>In Tapetum <em>Tapetum-Interfaces in BK anlegen</em> klicken – BK speichert und lädt die Show neu.</li>
+        <li>Eine Cue starten: das Licht erscheint. Lampen per Maus platzieren; die Positionen landen in BK.</li>
+        <li>Das Bühnenbild aus IngeTrazo importieren – fertig.</li>
+      </ol>
+      <ol class="steps en">
+        <li><strong>Install Tapetum</strong>, start it and choose your BlinderKitten show (<code>.olga</code>).</li>
+        <li>In BlinderKitten, once: tick <em>File → Preferences → OSC Remote Control → Enabled</em>, and open the same show.</li>
+        <li>In Tapetum, click <em>Add the Tapetum interfaces in BK</em> – BK saves and reloads the show.</li>
+        <li>Run a cue: the light appears. Place fixtures with the mouse; their positions go to BK.</li>
+        <li>Import the set from IngeTrazo – done.</li>
+      </ol>
+    </section>
+
+    <section id="features">
+      <h2 data-de="Was Tapetum zeigt" data-en="What Tapetum shows">Was Tapetum zeigt</h2>
+      <p class="sub de">Physikalisch plausibel statt bloß bunt: Licht in Lumen, Strahlen, die an Objekten enden, Gobos, die nur das Licht ihrer eigenen Lampe wegnehmen.</p>
+      <p class="sub en">Physically plausible rather than just colourful: light in lumens, beams that end at objects, gobos that only take away their own lamp's light.</p>
+      <div class="grid">
+        <div class="card"><div class="icon">🌫️</div><h3 data-de="Strahlen im Haze" data-en="Beams in haze">Strahlen im Haze</h3><p class="de">Dichte, Streuung und Farbe einstellbar; Strahlen beginnen mit dem Durchmesser des LED-Felds und enden an Objekten.</p><p class="en">Density, scattering and colour adjustable; beams start with the diameter of the LED field and end at objects.</p></div>
+        <div class="card"><div class="icon">⭐</div><h3>Gobos</h3><p class="de">Goboräder und feste Gobos, eingebaute Muster mit bewegtem Wasser oder eigene Bilder – auf jeder Fläche, auch auf Gaze und Folie.</p><p class="en">Gobo wheels and fixed gobos, built-in patterns with moving water or your own pictures – on every surface, gauze and foil included.</p></div>
+        <div class="card"><div class="icon">🔦</div><h3 data-de="Jedes Gerät" data-en="Every fixture">Jedes Gerät</h3><p class="de">Moving Heads mit Trägheit, Spots, Washes, Bars, LED-Ringe und -Matrizen mit Zellen, Farbräder, Strobe, Zoom, Abstrahlwinkel bis 360°.</p><p class="en">Moving heads with inertia, spots, washes, bars, LED rings and matrices with cells, colour wheels, strobe, zoom, beam angles up to 360°.</p></div>
+        <div class="card"><div class="icon">💻</div><h3 data-de="Auch auf dem Laptop" data-en="On a laptop too">Auch auf dem Laptop</h3><p class="de">Drei Qualitätsstufen: „Niedrig“ für integrierte Grafik, „Hoch“ mit Schatten jeder Zelle in voller Retina-Auflösung.</p><p class="en">Three quality levels: “Low” for integrated graphics, “High” with shadows of every cell at full Retina resolution.</p></div>
+        <div class="card"><div class="icon">🖱️</div><h3 data-de="Bedienung" data-en="Handling">Bedienung</h3><p class="de">Gizmo zum Verschieben und Drehen mit Einrasten, Rückgängig/Wiederholen, 3Dconnexion SpaceMouse – auch während du BK bedienst.</p><p class="en">Gizmo to move and turn with snapping, undo/redo, 3Dconnexion SpaceMouse – even while you operate BK.</p></div>
+        <div class="card"><div class="icon">🔒</div><h3 data-de="Bei dir zu Hause" data-en="Stays with you">Bei dir zu Hause</h3><p class="de">Keine Cloud, kein Konto, kein Tracking. Tapetum spricht nur mit BlinderKitten auf deinem Rechner und liest fremde Dateien vorsichtig.</p><p class="en">No cloud, no account, no tracking. Tapetum only talks to BlinderKitten on your computer and reads foreign files carefully.</p></div>
+      </div>
+    </section>
+
+    <section id="ai">
+      <h2 data-de="Ganz offen: mit KI programmiert" data-en="Openly: written with AI">Ganz offen: mit KI programmiert</h2>
+      <div class="note de">
+        <p>Tapetum ist vollständig <strong>„vibecoded“</strong>: Jede Zeile Code hat Claude (Anthropic) geschrieben, gesteuert, getestet und im Theateralltag ausprobiert von Julius B. Müller. Das Logo hat ChatGPT generiert.</p>
+        <p>So entstand in kurzer Zeit ein Werkzeug, das es sonst nicht gäbe. Der Quelltext ist offen – schau ihn dir an, und probiere Tapetum aus, bevor du dich in einer Vorstellung darauf verlässt.</p>
+      </div>
+      <div class="note en">
+        <p>Tapetum is entirely <strong>“vibe-coded”</strong>: every line of code was written by Claude (Anthropic), directed, tested and tried out in everyday theatre work by Julius B. Müller. The logo was generated by ChatGPT.</p>
+        <p>That way a tool came about in a short time that wouldn't exist otherwise. The source is open – have a look, and try Tapetum before you rely on it in a performance.</p>
+      </div>
+    </section>
+
+    <section id="download">
+      <h2 data-de="Herunterladen" data-en="Download">Herunterladen</h2>
+      <p class="sub de">Version 0.1.0 · frei unter der GPL-3.0 · getestet mit BlinderKitten 1.0.1b98 und IngeTrazo 0.5.7. <a href="https://github.com/julius-b-mueller/tapetum/releases">Alle Versionen</a></p>
+      <p class="sub en">Version 0.1.0 · free under the GPL-3.0 · tested with BlinderKitten 1.0.1b98 and IngeTrazo 0.5.7. <a href="https://github.com/julius-b-mueller/tapetum/releases">All versions</a></p>
+      <div class="dl">
+        <div class="card" data-platform="mac">
+          <h3> macOS</h3>
+          <div class="dl-row"><span>Apple Silicon (M1 …)</span><a class="dl-btn" href="https://github.com/julius-b-mueller/tapetum/releases/latest/download/Tapetum-macos-arm64.dmg">↓ .dmg</a></div>
+          <div class="dl-row"><span>Intel</span><a class="dl-btn" href="https://github.com/julius-b-mueller/tapetum/releases/latest/download/Tapetum-macos-x64.dmg">↓ .dmg</a></div>
+          <p class="de" style="font-size:.82rem;color:var(--dim);margin-top:.5rem">Noch nicht notarisiert: beim ersten Start Rechtsklick → Öffnen.</p>
+          <p class="en" style="font-size:.82rem;color:var(--dim);margin-top:.5rem">Not notarized yet: the first time, right-click → Open.</p>
+        </div>
+        <div class="card" data-platform="win">
+          <h3>⊞ Windows</h3>
+          <div class="dl-row"><span>x64</span><span><a class="dl-btn" href="https://github.com/julius-b-mueller/tapetum/releases/latest/download/Tapetum-windows-x64.exe">↓ Installer</a> <a class="dl-btn" href="https://github.com/julius-b-mueller/tapetum/releases/latest/download/Tapetum-windows-x64-portable.zip">↓ .zip</a></span></div>
+          <div class="dl-row"><span>ARM64</span><span><a class="dl-btn" href="https://github.com/julius-b-mueller/tapetum/releases/latest/download/Tapetum-windows-arm64.exe">↓ Installer</a> <a class="dl-btn" href="https://github.com/julius-b-mueller/tapetum/releases/latest/download/Tapetum-windows-arm64-portable.zip">↓ .zip</a></span></div>
+          <p class="de" style="font-size:.82rem;color:var(--dim);margin-top:.5rem">Ohne Administratorrechte. Die Firewall nach UDP 6454 fragen lassen.</p>
+          <p class="en" style="font-size:.82rem;color:var(--dim);margin-top:.5rem">No administrator rights needed. Let the firewall allow UDP 6454.</p>
+        </div>
+        <div class="card" data-platform="lin">
+          <h3>🐧 Linux</h3>
+          <div class="dl-row"><span>x64</span><span><a class="dl-btn" href="https://github.com/julius-b-mueller/tapetum/releases/latest/download/Tapetum-linux-x64.AppImage">↓ AppImage</a> <a class="dl-btn" href="https://github.com/julius-b-mueller/tapetum/releases/latest/download/Tapetum-linux-x64.deb">.deb</a> <a class="dl-btn" href="https://github.com/julius-b-mueller/tapetum/releases/latest/download/Tapetum-linux-x64.rpm">.rpm</a></span></div>
+          <div class="dl-row"><span>ARM64</span><span><a class="dl-btn" href="https://github.com/julius-b-mueller/tapetum/releases/latest/download/Tapetum-linux-arm64.AppImage">↓ AppImage</a> <a class="dl-btn" href="https://github.com/julius-b-mueller/tapetum/releases/latest/download/Tapetum-linux-arm64.deb">.deb</a> <a class="dl-btn" href="https://github.com/julius-b-mueller/tapetum/releases/latest/download/Tapetum-linux-arm64.rpm">.rpm</a></span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <a href="about.html" data-de="Über" data-en="About">Über</a> ·
+    <a href="impressum.html" data-de="Impressum &amp; Datenschutz" data-en="Legal notice &amp; privacy">Impressum &amp; Datenschutz</a> ·
+    <a href="https://github.com/julius-b-mueller/tapetum">GitHub</a>
+    <p style="margin-top:.6rem" data-de="Tapetum – nach der Schicht im Katzenauge, die das Licht zurückwirft." data-en="Tapetum – after the layer in a cat's eye that throws the light back.">Tapetum – nach der Schicht im Katzenauge, die das Licht zurückwirft.</p>
+  </footer>
+</body>
+
+</html>

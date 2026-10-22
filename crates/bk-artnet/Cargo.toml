@@ -1,0 +1,10 @@
+[package]
+name = "bk-artnet"
+description = "Minimal Art-Net (ArtDmx) receiver and sender"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+socket2.workspace = true

@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://julius-b-mueller.github.io/tapetum/sitemap.xml

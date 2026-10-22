@@ -1,0 +1,25 @@
+[workspace]
+resolver = "3"
+members = ["crates/bk-olga", "crates/bk-artnet", "crates/tapetum-project", "crates/tapetum"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "GPL-3.0-or-later"
+
+[workspace.dependencies]
+bk-olga = { path = "crates/bk-olga" }
+bk-artnet = { path = "crates/bk-artnet" }
+tapetum-project = { path = "crates/tapetum-project" }
+anyhow = "1"
+thiserror = "2"
+serde = { version = "1", features = ["derive"] }
+# preserve_order keeps .olga files in BK's key order when we rewrite them.
+serde_json = { version = "1", features = ["preserve_order", "float_roundtrip"] }
+socket2 = { version = "0.6", features = ["all"] }
+notify = "8"
+clap = { version = "4", features = ["derive"] }
+
+[profile.release]
+lto = "thin"
+codegen-units = 1

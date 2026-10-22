@@ -1,0 +1,12 @@
+[package]
+name = "tapetum-project"
+description = "Sidecar project file (.tapetum) of the Tapetum visualizer"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true

@@ -1,0 +1,221 @@
+name: Build & Deploy
+
+# The app and the website.
+#
+#   push / pull request     tests (clippy, tests, licenses and advisories of all dependencies)
+#   push to main            and the website goes to GitHub Pages
+#   tag 0.2.0               tests, packages for all six targets, GitHub release
+#   tag 0.2.0-beta.1        the same, marked as a pre-release ("latest" stays as it is)
+#   manual run              tests and packages (artifacts only)
+#
+# A release tag has to be the version in Cargo.toml, and for a full release also the
+# softwareVersion on the website; the `versions` job refuses the tag otherwise.
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+-*'
+  pull_request:
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  CARGO_TERM_COLOR: always
+
+permissions: read-all
+
+jobs:
+
+  # ── Tests (always) ────────────────────────────────────────────────────────
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - run: rustup toolchain install stable --profile minimal --component clippy
+      - run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libudev-dev libx11-dev libxkbcommon-dev libwayland-dev
+      - run: cargo clippy --workspace --all-targets -- -D warnings
+      - run: cargo test --workspace
+      - name: Smoke test
+        run: cargo run --release -p tapetum -- dump crates/bk-olga/tests/show.olga
+      - uses: taiki-e/install-action@a4d3f3f761dcd95cce1b72cb61cb6d1963438177 # v2.87.30
+        with:
+          tool: cargo-deny
+      # Licenses, sources and known vulnerabilities of every dependency (deny.toml).
+      - run: cargo deny check
+
+  # ── Versions agree (tags only) ────────────────────────────────────────────
+  versions:
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - env:
+          # Through the environment, not pasted into the script: a tag name is free text.
+          TAG: ${{ github.ref_name }}
+        run: |
+          tag="$TAG"
+          cargo=$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -1)
+          site=$(sed -n 's/.*"softwareVersion": "\(.*\)".*/\1/p' website/index.html | head -1)
+          echo "tag $tag · Cargo.toml $cargo · website $site"
+          if [ "$cargo" != "$tag" ]; then
+            echo "::error::The tag is $tag, but Cargo.toml says $cargo."
+            exit 1
+          fi
+          # A pre-release does not go on the website.
+          case "$tag" in
+            *-*) ;;
+            *) if [ "$site" != "$tag" ]; then
+                 echo "::error::The tag is $tag, but softwareVersion in website/index.html says $site."
+                 exit 1
+               fi ;;
+          esac
+
+  # ── Linux ─────────────────────────────────────────────────────────────────
+  linux:
+    if: github.ref_type == 'tag' || github.event_name == 'workflow_dispatch'
+    strategy:
+      # One target failing must not take the other's packages with it.
+      fail-fast: false
+      matrix:
+        include:
+          - { runner: ubuntu-24.04, arch: x64 }
+          - { runner: ubuntu-24.04-arm, arch: arm64 }
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - run: rustup toolchain install stable --profile minimal
+      - run: |
+          sudo apt-get update
+          # desktop-file-utils: appimagetool checks the .desktop file with it.
+          sudo apt-get install -y --no-install-recommends libudev-dev libx11-dev libxkbcommon-dev libwayland-dev desktop-file-utils
+      - run: cargo build --release -p tapetum
+      - run: |
+          cargo install cargo-deb@3.8.0 cargo-generate-rpm@0.21.0 --locked
+          cargo deb -p tapetum --no-build
+          # rpm takes no "-" in a version: 0.2.0-beta.1 becomes 0.2.0~beta.1.
+          version=$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -1 | tr - '~')
+          cargo generate-rpm -p crates/tapetum --set-metadata "version = \"$version\""
+          scripts/bundle-appimage.sh
+          mkdir -p artifacts
+          tar -czf artifacts/Tapetum-linux-${{ matrix.arch }}.tar.gz -C target/release tapetum
+          cp target/debian/*.deb artifacts/Tapetum-linux-${{ matrix.arch }}.deb
+          cp target/generate-rpm/*.rpm artifacts/Tapetum-linux-${{ matrix.arch }}.rpm
+          cp target/bundle/Tapetum-linux-${{ matrix.arch }}.AppImage artifacts/
+          ls -lh artifacts/
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: linux-${{ matrix.arch }}
+          path: artifacts/
+          retention-days: 14
+
+  # ── Windows ───────────────────────────────────────────────────────────────
+  windows:
+    if: github.ref_type == 'tag' || github.event_name == 'workflow_dispatch'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { runner: windows-latest, arch: x64 }
+          - { runner: windows-11-arm, arch: arm64 }
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - run: rustup toolchain install stable --profile minimal
+      - run: cargo build --release -p tapetum
+      - run: |
+          New-Item -ItemType Directory -Force -Path artifacts, target/bundle | Out-Null
+          # Without installing: the program by itself, zipped.
+          Copy-Item target/release/tapetum.exe artifacts/Tapetum.exe
+          Compress-Archive -Path artifacts/Tapetum.exe -DestinationPath artifacts/Tapetum-windows-${{ matrix.arch }}-portable.zip
+          Remove-Item artifacts/Tapetum.exe
+          # The installer. NSIS comes with most runner images; fetch it where it does not.
+          if (-not (Get-Command makensis -ErrorAction SilentlyContinue)) {
+            choco install nsis --version 3.13.0 -y --no-progress
+            $env:PATH += ";${env:ProgramFiles(x86)}\NSIS"
+          }
+          $version = (Select-String -Path Cargo.toml -Pattern '^version = "(.*)"').Matches[0].Groups[1].Value
+          makensis /DVERSION=$version /DARCH=${{ matrix.arch }} scripts/windows-installer.nsi
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Copy-Item target/bundle/Tapetum-windows-${{ matrix.arch }}-setup.exe artifacts/Tapetum-windows-${{ matrix.arch }}.exe
+          Get-ChildItem artifacts/
+        shell: pwsh
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: windows-${{ matrix.arch }}
+          path: artifacts/
+          retention-days: 14
+
+  # ── macOS (Apple Silicon and Intel) ───────────────────────────────────────
+  # Both on the Apple Silicon runner: the Intel app is cross-compiled there.
+  macos:
+    if: github.ref_type == 'tag' || github.event_name == 'workflow_dispatch'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { arch: arm64, option: "" }
+          - { arch: x64, option: "--x64" }
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - run: rustup toolchain install stable --profile minimal
+      - run: scripts/bundle-macos.sh --dmg ${{ matrix.option }}
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: macos-${{ matrix.arch }}
+          path: target/bundle/Tapetum-macos-${{ matrix.arch }}.dmg
+          retention-days: 14
+
+  # ── GitHub Pages (main only) ──────────────────────────────────────────────
+  deploy-pages:
+    needs: [test]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      # The website is plain files; nothing is built.
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: website/
+      - uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5
+        id: deployment
+
+  # ── GitHub Release (tags only) ────────────────────────────────────────────
+  release:
+    needs: [test, versions, linux, windows, macos]
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          path: release-assets/
+          merge-multiple: true
+      - run: |
+          ls -lh release-assets/
+          # A tag like 0.2.0-beta.1 is a pre-release: the website's download links
+          # (releases/latest) go on pointing at the last full release.
+          prerelease=""
+          case "$TAG" in *-*) prerelease="--prerelease" ;; esac
+          gh release create "$TAG" \
+            release-assets/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Tapetum $TAG" \
+            --generate-notes $prerelease
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}

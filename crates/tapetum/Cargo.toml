@@ -1,0 +1,66 @@
+[package]
+name = "tapetum"
+description = "Tapetum – 3D lighting visualizer for BlinderKitten"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[[bin]]
+name = "tapetum"
+path = "src/main.rs"
+
+[dependencies]
+bk-olga.workspace = true
+bk-artnet.workspace = true
+tapetum-project.workspace = true
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+# Gobo pictures; the formats people actually have.
+image = { version = "0.25", default-features = false, features = ["png", "jpeg"] }
+# File dialogs; xdg-portal avoids a GTK dependency on Linux.
+# Stage models. gltf is the version Bevy already uses; tobj and zip are the
+# usual crates for OBJ and for IngeTrazo's .igz containers.
+gltf = { version = "1.4", default-features = false, features = ["import", "utils", "names"] }
+tobj = { version = "4", default-features = false }
+zip = { version = "9", default-features = false, features = ["deflate-flate2-zlib-rs"] }
+rfd = { version = "0.17", default-features = false, features = ["xdg-portal", "wayland"] }
+clap.workspace = true
+notify.workspace = true
+# Bevy without audio (no ALSA on Linux) and without 2D/UI crates we don't use.
+bevy = { version = "0.20", default-features = false, features = ["3d", "tonemapping_luts"] }
+bevy_egui = { version = "0.43", default-features = false, features = ["render", "default_fonts", "manage_clipboard", "open_url"] }
+# 3Dconnexion SpaceMouse over HID; shared on macOS so the 3Dconnexion driver keeps working.
+hidapi = { version = "2.6", default-features = false, features = ["linux-static-hidraw", "macos-shared-device"] }
+sys-locale = "0.3"
+winit = { version = "0.30", default-features = false }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+# The 3Dconnexion driver holds the SpaceMouse exclusively on macOS; its client
+# framework is loaded at run time so Tapetum also starts without the driver.
+libloading = "0.8"
+
+[target.'cfg(windows)'.build-dependencies]
+winresource = "0.1"
+
+[package.metadata.deb]
+name = "tapetum"
+maintainer = "Julius B. Müller <hello@mdstage.org>"
+extended-description = "3D lighting visualizer for BlinderKitten: reads the show file, receives Art-Net and shows beams in haze, gobos and stage sets from IngeTrazo."
+section = "graphics"
+assets = [
+    ["target/release/tapetum", "usr/bin/tapetum", "755"],
+    ["assets/icon-512.png", "usr/share/icons/hicolor/512x512/apps/tapetum.png", "644"],
+    ["tapetum.desktop", "usr/share/applications/tapetum.desktop", "644"],
+]
+
+[package.metadata.generate-rpm]
+name = "tapetum"
+summary = "3D lighting visualizer for BlinderKitten"
+assets = [
+    { source = "target/release/tapetum", dest = "/usr/bin/tapetum", mode = "755" },
+    { source = "assets/icon-512.png", dest = "/usr/share/icons/hicolor/512x512/apps/tapetum.png", mode = "644" },
+    { source = "tapetum.desktop", dest = "/usr/share/applications/tapetum.desktop", mode = "644" },
+]

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Über – Tapetum</title>
+  <meta name="description" content="Wie Tapetum entstand – eine 3D-Lichtvisualisierung für BlinderKitten, vollständig mit KI programmiert.">
+  <link rel="canonical" href="https://julius-b-mueller.github.io/tapetum/about.html">
+  <meta name="theme-color" content="#05070d">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Tapetum">
+  <meta property="og:title" content="Über – Tapetum">
+  <meta property="og:image" content="https://julius-b-mueller.github.io/tapetum/assets/open-graph.jpg">
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="assets/site.js"></script>
+</head>
+
+<body>
+  <nav>
+    <a class="nav-logo" href="index.html"><img src="assets/favicon.png" alt="">Tapetum</a>
+    <div class="nav-links">
+      <a href="index.html" data-de="Start" data-en="Home">Start</a>
+      <a href="about.html" data-de="Über" data-en="About">Über</a>
+      <a href="impressum.html" data-de="Impressum" data-en="Legal notice">Impressum</a>
+    </div>
+    <div class="lang">
+      <button class="lang-btn" data-lang="de" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    </div>
+    <a class="nav-cta" href="index.html#download" data-de="Herunterladen" data-en="Download">Herunterladen</a>
+  </nav>
+
+  <div class="page">
+    <div class="de">
+      <h1>Über Tapetum</h1>
+      <p style="color:var(--dim)">Licht sehen, bevor es leuchtet.</p>
+
+      <h2>Über das Projekt</h2>
+      <p><a href="https://github.com/norbertrostaing/BlinderKitten">BlinderKitten</a> ist eine freie Lichtsteuerung, mit der sich ganze Theaterproduktionen fahren lassen. Was fehlte, war eine Visualisierung, die genau dazu passt: frei, schlank, ohne Export und ohne zweite Patchliste – und mit dem Bühnenbild, das man ohnehin in <a href="https://github.com/ingelibre/ingetrazo">IngeTrazo</a> zeichnet. Tapetum liest beide Dateien direkt, empfängt das Art-Net von BlinderKitten auf demselben Rechner und zeigt, wie das Licht auf der Bühne aussehen wird. So lassen sich Stimmungen, Positionen und Umbauten vorbereiten, bevor man im Saal steht.</p>
+      <p>Der Name kommt vom <em>Tapetum lucidum</em>, der Schicht hinter der Netzhaut von Katzen, die das Licht zurückwirft – deshalb leuchten ihre Augen im Scheinwerferlicht. BlinderKitten, die Katze, das Licht: das passte.</p>
+
+      <h2>Mit KI programmiert</h2>
+      <p>Tapetum ist vollständig <strong>„vibecoded“</strong>: Jede Zeile Code hat Claude Code (Anthropic) geschrieben. Ich habe beschrieben, was die Software können soll, die Ergebnisse geprüft, verworfen, nachgeschärft und im Alltag ausprobiert. Das Logo hat ChatGPT generiert. Ohne KI gäbe es Tapetum in dieser Form nicht – in einem Bruchteil der Zeit ließen sich Dinge wie Strahlen im Haze, Gobos auf Gaze oder die direkte Anbindung an BlinderKitten umsetzen.</p>
+      <p>Der Quelltext ist offen (GPL-3.0). Bitte probiere Tapetum aus, bevor du dich in einer Vorstellung darauf verlässt, und melde Fehler gerne.</p>
+
+      <h2>Über mich</h2>
+      <p>Ich bin Julius B. Müller, Ingenieur der Mechatronik und begeisterter Tüftler an allem, was mit Technik zu tun hat. Gleichzeitig habe ich eine kreative Seite: Ich komponiere und produziere Musik, am liebsten für's Theater. Hör gerne mal auf <a href="https://open.spotify.com/intl-de/artist/38unO5ffnxIQy3Nvuh2qfV?si=o3VAzyTeQsGNDFWxpjpjBg">Spotify</a> rein.</p>
+      <p>Am meisten begeistert mich die Verbindung von Technik und Kunst. Deshalb habe ich die Firma <a href="https://plaxite.de">plaxite</a> gegründet, bei der wir Gestaltung mit digitalen Techniken verbinden. Von mir stammt auch <a href="https://mdstage.org">MDstage</a>, das interaktive Inspizientenbuch für Live-Shows.</p>
+
+      <h2>Kontakt &amp; Feedback</h2>
+      <p>Rückmeldungen, Bugreports und Fragen sind herzlich willkommen – per Mail an <a href="mailto:hello@mdstage.org">hello@mdstage.org</a> oder als <a href="https://github.com/julius-b-mueller/tapetum/issues">Issue auf GitHub</a>. Besonders freue ich mich zu hören, wo du Tapetum einsetzt.</p>
+
+      <h2>Danke</h2>
+      <p>An die Menschen hinter BlinderKitten, IngeTrazo, Bevy, egui und allen anderen freien Bibliotheken, auf denen Tapetum aufbaut. Ihre Lizenzen stehen in der App unter <em>☰ → Über Tapetum</em>.</p>
+    </div>
+
+    <div class="en">
+      <h1>About Tapetum</h1>
+      <p style="color:var(--dim)">See the light before it shines.</p>
+
+      <h2>About the project</h2>
+      <p><a href="https://github.com/norbertrostaing/BlinderKitten">BlinderKitten</a> is a free lighting controller that can run entire theatre productions. What was missing was a visualizer to match: free, lean, without export and without a second patch list – and with the set you draw in <a href="https://github.com/ingelibre/ingetrazo">IngeTrazo</a> anyway. Tapetum reads both files directly, receives BlinderKitten's Art-Net on the same computer and shows how the light will look on stage. That way looks, positions and set changes can be prepared before you are in the venue.</p>
+      <p>The name comes from the <em>tapetum lucidum</em>, the layer behind a cat's retina that throws light back – that's why their eyes glow in a spotlight. BlinderKitten, the cat, the light: it fitted.</p>
+
+      <h2>Written with AI</h2>
+      <p>Tapetum is entirely <strong>“vibe-coded”</strong>: every line of code was written by Claude Code (Anthropic). I described what the software should do, checked the results, threw things out, sharpened them and tried them out in practice. The logo was generated by ChatGPT. Without AI, Tapetum wouldn't exist in this form – things like beams in haze, gobos on gauze or the direct link to BlinderKitten became possible in a fraction of the time.</p>
+      <p>The source is open (GPL-3.0). Please try Tapetum before you rely on it in a performance, and do report bugs.</p>
+
+      <h2>About me</h2>
+      <p>I'm Julius B. Müller – a mechatronics engineer with a passion for everything technical. At the same time, I have a creative side: I compose and produce music, with a particular love for theatre. Feel free to check out my work on <a href="https://open.spotify.com/intl-de/artist/38unO5ffnxIQy3Nvuh2qfV?si=o3VAzyTeQsGNDFWxpjpjBg">Spotify</a>.</p>
+      <p>What excites me most is the intersection of technology and art. That's why I founded <a href="https://plaxite.de">plaxite</a>, where we combine design with digital techniques. I also made <a href="https://mdstage.org">MDstage</a>, the interactive prompt book for live shows.</p>
+
+      <h2>Contact &amp; feedback</h2>
+      <p>Feedback, bug reports and questions are very welcome – by email to <a href="mailto:hello@mdstage.org">hello@mdstage.org</a> or as an <a href="https://github.com/julius-b-mueller/tapetum/issues">issue on GitHub</a>. I'm especially happy to hear where you're using Tapetum.</p>
+
+      <h2>Thanks</h2>
+      <p>To the people behind BlinderKitten, IngeTrazo, Bevy, egui and every other free library Tapetum builds on. Their licenses are listed in the app under <em>☰ → About Tapetum</em>.</p>
+    </div>
+  </div>
+
+  <footer>
+    <a href="index.html" data-de="Start" data-en="Home">Start</a> ·
+    <a href="about.html" data-de="Über" data-en="About">Über</a> ·
+    <a href="impressum.html" data-de="Impressum &amp; Datenschutz" data-en="Legal notice &amp; privacy">Impressum &amp; Datenschutz</a> ·
+    <a href="https://github.com/julius-b-mueller/tapetum">GitHub</a>
+  </footer>
+</body>
+
+</html>

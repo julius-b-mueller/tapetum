@@ -1,0 +1,104 @@
+/* Tapetum website – colours from the logo: night blue, wireframe blue, amber eyes. */
+:root {
+  --bg: #05070d;
+  --bg2: #0a1120;
+  --bg3: #101a30;
+  --border: #1c2a48;
+  --text: #c3d0e6;
+  --dim: #7487a8;
+  --white: #f2f6ff;
+  --blue: #3d8bff;
+  --cyan: #6fd3ff;
+  --amber: #ffc24d;
+  --amber2: #ff9a1f;
+  --r: 12px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+html { scroll-behavior: smooth }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+}
+a { color: var(--cyan) }
+a:hover { color: var(--white) }
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(5, 7, 13, .86);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem; height: 58px;
+  display: flex; align-items: center; gap: 2rem;
+}
+.nav-logo { color: var(--white); font-weight: 700; font-size: 1.1rem; text-decoration: none; display: flex; align-items: center; gap: .55rem; letter-spacing: -.01em }
+.nav-logo img { width: 30px; height: 30px; border-radius: 7px }
+.nav-links { display: flex; gap: .2rem; flex: 1 }
+.nav-links a { color: var(--dim); text-decoration: none; padding: .3rem .7rem; border-radius: 6px; font-size: .92rem }
+.nav-links a:hover { color: var(--white); background: var(--bg3) }
+.lang { display: flex; gap: .2rem }
+.lang-btn { background: none; border: 1px solid var(--border); color: var(--dim); border-radius: 6px; padding: .15rem .5rem; cursor: pointer; font-size: .8rem }
+.lang-btn.active { color: var(--bg); background: var(--cyan); border-color: var(--cyan) }
+.nav-cta { background: var(--amber); color: #1a1000 !important; font-weight: 600; text-decoration: none; padding: .35rem .9rem; border-radius: 8px; font-size: .9rem }
+.nav-cta:hover { background: var(--white) }
+main { max-width: 1120px; margin: 0 auto; padding: 0 2rem }
+.hero { text-align: center; padding: 4.5rem 0 2.5rem }
+.hero img.logo { width: 132px; height: 132px; border-radius: 30px; box-shadow: 0 0 60px rgba(61, 139, 255, .35), 0 0 120px rgba(255, 194, 77, .12) }
+.hero h1 { color: var(--white); font-size: 3.4rem; line-height: 1.1; margin: 1.4rem 0 .6rem; letter-spacing: -.02em }
+.hero h1 span { background: linear-gradient(90deg, var(--cyan), var(--blue)); -webkit-background-clip: text; background-clip: text; color: transparent }
+.hero p.lead { font-size: 1.25rem; color: var(--text); max-width: 720px; margin: 0 auto 2rem }
+.buttons { display: flex; gap: .8rem; justify-content: center; flex-wrap: wrap }
+.btn-primary, .btn-secondary { display: inline-block; padding: .75rem 1.5rem; border-radius: 10px; text-decoration: none; font-weight: 600 }
+.btn-primary { background: linear-gradient(180deg, var(--amber), var(--amber2)); color: #1a1000; box-shadow: 0 0 24px rgba(255, 194, 77, .35) }
+.btn-primary:hover { color: #1a1000; filter: brightness(1.08) }
+.btn-secondary { border: 1px solid var(--border); color: var(--white); background: var(--bg2) }
+.btn-secondary:hover { border-color: var(--blue) }
+.shot { margin: 3rem 0 1rem; border-radius: var(--r); overflow: hidden; border: 1px solid var(--border); box-shadow: 0 30px 80px rgba(0, 0, 0, .6), 0 0 80px rgba(61, 139, 255, .12) }
+.shot img { display: block; width: 100% }
+.caption { text-align: center; color: var(--dim); font-size: .85rem; margin-bottom: 3rem }
+section { padding: 3.5rem 0; border-top: 1px solid var(--border) }
+h2 { color: var(--white); font-size: 2rem; margin-bottom: .4rem; letter-spacing: -.01em }
+h2 + p.sub { color: var(--dim); margin-bottom: 2rem; max-width: 760px }
+h3 { color: var(--white); font-size: 1.08rem; margin-bottom: .4rem }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 1rem }
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 1.3rem 1.4rem }
+.card .icon { font-size: 1.4rem; margin-bottom: .4rem }
+.card p, .card li { font-size: .95rem }
+.card ul { padding-left: 1.1rem }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem }
+.pair .card { border-top: 3px solid var(--blue) }
+.pair .card.amber { border-top-color: var(--amber) }
+.steps { counter-reset: step; list-style: none }
+.steps li { counter-increment: step; position: relative; padding: 0 0 1rem 3rem }
+.steps li::before { content: counter(step); position: absolute; left: 0; top: 0; width: 2rem; height: 2rem; border-radius: 50%; background: var(--bg3); border: 1px solid var(--blue); color: var(--cyan); font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: .9rem }
+.note { background: linear-gradient(90deg, rgba(255, 194, 77, .08), rgba(61, 139, 255, .06)); border: 1px solid var(--border); border-left: 3px solid var(--amber); border-radius: var(--r); padding: 1.1rem 1.3rem; margin: 1rem 0 }
+.dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 1rem }
+.dl .card h3 { display: flex; align-items: center; gap: .5rem }
+.dl-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .5rem; padding: .35rem 0; border-top: 1px solid var(--border); font-size: .92rem }
+.dl-row:first-of-type { border-top: 0 }
+.dl-row > span:last-child { display: flex; flex-wrap: wrap; gap: .3rem }
+.card { min-width: 0 }
+code { overflow-wrap: anywhere }
+.dl-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--white); text-decoration: none; padding: .2rem .65rem; border-radius: 7px; font-size: .85rem; white-space: nowrap }
+.dl-btn:hover { border-color: var(--amber); color: var(--amber) }
+.dl .card.recommended { border-color: var(--amber); box-shadow: 0 0 30px rgba(255, 194, 77, .12) }
+table { width: 100%; border-collapse: collapse; font-size: .93rem }
+th, td { text-align: left; padding: .5rem .6rem; border-bottom: 1px solid var(--border); vertical-align: top }
+th { color: var(--white); font-weight: 600 }
+code { background: var(--bg3); border: 1px solid var(--border); border-radius: 5px; padding: 0 .3rem; font-size: .88em }
+footer { border-top: 1px solid var(--border); margin-top: 3rem; padding: 2rem; text-align: center; color: var(--dim); font-size: .88rem }
+footer a { color: var(--dim); margin: 0 .5rem }
+.page { max-width: 780px; margin: 0 auto; padding: 3rem 2rem }
+.page h1 { color: var(--white); font-size: 2.3rem; margin-bottom: .3rem }
+.page h2 { font-size: 1.35rem; margin: 2rem 0 .5rem }
+.page p { margin-bottom: .8rem }
+@media (max-width: 760px) {
+  nav { padding: 0 1rem; gap: 1rem }
+  .nav-links { display: none }
+  main { padding: 0 1.1rem }
+  .hero h1 { font-size: 2.2rem }
+  .hero p.lead { font-size: 1.08rem }
+  .nav-cta { display: none }
+  .pair { grid-template-columns: 1fr }
+}

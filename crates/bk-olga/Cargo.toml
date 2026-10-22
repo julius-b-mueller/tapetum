@@ -1,0 +1,16 @@
+[package]
+name = "bk-olga"
+description = "Reader for BlinderKitten .olga show files"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+serde_json.workspace = true
+thiserror.workspace = true
+notify = { workspace = true, optional = true }
+
+[features]
+default = ["watch"]
+watch = ["dep:notify"]
