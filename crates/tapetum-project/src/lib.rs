@@ -146,6 +146,8 @@ pub struct FixtureOverride {
     pub tilt_speed: Option<f32>,
     /// Pan/tilt acceleration in degrees per second squared.
     pub pt_acceleration: Option<f32>,
+    /// Top speed of the zoom, beam angle in degrees per second; 0 = follow DMX at once.
+    pub zoom_speed: Option<f32>,
     pub lumens: Option<f32>,
     /// Color temperature of the white LEDs / lamp in Kelvin.
     pub white_kelvin: Option<f32>,
@@ -482,6 +484,7 @@ impl Project {
             pan_speed: o.pan_speed.or(base.pan_speed),
             tilt_speed: o.tilt_speed.or(base.tilt_speed),
             pt_acceleration: o.pt_acceleration.or(base.pt_acceleration),
+            zoom_speed: o.zoom_speed.or(base.zoom_speed),
             lumens: o.lumens.or(base.lumens),
             white_kelvin: o.white_kelvin.or(base.white_kelvin),
             strobe_hz: o.strobe_hz.or(base.strobe_hz),

@@ -72,7 +72,7 @@ Fixture types are recognized from their channels (moving head, spot/PAR, bar, wa
 - beam type spot/wash, beam angle (up to 360°) or zoom range, lumens, body size, white colour temperature, strobe range
 - LED layouts (rectangular or rings) with LED-to-cell assignment; cells as separate lights or one mixed beam
 - colour wheel and gobo wheel (built-in patterns incl. moving water, or your own pictures), fixed gobos for fixtures without a gobo channel
-- pan/tilt range, speed and acceleration – heads travel instead of jumping
+- pan/tilt range, speed and acceleration – heads travel instead of jumping; the zoom travels at its own top speed too
 
 ## Quality levels
 

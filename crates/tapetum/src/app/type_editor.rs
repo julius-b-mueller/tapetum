@@ -117,7 +117,10 @@ fn beam(ui: &mut egui::Ui, ty: &FixtureType, spec: &FixtureSpec, o: &mut Fixture
             ui.selectable_value(&mut o.beam, Some(BeamKind::Wash), label(BeamKind::Wash));
         });
     match spec.zoom_range {
-        Some(range) => range_row(ui, "Zoom", ty, &Attribute::Zoom, range, &mut o.zoom_range, ev),
+        Some(range) => {
+            range_row(ui, "Zoom", ty, &Attribute::Zoom, range, &mut o.zoom_range, ev);
+            zoom_motion(ui, spec, o);
+        }
         None => {
             let mut angle = spec.beam_angle;
             if ui.add(egui::Slider::new(&mut angle, 1.0..=360.0).logarithmic(true).text(tr("Abstrahlwinkel °", "Beam angle °"))).changed() {
@@ -148,6 +151,30 @@ fn range_row(ui: &mut egui::Ui, name: &str, ty: &FixtureType, attr: &Attribute, 
         _ => tr("Standardwert – in BlinderKitten nicht gesetzt; Ändern trägt ihn dort ein", "default – not set in BlinderKitten; changing it enters it there"),
     };
     ui.indent(name, |ui| ui.colored_label(GRAY, source));
+}
+
+/// Top speed of the zoom: many fixtures take a while to go from narrow to wide.
+fn zoom_motion(ui: &mut egui::Ui, spec: &FixtureSpec, o: &mut FixtureOverride) {
+    let mut travels = spec.zoom_limits.max_speed > 0.0;
+    if ui
+        .checkbox(&mut travels, tr("Zoom fährt (statt zu springen)", "Zoom travels (instead of jumping)"))
+        .on_hover_text(tr("Aus: der Strahl folgt dem Zoom-Kanal sofort.", "Off: the beam follows the zoom channel at once."))
+        .changed()
+    {
+        o.zoom_speed = if travels { None } else { Some(0.0) };
+    }
+    if !travels {
+        return;
+    }
+    let mut v = spec.zoom_limits.max_speed;
+    if ui.add(egui::Slider::new(&mut v, 2.0..=500.0).logarithmic(true).suffix(" °/s").text(tr("Zoom max.", "Zoom max."))).changed() {
+        o.zoom_speed = Some(v);
+    }
+    if let Some(range) = spec.zoom_range {
+        let span = (range[1] - range[0]).abs();
+        let t = travel_time(span, spec.zoom_limits);
+        ui.colored_label(GRAY, trf!("Ganzer Zoom ({a:.0}° ↔ {b:.0}°) dauert {t:.1} s.", "The full zoom ({a:.0}° ↔ {b:.0}°) takes {t:.1} s.", a = range[0], b = range[1], t = t));
+    }
 }
 
 /// Top speeds and acceleration of the pan/tilt motors.

@@ -51,6 +51,8 @@ pub struct Emitter {
     pub radius: f32,
     /// The fixture's main beam (the others are extra cells in "one light per cell").
     pub main: bool,
+    /// Beam angle on its way to the zoom's target.
+    pub zoom: Axis,
 }
 
 #[derive(Component)]
@@ -93,6 +95,7 @@ pub struct FixtureSpec {
     pub tilt_range: [f32; 2],
     pub pan_limits: Limits,
     pub tilt_limits: Limits,
+    pub zoom_limits: Limits,
     pub lumens: f32,
     pub tuning: light::Tuning,
     pub color_wheel: Vec<ColorSlot>,
@@ -114,6 +117,13 @@ pub const TILT_DEFAULT: [f32; 2] = [-135.0, 135.0];
 pub const PAN_SPEED_DEFAULT: f32 = 250.0;
 pub const TILT_SPEED_DEFAULT: f32 = 180.0;
 pub const PT_ACCELERATION_DEFAULT: f32 = 900.0;
+/// A typical zoom: about a second from one end of the range to the other.
+pub const ZOOM_SPEED_DEFAULT: f32 = 40.0;
+
+/// Zoom motors have no own acceleration setting: top speed within a quarter second.
+pub fn zoom_limits(max_speed: f32) -> Limits {
+    Limits { max_speed, acceleration: max_speed * 4.0 }
+}
 
 /// Spot if the type has optics only a profile has; otherwise a wash.
 pub fn auto_beam(ty: &FixtureType) -> BeamKind {
@@ -200,6 +210,7 @@ pub fn resolve(ty: &FixtureType, o: &FixtureOverride) -> FixtureSpec {
             max_speed: o.tilt_speed.unwrap_or(TILT_SPEED_DEFAULT),
             acceleration: o.pt_acceleration.unwrap_or(PT_ACCELERATION_DEFAULT),
         },
+        zoom_limits: zoom_limits(o.zoom_speed.unwrap_or(ZOOM_SPEED_DEFAULT)),
         lumens: o.lumens.unwrap_or(lumens),
         tuning: light::Tuning {
             white: o.white_kelvin.map(light::kelvin_to_rgb),
@@ -504,7 +515,7 @@ fn spawn_model(
                     ..default()
                 },
                 Transform::from_xyz(-plan.pos.x, plan.pos.y, lens_z - 0.01),
-                Emitter { fixture: index, cells: plan.cells, weights: plan.weights, lumens: spec.lumens * plan.share, radius, main: i == 0 },
+                Emitter { fixture: index, cells: plan.cells, weights: plan.weights, lumens: spec.lumens * plan.share, radius, main: i == 0, zoom: Axis::default() },
                 ChildOf(head),
             ))
             .with_child((Mesh3d(a.cone.clone()), MeshMaterial3d(material.clone()), Transform::default(), Visibility::Hidden, BeamVolume { material }, NotShadowCaster))
@@ -620,11 +631,12 @@ impl<'a> Frame<'a> {
         }
     }
 
-    /// Full beam angle in degrees from zoom and iris.
-    fn angle(&self, fixture: usize, cell: Option<u32>) -> f32 {
+    /// Full beam angle in degrees from zoom and iris, the zoom as `zoom`
+    /// (target angle in, travelled angle out) makes it.
+    fn angle(&self, fixture: usize, cell: Option<u32>, zoom: impl FnOnce(f32) -> f32) -> f32 {
         let spec = self.spec(fixture);
         let mut angle = match (spec.and_then(|s| s.zoom_range), self.value(fixture, cell, &Attribute::Zoom)) {
-            (Some(range), Some(z)) => lerp(range, z),
+            (Some(range), Some(z)) => zoom(lerp(range, z)),
             _ => spec.map_or(30.0, |s| s.beam_angle),
         };
         // Closing the iris narrows the beam down to a fifth.
@@ -634,10 +646,12 @@ impl<'a> Frame<'a> {
         angle.clamp(0.5, 360.0)
     }
 
-    fn beam(&self, em: &Emitter) -> Beam {
+    fn beam(&self, em: &mut Emitter, dt: f32) -> Beam {
         let outs: Vec<_> = em.cells.iter().zip(&em.weights).map(|(&c, &w)| (self.output(em.fixture, c), w)).collect();
         let out = if outs.len() == 1 { outs[0].0 } else { light::mix_weighted(&outs) };
-        Beam { out, angle: self.angle(em.fixture, em.cells[0]) }
+        let limits = self.spec(em.fixture).map_or(zoom_limits(0.0), |s| s.zoom_limits);
+        let zoom = &mut em.zoom;
+        Beam { out, angle: self.angle(em.fixture, em.cells[0], |target| zoom.step(target, limits, dt)) }
     }
 }
 
@@ -648,7 +662,7 @@ pub fn update_fixtures(
     gobos: Res<GoboImages>,
     mut yokes: Query<(&mut Yoke, &mut Transform), (Without<Head>, Without<BeamVolume>)>,
     mut heads: Query<(&mut Head, &mut Transform), (Without<Yoke>, Without<BeamVolume>)>,
-    mut emitters: Query<(&Emitter, &mut SpotLight, &GlobalTransform, Option<&Children>)>,
+    mut emitters: Query<(&mut Emitter, &mut SpotLight, &GlobalTransform, Option<&Children>)>,
     mut beams: Query<(&BeamVolume, &mut Transform, &mut Visibility), (Without<Yoke>, Without<Head>)>,
     mut wide: Query<(&mut PointLight, &mut Visibility), (With<WideLight>, Without<BeamVolume>)>,
     mut surface_gobos: ResMut<SurfaceGobos>,
@@ -689,8 +703,15 @@ pub fn update_fixtures(
         }
     }
 
-    for (em, mut spot, gt, children) in &mut emitters {
-        let Beam { out, angle } = frame.beam(em);
+    // Where each fixture's zoom is now, for the lens glare below.
+    let mut zoom_now = std::collections::HashMap::new();
+    for (mut em, mut spot, gt, children) in &mut emitters {
+        let Beam { out, angle } = frame.beam(&mut em, dt);
+        if em.main
+            && let Some(z) = em.zoom.angle
+        {
+            zoom_now.insert(em.fixture, z);
+        }
         let half = (angle / 2.0).to_radians();
         let beam = frame.spec(em.fixture).map_or(BeamKind::Wash, |s| s.beam);
         // Frost softens the edge of a spot.
@@ -816,7 +837,7 @@ pub fn update_fixtures(
         // The disc is flipped to face the beam: its local +Z is the beam direction.
         let axis = gt.affine().transform_vector3(Vec3::Z).normalize_or_zero();
         let nits = LENS_SIDE_NITS * out.intensity;
-        let half = (frame.angle(lens.fixture, lens.cell) / 2.0).to_radians();
+        let half = (frame.angle(lens.fixture, lens.cell, |target| zoom_now.get(&lens.fixture).copied().unwrap_or(target)) / 2.0).to_radians();
         let params = LensParams {
             color: Vec4::new(out.color[0] * nits, out.color[1] * nits, out.color[2] * nits, LENS_BEAM_NITS / LENS_SIDE_NITS),
             // Full glare a bit inside the beam edge, fading out just beyond it.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Builds the example that ships inside Tapetum (crates/tapetum/assets/example/):
+"""Builds the example that ships inside Tapetum (crates/tapetum/assets/example/de|en/):
 
   Tapetum-Demo.igz      a small theatre as an IngeTrazo document (format 2, a ZIP
                         with document.json + textures/), with the pergola bench of
@@ -8,7 +8,9 @@
                         that theatre, with a few cues
   Tapetum-Demo.tapetum  Tapetum's project: the .igz, fixture settings, a scene
 
-Everything is modelled here; nothing is downloaded. Run after changing it:
+German and English differ only in the names. Everything is modelled here (the
+figures' silhouettes are drawn here too, with Pillow); nothing is downloaded.
+Run after changing it:
 
     python3 scripts/gen-example.py
 """
@@ -16,8 +18,11 @@ import copy
 import io
 import json
 import math
+import hashlib
 import zipfile
 from pathlib import Path
+
+from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "crates/tapetum/assets/example"
@@ -27,6 +32,31 @@ NAME = "Tapetum-Demo"
 # Faces are counterclockwise seen from outside, colours (r, g, b, 1) in 0..1.
 
 STAGE_FRONT, STAGE_BACK = -4.4, 7.2
+
+NAMES = {
+    "de": {
+        "house": "Zuschauerraum Boden", "seats": "Zuschauerreihen", "stage": "Bühne", "cyc": "Rundhorizont",
+        "portal": "Portal", "curtain": "Vorhang", "masking": "Gassen und Soffitten", "truss": "Traversen",
+        "podest": "Podest", "columns": "Säulen", "table": "Tisch", "chairs": "Stühle", "lantern": "Laterne",
+        "crates": "Kisten", "bench": "Bank", "person": "Person", "woman": "Frau im Mantel", "man": "Mann mit Hut",
+        "fixtures": {31: "Seite L", 32: "Seite R", 41: "Wash L", 42: "Wash R", 51: "Laterne"},
+        "groups": {3: "Seite", 4: "Wash", 5: "Laterne"},
+        "cues": ["Einlass", "Abend", "Morgen", "Blackout"],
+        "chapters": ["1 - Einlass", "2 - Abend", "3 - Morgen", ""],
+        "scene": "Morgen",
+    },
+    "en": {
+        "house": "Auditorium floor", "seats": "Rows of seats", "stage": "Stage", "cyc": "Cyclorama",
+        "portal": "Proscenium", "curtain": "Curtain", "masking": "Legs and borders", "truss": "Trusses",
+        "podest": "Platform", "columns": "Columns", "table": "Table", "chairs": "Chairs", "lantern": "Lantern",
+        "crates": "Crates", "bench": "Bench", "person": "Person", "woman": "Woman in a coat", "man": "Man with a hat",
+        "fixtures": {31: "Side L", 32: "Side R", 41: "Wash L", 42: "Wash R", 51: "Lantern"},
+        "groups": {3: "Side", 4: "Wash", 5: "Lantern"},
+        "cues": ["Pre-show", "Evening", "Morning", "Blackout"],
+        "chapters": ["1 - Pre-show", "2 - Evening", "3 - Morning", ""],
+        "scene": "Morning",
+    },
+}
 
 
 class Group:
@@ -92,16 +122,16 @@ def valance(g, x0, x1, y, z0, z1, folds=40, depth=0.08, n=240):
         g.face((xa, ya, z0), (xb, yb, z1), (xa, ya, z1))
 
 
-def theatre():
+def theatre(n):
     G = []
-    def group(name, uid, rgb):
-        g = Group(name, uid, (*rgb, 1.0))
+    def group(key, uid, rgb):
+        g = Group(n[key], uid, (*rgb, 1.0))
         G.append(g)
         return g
 
-    house = group("Zuschauerraum Boden", "demo-house", (0.05, 0.04, 0.04))
+    house = group("house", "demo-house", (0.05, 0.04, 0.04))
     house.box(-16, 16, -18, STAGE_FRONT, -1.02, -1.0)
-    seats = group("Zuschauerreihen", "demo-seats", (0.28, 0.03, 0.04))
+    seats = group("seats", "demo-seats", (0.28, 0.03, 0.04))
     for r in range(7):
         y, z = -7.2 - r * 1.05, -1.0 + r * 0.16
         if r:
@@ -109,46 +139,46 @@ def theatre():
         for k in range(-12, 13):
             if k:
                 x = k * 0.56
-                seats.box(x - 0.24, x + 0.24, y, y + 0.09, z + 0.42, z + 1.0)
+                seats.box(x - 0.24, x + 0.24, y - 0.59, y - 0.5, z + 0.42, z + 1.0)
                 seats.box(x - 0.24, x + 0.24, y - 0.5, y, z + 0.38, z + 0.5)
-    group("Bühne", "demo-stage", (0.30, 0.28, 0.27)).box(-9, 9, STAGE_FRONT, STAGE_BACK, -1.0, 0.0)
-    group("Rundhorizont", "demo-cyc", (0.82, 0.82, 0.85)).face((-9, 6.9, 0), (9, 6.9, 0), (9, 6.9, 9), (-9, 6.9, 9))
-    portal = group("Portal", "demo-portal", (0.09, 0.02, 0.025))
+    group("stage", "demo-stage", (0.30, 0.28, 0.27)).box(-9, 9, STAGE_FRONT, STAGE_BACK, -1.0, 0.0)
+    group("cyc", "demo-cyc", (0.82, 0.82, 0.85)).face((-9, 6.9, 0), (9, 6.9, 0), (9, 6.9, 9), (-9, 6.9, 9))
+    portal = group("portal", "demo-portal", (0.09, 0.02, 0.025))
     portal.box(-11, -6.4, -5.0, -4.6, -1, 9.5)
     portal.box(6.4, 11, -5.0, -4.6, -1, 9.5)
     portal.box(-6.4, 6.4, -5.0, -4.6, 6.6, 9.5)
-    curtain = group("Vorhang", "demo-curtain", (0.55, 0.035, 0.05))
+    curtain = group("curtain", "demo-curtain", (0.55, 0.035, 0.05))
     drape(curtain, -6.4, -4.3, -5.35, -4.95, -4.45, 0, 6.6, 2.2)
     drape(curtain, 6.4, 4.3, 5.35, 4.95, -4.45, 0, 6.6, 2.2)
     valance(curtain, -6.4, 6.4, -4.4, 5.9, 6.6)
-    masking = group("Gassen und Soffitten", "demo-masking", (0.025, 0.025, 0.025))
+    masking = group("masking", "demo-masking", (0.025, 0.025, 0.025))
     for y in (0.0, 3.4):
         for s in (-1, 1):
             masking.box(min(s * 5.3, s * 7.6), max(s * 5.3, s * 7.6), y, y + 0.05, 0, 8)
         masking.box(-7.6, 7.6, y - 0.4, y - 0.35, 7.4, 8.6)
-    truss = group("Traversen", "demo-truss", (0.5, 0.5, 0.52))
+    truss = group("truss", "demo-truss", (0.5, 0.5, 0.52))
     for y in (-1.6, 1.8):
         for dy in (-0.15, 0.15):
             for dz in (-0.15, 0.15):
                 truss.box(-6.5, 6.5, y + dy - 0.02, y + dy + 0.02, 7.05 + dz - 0.02, 7.05 + dz + 0.02)
 
-    podest = group("Podest", "demo-podest", (0.22, 0.2, 0.22))
+    podest = group("podest", "demo-podest", (0.22, 0.2, 0.22))
     podest.box(-5.6, -2.4, 3.4, 5.8, 0, 0.8)
     for k in range(3):
         podest.box(-4.6, -3.2, 3.4 - 0.32 * (3 - k), 3.4 - 0.32 * (2 - k), 0, 0.2 * (k + 1))
-    columns = group("Säulen", "demo-columns", (0.78, 0.74, 0.68))
+    columns = group("columns", "demo-columns", (0.78, 0.74, 0.68))
     for cx, cy in ((3.4, 4.9), (5.0, 4.3)):
         columns.box(cx - 0.36, cx + 0.36, cy - 0.36, cy + 0.36, 0, 0.25)
         columns.cylinder(cx, cy, 0.24, 0.25, 3.9)
         columns.box(cx - 0.36, cx + 0.36, cy - 0.36, cy + 0.36, 3.9, 4.15)
     columns.box(3.0, 5.4, 4.0, 5.2, 4.15, 4.45)
     tx, ty = 3.1, -1.4
-    table = group("Tisch", "demo-table", (0.42, 0.25, 0.13))
+    table = group("table", "demo-table", (0.42, 0.25, 0.13))
     table.box(tx - 0.55, tx + 0.55, ty - 0.38, ty + 0.38, 0.72, 0.77)
     for sx in (-0.48, 0.48):
         for sy in (-0.31, 0.31):
             table.box(tx + sx - 0.03, tx + sx + 0.03, ty + sy - 0.03, ty + sy + 0.03, 0, 0.72)
-    chairs = group("Stühle", "demo-chairs", (0.42, 0.25, 0.13))
+    chairs = group("chairs", "demo-chairs", (0.42, 0.25, 0.13))
     for side in (-1, 1):
         cx = tx + side * 0.95
         chairs.box(cx - 0.22, cx + 0.22, ty - 0.22, ty + 0.22, 0.43, 0.47)
@@ -158,7 +188,7 @@ def theatre():
         bx = cx + side * 0.2
         chairs.box(bx - 0.02, bx + 0.02, ty - 0.22, ty + 0.22, 0.47, 0.95)
     lx, ly = LANTERN
-    lantern = group("Laterne", "demo-lantern", (0.08, 0.08, 0.09))
+    lantern = group("lantern", "demo-lantern", (0.08, 0.08, 0.09))
     lantern.box(lx - 0.15, lx + 0.15, ly - 0.15, ly + 0.15, 0, 0.12)
     lantern.cylinder(lx, ly, 0.045, 0.12, 2.85, 10)
     lantern.box(lx - 0.17, lx + 0.17, ly - 0.17, ly + 0.17, 3.2, 3.26)
@@ -166,7 +196,7 @@ def theatre():
     for sx in (-0.13, 0.13):
         for sy in (-0.13, 0.13):
             lantern.box(lx + sx - 0.012, lx + sx + 0.012, ly + sy - 0.012, ly + sy + 0.012, 2.87, 3.2)
-    crates = group("Kisten", "demo-crates", (0.5, 0.37, 0.2))
+    crates = group("crates", "demo-crates", (0.5, 0.37, 0.2))
     for x, y, z, a in ((-5.0, 0.9, 0, 0.7), (-4.2, 1.1, 0, 0.6), (-4.65, 1.0, 0.7, 0.55), (-5.3, 2.0, 0, 0.5)):
         crates.box(x - a / 2, x + a / 2, y - a / 2, y + a / 2, z, z + a)
     return G
@@ -175,31 +205,118 @@ def theatre():
 LANTERN = (-3.3, -1.9)
 
 
-def write_igz():
+# The bench faces stage right in its file: turned a quarter to face the audience,
+# and lifted 2 cm so its foundations no longer lie in the stage floor's plane.
+BENCH_TURN, BENCH_LIFT = -90.0, 0.02
+
+
+def bench_transform(groups):
+    pts = [v for g in groups for f in g.get("faces", []) for v in f["vertices"]]
+    cx = (min(p[0] for p in pts) + max(p[0] for p in pts)) / 2
+    cy = (min(p[1] for p in pts) + max(p[1] for p in pts)) / 2
+    c, s_ = math.cos(math.radians(BENCH_TURN)), math.sin(math.radians(BENCH_TURN))
+    # p' = R p + t, R about Z through the centre, then lifted.
+    t = (cx - (c * cx - s_ * cy), cy - (s_ * cx + c * cy), BENCH_LIFT)
+    point = lambda p: [c * p[0] - s_ * p[1] + t[0], s_ * p[0] + c * p[1] + t[1], p[2] + t[2]]
+
+    def mesh(m):
+        for e in m.get("edges", []):
+            e["a"], e["b"] = point(e["a"]), point(e["b"])
+        for f in m.get("faces", []):
+            f["vertices"] = [point(v) for v in f["vertices"]]
+            if "holes" in f:
+                f["holes"] = [[point(v) for v in h] for h in f["holes"]]
+    for g in groups:
+        if "xform" in g:
+            # Column-major 4x4: rotate its axes and its origin.
+            x = g["xform"]
+            for col in range(3):
+                vx, vy = x[col * 4], x[col * 4 + 1]
+                x[col * 4], x[col * 4 + 1] = c * vx - s_ * vy, s_ * vx + c * vy
+            x[12], x[13], x[14] = point(x[12:15])
+        else:
+            mesh(g)
+
+
+def silhouette(kind):
+    """A flat figure, drawn at 4x and scaled down for smooth edges: (png bytes, width, height in m)."""
+    w_m, h_m = {"woman": (0.62, 1.66), "man": (0.66, 1.78)}[kind]
+    W, H = 1200, int(1200 * h_m / w_m)
+    img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    ink = (24, 27, 36, 255)
+    X = lambda u: u * W
+    Y = lambda v: (1 - v) * H          # v: height share from the floor
+    if kind == "woman":
+        d.ellipse([X(.40), Y(.985), X(.60), Y(.865)], fill=ink)                                    # head
+        d.polygon([(X(.45), Y(.87)), (X(.55), Y(.87)), (X(.56), Y(.83)), (X(.44), Y(.83))], fill=ink)  # neck
+        d.polygon([(X(.27), Y(.80)), (X(.73), Y(.80)), (X(.70), Y(.62)), (X(.82), Y(.18)),
+                   (X(.18), Y(.18)), (X(.30), Y(.62))], fill=ink)                                  # coat
+        d.rounded_rectangle([X(.22), Y(.80), X(.36), Y(.78)], 20, fill=ink)
+        d.polygon([(X(.27), Y(.80)), (X(.17), Y(.50)), (X(.22), Y(.47)), (X(.33), Y(.72))], fill=ink)  # arms
+        d.polygon([(X(.73), Y(.80)), (X(.83), Y(.50)), (X(.78), Y(.47)), (X(.67), Y(.72))], fill=ink)
+        d.polygon([(X(.38), Y(.19)), (X(.47), Y(.19)), (X(.46), Y(.02)), (X(.39), Y(.02))], fill=ink)  # legs
+        d.polygon([(X(.53), Y(.19)), (X(.62), Y(.19)), (X(.61), Y(.02)), (X(.54), Y(.02))], fill=ink)
+        d.ellipse([X(.33), Y(.035), X(.47), Y(0)], fill=ink)
+        d.ellipse([X(.53), Y(.035), X(.67), Y(0)], fill=ink)
+    else:
+        d.ellipse([X(.40), Y(.95), X(.60), Y(.83)], fill=ink)                                      # head
+        d.rectangle([X(.39), Y(1.0), X(.61), Y(.93)], fill=ink)                                    # hat
+        d.ellipse([X(.28), Y(.945), X(.72), Y(.915)], fill=ink)                                    # brim
+        d.polygon([(X(.45), Y(.84)), (X(.55), Y(.84)), (X(.56), Y(.80)), (X(.44), Y(.80))], fill=ink)
+        d.polygon([(X(.22), Y(.79)), (X(.78), Y(.79)), (X(.74), Y(.44)), (X(.26), Y(.44))], fill=ink)  # jacket
+        d.polygon([(X(.22), Y(.79)), (X(.13), Y(.47)), (X(.20), Y(.45)), (X(.30), Y(.70))], fill=ink)  # arms
+        d.polygon([(X(.78), Y(.79)), (X(.87), Y(.47)), (X(.80), Y(.45)), (X(.70), Y(.70))], fill=ink)
+        d.polygon([(X(.28), Y(.45)), (X(.49), Y(.45)), (X(.47), Y(.02)), (X(.34), Y(.02))], fill=ink)  # legs
+        d.polygon([(X(.51), Y(.45)), (X(.72), Y(.45)), (X(.66), Y(.02)), (X(.53), Y(.02))], fill=ink)
+        d.ellipse([X(.28), Y(.04), X(.48), Y(0)], fill=ink)
+        d.ellipse([X(.52), Y(.04), X(.72), Y(0)], fill=ink)
+    img = img.resize((W // 4, H // 4), Image.LANCZOS)
+    buf = io.BytesIO()
+    img.save(buf, "PNG", optimize=True)
+    return buf.getvalue(), w_m, h_m
+
+
+def figure(name, uid, embed, w, h, x, y, z):
+    """A face-me figure as IngeTrazo makes it: one quad its picture covers."""
+    quad = [[x - w / 2, y, z], [x + w / 2, y, z], [x + w / 2, y, z + h], [x - w / 2, y, z + h]]
+    edges = [{"a": quad[i], "b": quad[(i + 1) % 4]} for i in range(4)]
+    return {"name": name, "uid": uid, "edges": edges, "billboard": True,
+            "faces": [{"vertices": quad, "texture": {"sw": w, "sh": h, "embed": embed}}]}
+
+
+def write_igz(lang):
+    n = NAMES[lang]
     bench = ROOT / "crates/tapetum/tests/data/banca-pergola-yanque.igz"
     with zipfile.ZipFile(bench) as z:
         doc = json.loads(z.read("document.json"))
-        textures = {n: z.read(n) for n in z.namelist() if n.startswith("textures/")}
+        textures = {k: z.read(k) for k in z.namelist() if k.startswith("textures/")}
     doc["app_version"] = "0.5.7"
     scene = doc["scene"]
-    # The bench's own groups become one named group "Bank", the face-me figure stays apart.
-    bench_groups = scene["groups"]
-    figure = [g for g in bench_groups if g.get("billboard")]
-    rest = [g for g in bench_groups if not g.get("billboard")]
-    for g in figure:
-        g["name"], g["uid"] = "Person", "demo-person"
-    bank = {"name": "Bank", "uid": "demo-bench", "component": False, "edges": [], "faces": [], "children": rest}
-    scene["groups"] = [g.json() for g in theatre()] + [bank] + figure
+    # The bench's own groups become one named group, the face-me figure stays apart.
+    person = [g for g in scene["groups"] if g.get("billboard")]
+    rest = [g for g in scene["groups"] if not g.get("billboard")]
+    bench_transform(rest)
+    for g in person:
+        g["name"], g["uid"] = n["person"], "demo-person"
+    figures = []
+    for kind, uid, pos in (("woman", "demo-woman", (2.1, -0.7, 0.0)), ("man", "demo-man", (-3.6, 4.4, 0.8))):
+        png, w, h = silhouette(kind)
+        embed = f"textures/{hashlib.sha256(png).hexdigest()[:16]}-{kind}.png"
+        textures[embed] = png
+        figures.append(figure(n[kind], uid, embed, w, h, *pos))
+    bank = {"name": n["bench"], "uid": "demo-bench", "component": False, "edges": [], "faces": [], "children": rest}
+    scene["groups"] = [g.json() for g in theatre(n)] + [bank] + person + figures
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
         info = zipfile.ZipInfo("document.json", (1980, 1, 1, 0, 0, 0))
         info.compress_type = zipfile.ZIP_DEFLATED
-        z.writestr(info, json.dumps(doc, separators=(",", ":")))
-        for n, data in sorted(textures.items()):
-            info = zipfile.ZipInfo(n, (1980, 1, 1, 0, 0, 0))
+        z.writestr(info, json.dumps(doc, separators=(",", ":"), ensure_ascii=False))
+        for k, data in sorted(textures.items()):
+            info = zipfile.ZipInfo(k, (1980, 1, 1, 0, 0, 0))
             info.compress_type = zipfile.ZIP_STORED
             z.writestr(info, data)
-    (OUT / f"{NAME}.igz").write_bytes(buf.getvalue())
+    (OUT / lang / f"{NAME}.igz").write_bytes(buf.getvalue())
 
 
 # ── Fixture placement (BlinderKitten's conventions, see bk-olga/src/placement.rs) ─
@@ -262,14 +379,14 @@ def rgbw(r, g, b, w=0.0):
     return [(RED, r), (GREEN, g), (BLUE, b), (WHITE, w)]
 
 
-# Cues of the main cuelist: (id, name, chapter, fade, [(group or fixture id, kind, values)]).
+# Cues of the main cuelist: (id, fade, [(group or fixture id, kind, values)]); names in NAMES.
 CUES = [
-    (1, "Einlass", "1 - Einlass", 0.0, [
+    (1, 0.0, [
         (2, "Group", rgbw(1.0, 0.32, 0.0)),
         (3, "Group", [(INT, 0.45)] + rgbw(1.0, 0.7, 0.4, 1.0)),
         (5, "Group", [(INT, 0.8)]),
     ]),
-    (2, "Abend", "2 - Abend", 4.0, [
+    (2, 4.0, [
         (1, "Group", [(INT, 1.0), (ZOOM, 0.78), (STROBE, 0.0), (PAN, 0.667)] + rgbw(0.12, 0.0, 1.0)),
         (11, "Fixture", [(TILT, 0.659)]), (12, "Fixture", [(TILT, 0.588)]),
         (13, "Fixture", [(TILT, 0.416)]), (14, "Fixture", [(TILT, 0.345)]),
@@ -278,21 +395,22 @@ CUES = [
         (4, "Group", [(INT, 1.0), (STROBE, 0.0)] + rgbw(0.0, 0.08, 1.0)),
         (5, "Group", [(INT, 1.0)]),
     ]),
-    (3, "Morgen", "3 - Morgen", 5.0, [
+    (3, 5.0, [
         (1, "Group", [(INT, 0.7), (ZOOM, 0.55), (PAN, 0.5), (TILT, 0.5)] + rgbw(1.0, 0.8, 0.5, 1.0)),
         (2, "Group", rgbw(0.25, 0.65, 1.0, 0.3)),
         (3, "Group", [(INT, 1.0)] + rgbw(1.0, 0.85, 0.6, 1.0)),
         (4, "Group", [(INT, 0.8)] + rgbw(1.0, 0.45, 0.0)),
         (5, "Group", [(INT, 0.0)]),
     ]),
-    (4, "Blackout", "", 3.0, [
+    (4, 3.0, [
         (1, "Group", [(INT, 0.0)]), (2, "Group", rgbw(0.0, 0.0, 0.0)),
         (3, "Group", [(INT, 0.0)]), (4, "Group", [(INT, 0.0)]), (5, "Group", [(INT, 0.0)]),
     ]),
 ]
 
 
-def write_olga():
+def write_olga(lang):
+    n = NAMES[lang]
     show = json.loads((ROOT / "crates/bk-olga/tests/show.olga").read_text())
     # Only what the example needs: no presets, effects or programmer state from the test show.
     for key in ("preset", "effect", "programmer"):
@@ -302,7 +420,7 @@ def write_olga():
         out = itf.get("containers", {}).get("artNet", {}).get("containers", {}).get("output")
         if out:
             set_param(out, "/remoteHost", "2.0.0.10")
-    names = {41: "Wash L", 42: "Wash R", 51: "Laterne"}
+    names = n["fixtures"]
     pl = placements()
     for fx in show["fixture"]["items"]:
         fid = params(fx)["/id"]["value"]
@@ -314,7 +432,7 @@ def write_olga():
         set_param(fx, "/rotation", rot)
     for grp in show["group"]["items"]:
         gid = int(grp["niceName"].split(" - ")[0])
-        new = {4: "Wash", 5: "Laterne"}.get(gid)
+        new = n["groups"].get(gid)
         if new:
             set_param(grp, "/name", new)
             grp["niceName"] = f"{gid} - {new}"
@@ -326,7 +444,7 @@ def write_olga():
     sel_t = cmd_t["containers"]["selections"]["items"][0]
     val_t = cmd_t["containers"]["values"]["items"][0]
     cues = []
-    for cid, name, chapter, fade, commands in CUES:
+    for (cid, fade, commands), name, chapter in zip(CUES, n["cues"], n["chapters"]):
         cue = copy.deepcopy(template)
         cue["parameters"] = [{"value": float(cid), "controlAddress": "/id"}]
         if chapter:
@@ -351,12 +469,12 @@ def write_olga():
         cue["containers"]["commands"]["items"] = items
         cues.append(cue)
     cuelist["containers"]["cues"]["items"] = cues
-    (OUT / f"{NAME}.olga").write_text(json.dumps(show, indent=1, ensure_ascii=False))
+    (OUT / lang / f"{NAME}.olga").write_text(json.dumps(show, indent=1, ensure_ascii=False))
 
 
 # ── Tapetum project ───────────────────────────────────────────────────────────
 
-def write_project():
+def write_project(lang):
     obj = lambda uid: f"1/uid:{uid}"
     project = {
         "render": {"ambient": 0.25, "exposure_ev": 5.6, "bloom": True,
@@ -370,19 +488,20 @@ def write_project():
             "channel": {"beam_angle": 360.0, "lumens": 1800.0, "white_kelvin": 2700.0, "body_scale": 0.3},
         },
         # The set change for the morning: crates gone, table and chairs centre stage.
-        "scenes": [{"id": 1, "name": "Morgen", "cue_id": 3.0, "transition": 3.0, "objects": {
+        "scenes": [{"id": 1, "name": NAMES[lang]["scene"], "cue_id": 3.0, "transition": 3.0, "objects": {
             obj("demo-crates"): {"offset": [0, 0, 0], "rotation": [0, 0, 0], "visible": False},
             obj("demo-table"): {"offset": [-4.6, 3.2, 0], "rotation": [0, 0, 0], "visible": True},
             obj("demo-chairs"): {"offset": [-4.6, 3.2, 0], "rotation": [0, 0, 0], "visible": True},
         }}],
     }
-    (OUT / f"{NAME}.tapetum").write_text(json.dumps(project, indent=1, ensure_ascii=False) + "\n")
+    (OUT / lang / f"{NAME}.tapetum").write_text(json.dumps(project, indent=1, ensure_ascii=False) + "\n")
 
 
 if __name__ == "__main__":
-    OUT.mkdir(parents=True, exist_ok=True)
-    write_igz()
-    write_olga()
-    write_project()
-    for f in sorted(OUT.iterdir()):
+    for lang in NAMES:
+        (OUT / lang).mkdir(parents=True, exist_ok=True)
+        write_igz(lang)
+        write_olga(lang)
+        write_project(lang)
+    for f in sorted(OUT.rglob("*.*")):
         print(f"{f.relative_to(ROOT)}  {f.stat().st_size // 1024} KB")
