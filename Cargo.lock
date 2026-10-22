@@ -2083,14 +2083,14 @@ dependencies = [
 
 [[package]]
 name = "bk-artnet"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "socket2",
 ]
 
 [[package]]
 name = "bk-olga"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "notify",
  "serde_json",
@@ -5595,7 +5595,7 @@ checksum = "55937e1799185b12863d447f42597ed69d9928686b8d88a1df17376a097d8369"
 
 [[package]]
 name = "tapetum"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "anyhow",
  "bevy",
@@ -5622,7 +5622,7 @@ dependencies = [
 
 [[package]]
 name = "tapetum-project"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "serde",
  "serde_json",
