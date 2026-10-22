@@ -6,7 +6,7 @@
 
 Native app written in Rust, for macOS (Apple Silicon and Intel), Windows and Linux (x64 and ARM64 each). German and English.
 
-> **Transparency:** Tapetum was written entirely with AI (“vibe-coded” with Claude by Anthropic) – every line of code, including this README. The logo was generated with ChatGPT. It is tested in practice, but please check it before you rely on it in a show.
+> **Transparency:** Tapetum was written entirely with AI (“vibe-coded” with Claude by Anthropic) – every line of code, including this README. The logo was generated with ChatGPT. The software is provided “as is”, without warranty of any kind.
 
 Website and downloads: **https://tapetum.org/**
 
@@ -32,8 +32,8 @@ Website and downloads: **https://tapetum.org/**
 ## Getting started
 
 1. **Download** Tapetum for your system from the [releases](https://github.com/julius-b-mueller/tapetum/releases/latest) and install it.
-   - macOS: open the `.dmg` and drag Tapetum to *Applications*. The app is not notarized yet: the first time, right-click it and choose *Open* (or allow it under *System Settings → Privacy & Security*).
-   - Windows: run the installer (no administrator rights needed) or unpack the portable `.zip`. Allow incoming UDP on port 6454 in the firewall when asked.
+   - macOS: open the `.dmg` and drag Tapetum to *Applications*. The app is unsigned: on first launch macOS warns; scroll down in *System Settings → Privacy & Security* and click *Open Anyway*.
+   - Windows: run the installer (no administrator rights needed) or unpack the portable `.zip`. If SmartScreen warns, click *More info → Run anyway*. Allow incoming UDP on port 6454 in the firewall when asked.
    - Linux: `.AppImage` (make it executable), `.deb` or `.rpm`.
 2. **Start Tapetum** and choose your BlinderKitten show (`.olga`). Next time it opens the last show by itself; *☰ → Open another show …* switches.
 3. **Connect BlinderKitten** – the sidebar walks you through it (*Set up BlinderKitten*):

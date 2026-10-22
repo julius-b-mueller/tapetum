@@ -14,6 +14,13 @@ use super::type_editor;
 use crate::bk_link::{Edit, HostInfo};
 use crate::routing::format_port_address;
 
+static HIDE_SIDEBAR_AT_START: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+
+/// Start with the sidebar hidden (for screenshots).
+pub fn hide_sidebar_at_start() {
+    HIDE_SIDEBAR_AT_START.store(true, std::sync::atomic::Ordering::Relaxed);
+}
+
 pub fn panel(
     mut contexts: EguiContexts,
     mut state: ResMut<ShowState>,
@@ -108,6 +115,9 @@ pub fn panel(
     );
     let mut rects = Vec::new();
     let mut hide = false;
+    if HIDE_SIDEBAR_AT_START.swap(false, std::sync::atomic::Ordering::Relaxed) {
+        *sidebar_hidden = true;
+    }
     if *sidebar_hidden {
         // Just a small handle to bring the sidebar back.
         let handle = egui::Area::new("sidebar_handle".into()).fixed_pos(egui::pos2(8.0, 8.0)).show(ctx, |ui| {

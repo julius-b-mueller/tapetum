@@ -64,6 +64,9 @@ struct ViewArgs {
     /// Open the about window at start (for screenshots).
     #[arg(long, hide = true)]
     about: bool,
+    /// Start with the sidebar hidden (for screenshots).
+    #[arg(long, hide = true)]
+    no_sidebar: bool,
     /// Frame everything at start (for screenshots): "audience" or "top".
     #[arg(long, hide = true, value_parser = ["audience", "top"])]
     fit: Option<String>,
@@ -135,6 +138,9 @@ fn main() -> Result<()> {
             let v = cli.view;
             if let Some(l) = &v.lang {
                 i18n::set(if l == "en" { i18n::Language::English } else { i18n::Language::German });
+            }
+            if v.no_sidebar {
+                app::hide_sidebar_at_start();
             }
             if v.about {
                 app::open_about_at_start();

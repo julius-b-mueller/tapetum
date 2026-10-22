@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Erste Schritte – Tapetum</title>
+  <meta name="description" content="Schritt für Schritt: Tapetum installieren, mit BlinderKitten verbinden, Lampen platzieren und das Bühnenbild aus IngeTrazo live einbinden.">
+  <link rel="canonical" href="https://tapetum.org/start.html">
+  <meta name="theme-color" content="#05070d">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Tapetum">
+  <meta property="og:title" content="Erste Schritte – Tapetum">
+  <meta property="og:image" content="https://tapetum.org/assets/open-graph.jpg">
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="assets/site.js"></script>
+</head>
+
+<body>
+  <nav>
+    <a class="nav-logo" href="index.html"><img src="assets/favicon.png" alt="">Tapetum</a>
+    <div class="nav-links">
+      <a href="index.html" data-de="Start" data-en="Home">Start</a>
+      <a href="start.html" class="active" data-de="Erste Schritte" data-en="Getting started">Erste Schritte</a>
+      <a href="about.html" data-de="Über" data-en="About">Über</a>
+    </div>
+    <div class="lang">
+      <button class="lang-btn" data-lang="de" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    </div>
+    <a class="nav-cta" href="index.html#download" data-de="Herunterladen" data-en="Download">Herunterladen</a>
+  </nav>
+
+  <main>
+    <div class="page-hero">
+      <div class="kicker amber" data-de="Erste Schritte" data-en="Getting started">Erste Schritte</div>
+      <h1 data-de="Tapetum mit BlinderKitten und IngeTrazo" data-en="Tapetum with BlinderKitten and IngeTrazo">Tapetum mit BlinderKitten und IngeTrazo</h1>
+      <p class="sub de">Von der Installation bis zum Licht im Bühnenbild – Schritt für Schritt. Danach laufen alle drei Programme nebeneinander, und jede Änderung ist sofort zu sehen. Die Seitenleiste von Tapetum führt dich durch dieselben Schritte.</p>
+      <p class="sub en">From installing to light on your set – step by step. Afterwards all three programs run side by side, and every change shows at once. Tapetum's sidebar walks you through the same steps.</p>
+      <div class="toc">
+        <a href="#installieren" data-de="1 · Installieren" data-en="1 · Install">1 · Installieren</a>
+        <a href="#verbinden" data-de="2 · BlinderKitten verbinden" data-en="2 · Connect BlinderKitten">2 · BlinderKitten verbinden</a>
+        <a href="#lampen" data-de="3 · Lampen einrichten" data-en="3 · Set up fixtures">3 · Lampen einrichten</a>
+        <a href="#buehnenbild" data-de="4 · Bühnenbild aus IngeTrazo" data-en="4 · The set from IngeTrazo">4 · Bühnenbild aus IngeTrazo</a>
+        <a href="#szenen" data-de="5 · Umbauten als Szenen" data-en="5 · Set changes as scenes">5 · Umbauten als Szenen</a>
+      </div>
+    </div>
+
+      <div class="guide">
+        <div class="phase" id="installieren">
+          <h2><span class="tag" data-de="Teil 1" data-en="Part 1">Teil 1</span> <span data-de="Installieren" data-en="Install">Installieren</span></h2>
+          <ol class="steps de">
+            <li><strong>Tapetum herunterladen</strong> – <a href="index.html#download">auf der Startseite</a> für dein System.</li>
+            <li><strong>macOS:</strong> <code>.dmg</code> öffnen und Tapetum in <em>Programme</em> ziehen. Die App ist nicht signiert: Beim ersten Start warnt macOS. Dann unter <em>Systemeinstellungen → Datenschutz &amp; Sicherheit</em> nach unten scrollen und <em>Trotzdem öffnen</em> klicken.<br>
+              <strong>Windows:</strong> Installer ausführen (keine Administratorrechte nötig; warnt SmartScreen, <em>Weitere Informationen → Trotzdem ausführen</em>) oder die portable <code>.zip</code> entpacken. Fragt die Firewall, eingehendes UDP auf Port 6454 erlauben – darüber kommt das Art-Net.<br>
+              <strong>Linux:</strong> <code>.AppImage</code> ausführbar machen, oder <code>.deb</code>/<code>.rpm</code> installieren.</li>
+            <li><strong>BlinderKitten</strong> und – für das Bühnenbild – <strong>IngeTrazo</strong> installieren, falls noch nicht geschehen. Getestet mit BlinderKitten 1.0.1b98 und IngeTrazo 0.5.7.</li>
+          </ol>
+          <ol class="steps en">
+            <li><strong>Download Tapetum</strong> – <a href="index.html#download">on the home page</a> for your system.</li>
+            <li><strong>macOS:</strong> open the <code>.dmg</code> and drag Tapetum to <em>Applications</em>. The app is unsigned: macOS warns on first launch. Then scroll down in <em>System Settings → Privacy &amp; Security</em> and click <em>Open Anyway</em>.<br>
+              <strong>Windows:</strong> run the installer (no administrator rights needed; if SmartScreen warns, <em>More info → Run anyway</em>) or unpack the portable <code>.zip</code>. If the firewall asks, allow incoming UDP on port 6454 – that's where Art-Net arrives.<br>
+              <strong>Linux:</strong> make the <code>.AppImage</code> executable, or install the <code>.deb</code>/<code>.rpm</code>.</li>
+            <li>Install <strong>BlinderKitten</strong> and – for the set – <strong>IngeTrazo</strong> if you haven't yet. Tested with BlinderKitten 1.0.1b98 and IngeTrazo 0.5.7.</li>
+          </ol>
+        </div>
+
+        <div class="phase" id="verbinden">
+          <h2><span class="tag" data-de="Teil 2" data-en="Part 2">Teil 2</span> <span data-de="Mit BlinderKitten verbinden" data-en="Connect BlinderKitten">Mit BlinderKitten verbinden</span></h2>
+          <ol class="steps de">
+            <li><strong>In BlinderKitten die Remote Control einschalten</strong> – einmalig, gilt für alle Shows: <em>File → Preferences → OSC Remote Control</em> → <em>Enabled</em> anhaken.</li>
+            <li><strong>Deine Show in BlinderKitten öffnen</strong> und gespeichert haben – Tapetum liest die <code>.olga</code>-Datei.</li>
+            <li><strong>Tapetum starten</strong> und dieselbe <code>.olga</code> wählen. Beim nächsten Mal öffnet Tapetum sie von selbst; eine andere Show gibt es unter <em>☰ → Andere Show öffnen …</em></li>
+            <li>In der Seitenleiste unter <em>BlinderKitten einrichten</em> auf <strong><em>Tapetum-Interfaces in BK anlegen</em></strong> klicken. Tapetum legt für jedes DMX-Interface der Show ein Art-Net-Interface „Tapetum …“ auf <code>127.0.0.1</code> an und spiegelt das Original per Pass-through dorthin. Patch und echte Hardware bleiben unverändert. BlinderKitten speichert und lädt die Show neu; eine Sicherung liegt als <code>.olga.bak</code> daneben.</li>
+            <li><strong>Eine Cue starten</strong> oder im Programmer einen Wert setzen – das Licht erscheint in Tapetum. Steht dort „Kein Signal von BlinderKitten“, zeigt die Seitenleiste, was zu prüfen ist.</li>
+          </ol>
+          <ol class="steps en">
+            <li><strong>Turn on Remote Control in BlinderKitten</strong> – once, for all shows: <em>File → Preferences → OSC Remote Control</em> → tick <em>Enabled</em>.</li>
+            <li><strong>Open your show in BlinderKitten</strong> and make sure it's saved – Tapetum reads the <code>.olga</code> file.</li>
+            <li><strong>Start Tapetum</strong> and choose the same <code>.olga</code>. Next time Tapetum opens it by itself; another show is under <em>☰ → Open another show …</em></li>
+            <li>In the sidebar under <em>Set up BlinderKitten</em>, click <strong><em>Add the Tapetum interfaces in BK</em></strong>. Tapetum adds an Art-Net interface “Tapetum …” on <code>127.0.0.1</code> for every DMX interface of the show and mirrors the original to it with a pass-through. Patch and real hardware stay unchanged. BlinderKitten saves and reloads the show; a backup is left next to it as <code>.olga.bak</code>.</li>
+            <li><strong>Run a cue</strong> or set a value in the programmer – the light appears in Tapetum. If it says “No signal from BlinderKitten”, the sidebar shows what to check.</li>
+          </ol>
+        </div>
+
+        <div class="phase" id="lampen">
+          <h2><span class="tag" data-de="Teil 3" data-en="Part 3">Teil 3</span> <span data-de="Lampen einrichten" data-en="Set up fixtures">Lampen einrichten</span></h2>
+          <div class="shot"><img src="assets/app-de.jpg" class="de" alt="Ausgewählter Moving Head mit Pfeilen und Ringen zum Verschieben und Drehen, rechts die Einstellungen des Gerätetyps" loading="lazy"><img src="assets/app-en.jpg" class="en" alt="Selected moving head with arrows and rings for moving and turning, the fixture type's settings on the right" loading="lazy"></div>
+          <ol class="steps de">
+            <li><strong>Lampen ohne Position</strong> in BlinderKitten stellt Tapetum automatisch in Reihen auf. Eine Lampe anklicken, dann an den Pfeilen ziehen (verschieben) oder an den Ringen (drehen). Drehen rastet in 15°-Schritten ein, mit gedrückter Shift-Taste frei.</li>
+            <li>Tapetum trägt die Position <strong>live in BlinderKitten</strong> ein. Dort speichern, damit sie bleibt. Ist BK gerade nicht offen, merkt sich Tapetum die Position und überträgt sie später.</li>
+            <li><strong>Gruppen</strong> aus BK wählst du per Rechtsklick auf eine Lampe – praktisch, um eine ganze Traverse auf einmal zu verschieben.</li>
+            <li><strong>Gerätetyp anpassen</strong> (einmal pro Typ): Strahlwinkel bzw. Zoombereich, Lichtstrom, Farbrad, Goborad (eingebaute Muster oder eigene Bilder), LED-Anordnung, Pan/Tilt-Bereich. Pan/Tilt/Zoom-Bereiche schreibt Tapetum als „Physical range“ nach BK zurück.</li>
+          </ol>
+          <ol class="steps en">
+            <li><strong>Fixtures without a position</strong> in BlinderKitten are lined up automatically. Click a fixture, then drag the arrows (move) or the rings (turn). Turning snaps in 15° steps, hold Shift to turn freely.</li>
+            <li>Tapetum enters the position <strong>live in BlinderKitten</strong>. Save there to keep it. If BK isn't open, Tapetum remembers the position and sends it later.</li>
+            <li><strong>Groups</strong> from BK are selected with a right click on a fixture – handy for moving a whole truss at once.</li>
+            <li><strong>Tune the fixture type</strong> (once per type): beam angle or zoom range, lumens, colour wheel, gobo wheel (built-in patterns or your own pictures), LED layout, pan/tilt range. Tapetum writes pan/tilt/zoom ranges back to BK as “Physical range”.</li>
+          </ol>
+        </div>
+
+        <div class="phase amber" id="buehnenbild">
+          <h2><span class="tag" data-de="Teil 4" data-en="Part 4">Teil 4</span> <span data-de="Bühnenbild aus IngeTrazo" data-en="The set from IngeTrazo">Bühnenbild aus IngeTrazo</span></h2>
+          <div class="shot"><img src="assets/set.jpg" alt="Bank aus IngeTrazo auf der Bühne, Wasser-Gobo auf dem Boden" loading="lazy"></div>
+          <ol class="steps de">
+            <li><strong>In IngeTrazo zeichnen</strong> wie gewohnt und als <code>.igz</code> speichern – am besten neben der Show-Datei. Die Vorderansicht von IngeTrazo ist die Zuschauersicht in Tapetum; Maße in Metern passen direkt zu den Lampenpositionen in BK.</li>
+            <li>In Tapetum unter <em>Bühnenobjekte</em> auf <strong><em>Importieren …</em></strong> klicken und die <code>.igz</code> wählen. Jede Gruppe und Komponente wird ein eigenes Objekt; Materialien und Texturen kommen mit. Ein Exportschritt ist nicht nötig.</li>
+            <li><strong>Beide Programme offen lassen:</strong> Arbeite einfach in IngeTrazo weiter. Nach jedem Speichern lädt Tapetum das Bühnenbild von selbst neu – du siehst sofort, wie das Licht auf die Änderung fällt. Tapetum verändert die <code>.igz</code> nie.</li>
+            <li><strong>Materialien</strong> pro Objekt überschreiben, wenn nötig: Farbe, Reflexionsgrad, opak oder transluzent – zum Beispiel für Gaze, Glas oder Operafolie mit Schattenspiel von hinten.</li>
+          </ol>
+          <ol class="steps en">
+            <li><strong>Draw in IngeTrazo</strong> as usual and save as <code>.igz</code> – ideally next to the show file. IngeTrazo's front view is the audience view in Tapetum; measurements in metres match the fixture positions in BK directly.</li>
+            <li>In Tapetum, under <em>Stage objects</em>, click <strong><em>Import …</em></strong> and choose the <code>.igz</code>. Every group and component becomes an object of its own; materials and textures come along. No export step needed.</li>
+            <li><strong>Keep both programs open:</strong> just carry on in IngeTrazo. Each time you save, Tapetum reloads the set by itself – you see at once how the light falls on the change. Tapetum never changes the <code>.igz</code>.</li>
+            <li><strong>Override materials</strong> per object if needed: colour, reflectance, opaque or translucent – for gauze, glass or opera foil with shadow play from behind, for example.</li>
+          </ol>
+        </div>
+
+        <div class="phase amber" id="szenen">
+          <h2><span class="tag" data-de="Teil 5" data-en="Part 5">Teil 5</span> <span data-de="Umbauten als Szenen" data-en="Set changes as scenes">Umbauten als Szenen</span></h2>
+          <ol class="steps de">
+            <li>Die <strong>Grundszene</strong> zeigt alles wie in den Dateien. Unter <em>Szenen</em> mit <strong><em>+ Szene</em></strong> eine neue anlegen und darin Objekte verschieben, drehen oder ausblenden.</li>
+            <li>Die Szene an eine <strong>Cue der Main-Cuelist</strong> koppeln. Läuft die Cuelist in BlinderKitten, zeigt Tapetum jeweils die Szene mit der höchsten Cue-ID bis zur aktuellen Cue – mit weichem Übergang.</li>
+            <li>Ohne laufende Cuelist wählst du die Szene einfach von Hand.</li>
+          </ol>
+          <ol class="steps en">
+            <li>The <strong>base scene</strong> shows everything as in the files. Under <em>Scenes</em>, click <strong><em>+ Scene</em></strong> to add one and move, turn or hide objects in it.</li>
+            <li>Bind the scene to a <strong>cue of the main cuelist</strong>. While the cuelist runs in BlinderKitten, Tapetum shows the scene with the highest cue ID up to the current cue – with a smooth transition.</li>
+            <li>Without a running cuelist, just choose the scene by hand.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="note de"><strong>Tipps:</strong> Läuft es ruckelig, unter <em>Qualität</em> „Niedrig“ wählen – gedacht für ältere Rechner und integrierte Grafik. Mit Cmd/Strg+Z machst du Änderungen rückgängig. Eine 3Dconnexion-SpaceMouse bewegt die Bühne und kann aktiv bleiben, während du BlinderKitten bedienst. Alle Einstellungen speichert Tapetum laufend in <code>&lt;show&gt;.tapetum</code> neben der Show.</div>
+      <div class="note en"><strong>Tips:</strong> If it stutters, choose “Low” under <em>Quality</em> – meant for older computers and integrated graphics. Cmd/Ctrl+Z undoes changes. A 3Dconnexion SpaceMouse moves the stage and can stay active while you operate BlinderKitten. Tapetum saves all settings as you go in <code>&lt;show&gt;.tapetum</code> next to the show.</div>
+      <div class="buttons" style="justify-content:center;margin:2.5rem 0 1rem"><a class="btn-primary" href="index.html#download" data-de="Tapetum herunterladen" data-en="Download Tapetum">Tapetum herunterladen</a></div>
+  </main>
+
+  <footer>
+    <a href="index.html" data-de="Start" data-en="Home">Start</a> ·
+    <a href="about.html" data-de="Über" data-en="About">Über</a> ·
+    <a href="impressum.html" data-de="Impressum &amp; Datenschutz" data-en="Legal notice &amp; privacy">Impressum &amp; Datenschutz</a> ·
+    <a href="https://github.com/julius-b-mueller/tapetum">GitHub</a>
+  </footer>
+</body>
+
+</html>

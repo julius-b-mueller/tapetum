@@ -2,6 +2,7 @@
 
 mod about;
 pub use about::open_at_start as open_about_at_start;
+pub use ui::hide_sidebar_at_start;
 mod beam;
 mod fixtures;
 mod gizmo;
