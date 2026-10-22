@@ -125,7 +125,7 @@ Developer commands: `tapetum dump <show>`, `tapetum monitor --show <show>`, `tap
 
 ## Security
 
-Show, project and model files can come from anywhere. Tapetum only reads them: it never runs anything from them, limits the size of every file it reads (including files a model refers to and entries of `.igz` archives) and refuses devices and pipes. It talks to BlinderKitten on `127.0.0.1` only; Art-Net is received on all network interfaces (so BlinderKitten may run on another computer) and only ever changes what you see. Tapetum sends nothing to the internet. Please report vulnerabilities privately to hello@mdstage.org.
+Show, project and model files can come from anywhere. Tapetum only reads them: it never runs anything from them, limits the size of every file it reads (including files a model refers to and entries of `.igz` archives) and refuses devices and pipes. It talks to BlinderKitten on `127.0.0.1` only; Art-Net is received on all network interfaces (so BlinderKitten may run on another computer) and only ever changes what you see. Tapetum sends nothing to the internet. Please report vulnerabilities privately to hello@tapetum.org.
 
 ## License and credits
 

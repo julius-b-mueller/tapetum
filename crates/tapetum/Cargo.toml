@@ -47,7 +47,7 @@ winresource = "0.1"
 
 [package.metadata.deb]
 name = "tapetum"
-maintainer = "Julius B. Müller <hello@mdstage.org>"
+maintainer = "Julius B. Müller <hello@tapetum.org>"
 extended-description = "3D lighting visualizer for BlinderKitten: reads the show file, receives Art-Net and shows beams in haze, gobos and stage sets from IngeTrazo."
 section = "graphics"
 assets = [
