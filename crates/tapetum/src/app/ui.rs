@@ -100,14 +100,14 @@ pub fn panel(
         project.objects.push(tapetum_project::StageObject { id, name, model: stored_path(&state, &file), unit_scale, up, ..Default::default() });
     }
     library_offers(ctx, &mut offers, &mut project, &mut state);
+    export_notice(ctx);
     match library.poll() {
         Some(LibraryDone::Exported(short, file, source, modified, mochi_error)) => {
+            let short_for_notice = short.clone();
             let applied = crate::fixture_library::fingerprint(&project.fixture_types.get(&short).cloned().unwrap_or_default());
             project.library_links.insert(short, tapetum_project::LibraryLink { file: file.to_string_lossy().into_owned(), applied, source, seen: modified });
-            state.status = Some(match mochi_error {
-                None => trf!("In der Gerätebibliothek gespeichert: {} (mit .mochi für BlinderKitten)", "Saved in the fixture library: {} (with a .mochi for BlinderKitten)", file.display()),
-                Some(e) => trf!("In der Gerätebibliothek gespeichert: {} – die .mochi nicht: {e}", "Saved in the fixture library: {} – not the .mochi: {e}", file.display(), e = e),
-            });
+            let name = state.show.fixture_types.iter().find(|t| t.short_name == short_for_notice).map_or_else(|| short_for_notice.clone(), |t| t.name.clone());
+            ctx.data_mut(|d| d.insert_temp(egui::Id::new("export_notice"), (name, file.clone(), mochi_error)));
         }
         Some(LibraryDone::Picked(short, file)) => match crate::fixture_library::take_over(&mut project, &short, &file, &state.project_dir()) {
             Ok(()) => state.status = Some(trf!("Aus der Gerätebibliothek geladen: {}", "Loaded from the fixture library: {}", file.display())),
@@ -842,6 +842,45 @@ fn ago(t: u64) -> String {
             let y = yoe + era * 400 + i64::from(m <= 2);
             if crate::i18n::english() { format!("{y}-{m:02}-{d:02}") } else { format!("{d}.{m}.{y}") }
         }
+    }
+}
+
+/// After exporting a fixture: where it went, and the .mochi next to it.
+fn export_notice(ctx: &egui::Context) {
+    let id = egui::Id::new("export_notice");
+    let Some((name, file, mochi_error)) = ctx.data(|d| d.get_temp::<(String, std::path::PathBuf, Option<String>)>(id)) else { return };
+    let mut close = false;
+    egui::Window::new(egui::RichText::new(tr("Gerät exportiert", "Fixture exported")).size(18.0).strong())
+        .id(id.with("window"))
+        .collapsible(false)
+        .resizable(false)
+        .order(egui::Order::Foreground)
+        .anchor(egui::Align2::CENTER_CENTER, egui::vec2(0.0, 0.0))
+        .show(ctx, |ui| {
+            ui.set_width(440.0);
+            let dir = file.parent().map(|d| d.display().to_string()).unwrap_or_default();
+            ui.label(trf!("„{name}“ ist gespeichert unter", "“{name}” is saved in", name = name));
+            ui.label(egui::RichText::new(&dir).monospace());
+            ui.add_space(6.0);
+            match &mochi_error {
+                None => ui.label(tr(
+                    "Hinweis: Im selben Ordner liegt zusätzlich eine .mochi-Datei. Sie lässt sich in einem anderen Projekt in BlinderKitten importieren (File → Import…) – Tapetum übernimmt dann diese Einstellungen für das Gerät.",
+                    "Note: the same folder also holds a .mochi file. It can be imported into another project in BlinderKitten (File → Import…) – Tapetum then takes these settings over for the fixture.",
+                )),
+                Some(e) => ui.colored_label(egui::Color32::LIGHT_YELLOW, trf!("Die .mochi-Datei für BlinderKitten konnte nicht geschrieben werden: {e}", "The .mochi file for BlinderKitten couldn't be written: {e}", e = e)),
+            };
+            ui.add_space(8.0);
+            ui.horizontal(|ui| {
+                if ui.button(egui::RichText::new("OK").strong()).clicked() {
+                    close = true;
+                }
+                if ui.button(tr("Im Dateimanager zeigen", "Show in file manager")).clicked() {
+                    crate::example::reveal(&file);
+                }
+            });
+        });
+    if close {
+        ctx.data_mut(|d| d.remove::<(String, std::path::PathBuf, Option<String>)>(id));
     }
 }
 

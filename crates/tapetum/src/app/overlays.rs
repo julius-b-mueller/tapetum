@@ -21,12 +21,12 @@ const SLIDE: f32 = 0.18;
 
 /// How far an overlay is out (0 hidden … 1 out): out while the mouse is over
 /// what it showed last frame, or while one of its controls is in use.
-fn openness(ctx: &egui::Context, id: egui::Id) -> f32 {
+fn openness(ctx: &egui::Context, id: egui::Id, also: bool) -> f32 {
     let rect: Option<egui::Rect> = ctx.data(|d| d.get_temp(id.with("rect")));
     let was_open = ctx.data(|d| d.get_temp::<bool>(id.with("open")).unwrap_or(false));
     let over = ctx.pointer_hover_pos().zip(rect).is_some_and(|(p, r)| r.expand(10.0).contains(p));
     let busy = was_open && (ctx.dragged_id().is_some() || egui::Popup::is_any_open(ctx));
-    let open = over || busy || OPEN_FOR_SCREENSHOTS.load(std::sync::atomic::Ordering::Relaxed);
+    let open = over || busy || also || OPEN_FOR_SCREENSHOTS.load(std::sync::atomic::Ordering::Relaxed);
     ctx.data_mut(|d| d.insert_temp(id.with("open"), open));
     ctx.animate_bool_with_time(id, open, SLIDE)
 }
@@ -50,7 +50,7 @@ fn fader(ui: &mut egui::Ui, value: &mut f32, range: std::ops::RangeInclusive<f32
 /// Light and haze at the bottom edge. Returns the area it covers.
 pub fn faders(ctx: &egui::Context, project: &mut Project, spacemouse: bool) -> egui::Rect {
     let id = egui::Id::new("faders");
-    let t = openness(ctx, id);
+    let t = openness(ctx, id, false);
     let screen = ctx.content_rect();
     let height: f32 = ctx.data(|d| d.get_temp(id.with("height")).unwrap_or(200.0));
     // The faders' width from last frame: the tab centres over them.
@@ -179,7 +179,18 @@ pub fn scene_bar(ctx: &egui::Context, state: &ShowState, project: &mut Project, 
     if editing.is_some() {
         ctx.data_mut(|d| d.insert_temp(id.with("open"), true));
     }
-    let t = openness(ctx, id).max(if editing.is_some() { 1.0 } else { 0.0 });
+    // ← and → (not while typing) bring the scenes out for a moment, as if the
+    // mouse were there, so the change is seen sliding.
+    let now = ctx.input(|i| i.time);
+    let (step_left, step_right) = if ctx.egui_wants_keyboard_input() { (false, false) } else { ctx.input(|i| (i.key_pressed(egui::Key::ArrowLeft), i.key_pressed(egui::Key::ArrowRight))) };
+    if step_left || step_right {
+        ctx.data_mut(|d| d.insert_temp(id.with("peek"), now + 1.2));
+    }
+    let peeking = ctx.data(|d| d.get_temp::<f64>(id.with("peek"))).is_some_and(|until| now < until);
+    if peeking {
+        ctx.request_repaint();
+    }
+    let t = openness(ctx, id, peeking).max(if editing.is_some() { 1.0 } else { 0.0 });
     let screen = ctx.content_rect();
     let middle = screen.center().x;
     let mut pick = None;
@@ -204,14 +215,10 @@ pub fn scene_bar(ctx: &egui::Context, state: &ShowState, project: &mut Project, 
     let n = tabs.len();
     let current = tabs.iter().position(|tab| tab.0 == rt.active).unwrap_or(0);
 
-    // ← and → step through the scenes (not while typing).
-    if !ctx.egui_wants_keyboard_input() {
-        let (left, right) = ctx.input(|i| (i.key_pressed(egui::Key::ArrowLeft), i.key_pressed(egui::Key::ArrowRight)));
-        if left && current > 0 {
-            pick = Some(ScenePick::Show(tabs[current - 1].0));
-        } else if right && current + 1 < n {
-            pick = Some(ScenePick::Show(tabs[current + 1].0));
-        }
+    if step_left && current > 0 {
+        pick = Some(ScenePick::Show(tabs[current - 1].0));
+    } else if step_right && current + 1 < n {
+        pick = Some(ScenePick::Show(tabs[current + 1].0));
     }
 
     // The strip of tabs, placed so that the (gliding) current position sits in the middle.
@@ -222,7 +229,7 @@ pub fn scene_bar(ctx: &egui::Context, state: &ShowState, project: &mut Project, 
         strip[k] = strip[k - 1] + widths[k - 1] + GAP;
     }
     let centre = |k: usize| strip[k] + widths[k] / 2.0;
-    let pos = glide(ctx, id.with("glide"), current as f32, t > 0.05);
+    let pos = glide(ctx, id.with("glide"), current as f32, t > 0.05 || peeking);
     let (a, b) = (pos.floor() as usize, (pos.ceil() as usize).min(n - 1));
     let at = centre(a) + (centre(b) - centre(a)) * (pos - pos.floor());
     let shift = middle - at;
@@ -250,13 +257,15 @@ pub fn scene_bar(ctx: &egui::Context, state: &ShowState, project: &mut Project, 
     let plus_left = (current > 0 && t > 0.3).then(|| egui::Rect::from_min_size(egui::pos2(cur_rect.left() - GAP - PLUS, plus_y), egui::vec2(PLUS, PLUS)));
     let plus_right = (t > 0.3).then(|| egui::Rect::from_min_size(egui::pos2(cur_rect.right() + GAP, plus_y), egui::vec2(PLUS, PLUS)));
     let line_y = current_reach + 6.0;
+    // Chosen by hand (it shows amber): while out, a button under it to follow BK again.
+    let follow = (detached && t > 0.5).then(|| egui::Rect::from_center_size(egui::pos2(middle, line_y + 11.0), egui::vec2(150.0, 22.0)));
     let span = places
         .iter()
         .flatten()
         .map(|p| p.1)
         .chain(plus_left)
         .chain(plus_right)
-        .chain(detached.then(|| egui::Rect::from_center_size(egui::pos2(middle, line_y + 12.0), egui::vec2(screen.width().min(760.0), 24.0))))
+        .chain(follow)
         .fold(egui::Rect::NOTHING, |a, b| a.union(b));
     if !span.is_positive() {
         return (pick, egui::Rect::NOTHING);
@@ -319,29 +328,19 @@ pub fn scene_bar(ctx: &egui::Context, state: &ShowState, project: &mut Project, 
         if let Some((rect, text)) = hint {
             let galley = ui.painter().layout_no_wrap(text, egui::FontId::proportional(12.0), visuals.text_color());
             let size = galley.size() + egui::vec2(14.0, 8.0);
-            let below = egui::Rect::from_center_size(egui::pos2(rect.center().x, rect.bottom() + 6.0 + size.y / 2.0), size);
+            // Under the follow button when that is there, below the current scene.
+            let top = follow.filter(|f| (f.center().x - rect.center().x).abs() < 1.0).map_or(rect.bottom(), |f| f.bottom());
+            let below = egui::Rect::from_center_size(egui::pos2(rect.center().x, top + 6.0 + size.y / 2.0), size);
             let painter = ctx.layer_painter(egui::LayerId::new(egui::Order::Tooltip, id.with("hint")));
             painter.rect(below, egui::CornerRadius::same(4), visuals.window_fill, visuals.window_stroke, egui::StrokeKind::Inside);
             painter.galley(below.min + egui::vec2(7.0, 4.0), galley, visuals.text_color());
         }
-        // Not in step with BlinderKitten: say so, centred under the bar, and offer to follow again.
-        if detached {
-            let line = egui::Rect::from_center_size(egui::pos2(middle, line_y + 12.0), egui::vec2(screen.width().min(760.0), 24.0));
-            let inner = ui.scope_builder(egui::UiBuilder::new().max_rect(line).layout(egui::Layout::top_down(egui::Align::Center)), |ui| {
-                egui::Frame::popup(ui.style())
-                    .inner_margin(egui::Margin::symmetric(8, 2))
-                    .show(ui, |ui| {
-                        ui.horizontal(|ui| {
-                            ui.colored_label(ACCENT, tr("Von Hand gewählt – nicht synchron mit BlinderKitten. Beim nächsten Cue folgt Tapetum wieder.", "Chosen by hand – not in step with BlinderKitten. Tapetum follows again at the next cue."));
-                            if ui.small_button(tr("Jetzt folgen", "Follow now")).clicked() {
-                                pick = Some(ScenePick::Follow);
-                            }
-                        });
-                    })
-                    .response
-                    .rect
-            });
-            covered = covered.union(inner.inner);
+        if let Some(rect) = follow {
+            let resp = ui.put(rect, egui::Button::new(tr("BlinderKitten folgen", "Follow BlinderKitten")).small());
+            covered = covered.union(resp.rect);
+            if resp.on_hover_text(tr("Die Szene wieder von der Main-Cuelist bestimmen lassen (sonst ab dem nächsten Cue).", "Let the main cuelist choose the scene again (else from the next cue).")).clicked() {
+                pick = Some(ScenePick::Follow);
+            }
         } else if rt.moving() && t > 0.5 {
             ui.painter().text(egui::pos2(middle, line_y), egui::Align2::CENTER_TOP, tr("Übergang läuft …", "Transition running …"), egui::FontId::proportional(12.0), egui::Color32::LIGHT_YELLOW);
         }
