@@ -36,7 +36,7 @@ use bevy::window::{PresentMode, WindowResolution};
 use bevy_egui::{EguiGlobalSettings, EguiPlugin, EguiPrimaryContextPass};
 use tapetum_project::Project;
 
-use state::{BkLink, BkStatus, Dmx, GoboImport, LibraryJobs, ObjectImport, PlacementSync, RangeSync, ShowState, Watch};
+use state::{BkLink, BkStatus, Dmx, GoboImport, LibraryJobs, LibraryUpdates, ObjectImport, PlacementSync, RangeSync, ShowState, Watch};
 
 #[derive(Resource)]
 struct Offscreen(Handle<Image>);
@@ -87,6 +87,7 @@ pub fn run(opts: Options) -> Result<()> {
     if !taken.is_empty() {
         project.save(&project_path)?;
     }
+    let library_offers = LibraryUpdates::find(&show, &project);
     let library_status = (!taken.is_empty()).then(|| trf!("Aus der Gerätebibliothek: {}", "From the fixture library: {}", taken.join(", ")));
     // A port given on the command line is taken as it is; the project's, if
     // another program holds it, gives way to the next free one (the sidebar
@@ -148,6 +149,7 @@ pub fn run(opts: Options) -> Result<()> {
     .init_resource::<gizmo::GizmoState>()
     .init_resource::<GoboImport>()
     .init_resource::<LibraryJobs>()
+    .insert_resource(library_offers)
     .init_resource::<ObjectImport>()
     .add_systems(Startup, (fixtures::setup_assets, scene::setup_scene, setup_gizmos))
     .add_systems(

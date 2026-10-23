@@ -8,7 +8,7 @@ use super::gizmo::GizmoState;
 use super::scene::View3d;
 use super::objects::{SceneRuntime, StageObjects, file_color, file_reflectance, is_igz, object_key, split_key, stored_path};
 use super::undo::{Step, UndoHistory};
-use super::state::{BkLink, BkStatus, Dmx, GoboImport, LibraryDone, LibraryJobs, ObjectImport, PlacementSync, RangeSync, ShowState};
+use super::state::{BkLink, BkStatus, Dmx, GoboImport, LibraryDone, LibraryJobs, LibraryUpdates, ObjectImport, PlacementSync, RangeSync, ShowState};
 use super::type_editor;
 use super::onboarding::SetupAction;
 use crate::bk_link::{Edit, HostInfo};
@@ -31,7 +31,7 @@ pub fn panel(
     mut placement_sync: ResMut<PlacementSync>,
     mut gizmo_state: ResMut<GizmoState>,
     (mut object_import, stage_objects, mut scene_rt, spacemouse): (ResMut<ObjectImport>, Res<StageObjects>, ResMut<SceneRuntime>, Res<super::spacemouse::SpaceMouse>),
-    (mut import, mut library): (ResMut<GoboImport>, ResMut<LibraryJobs>),
+    (mut import, mut library, mut offers): (ResMut<GoboImport>, ResMut<LibraryJobs>, ResMut<LibraryUpdates>),
     view: Res<View3d>,
     mut ui_rects: ResMut<UiRects>,
     time: Res<Time>,
@@ -100,10 +100,11 @@ pub fn panel(
         let name = file.file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_else(|| trf!("Datei {id}", "File {id}", id = id));
         project.objects.push(tapetum_project::StageObject { id, name, model: stored_path(&state, &file), unit_scale, up, ..Default::default() });
     }
+    library_offers(ctx, &mut offers, &mut project, &mut state);
     match library.poll() {
-        Some(LibraryDone::Exported(short, file, source)) => {
+        Some(LibraryDone::Exported(short, file, source, modified)) => {
             let applied = crate::fixture_library::fingerprint(&project.fixture_types.get(&short).cloned().unwrap_or_default());
-            project.library_links.insert(short, tapetum_project::LibraryLink { file: file.to_string_lossy().into_owned(), applied, source });
+            project.library_links.insert(short, tapetum_project::LibraryLink { file: file.to_string_lossy().into_owned(), applied, source, seen: modified });
             state.status = Some(trf!("In der Gerätebibliothek gespeichert: {}", "Saved in the fixture library: {}", file.display()));
         }
         Some(LibraryDone::Picked(short, file)) => match crate::fixture_library::take_over(&mut project, &short, &file, &state.project_dir()) {
@@ -479,6 +480,15 @@ pub fn panel(
         state.manual_scene = manual_scene;
     }
     if project != state.project {
+        // A fixture type's settings changed here: note when (taking a library
+        // file over sets that file's time itself).
+        let now = tapetum_project::now();
+        let types: std::collections::BTreeSet<String> = project.fixture_types.keys().chain(state.project.fixture_types.keys()).cloned().collect();
+        for ty in types {
+            if project.fixture_types.get(&ty) != state.project.fixture_types.get(&ty) && project.fixture_types_changed.get(&ty) == state.project.fixture_types_changed.get(&ty) {
+                project.fixture_types_changed.insert(ty, now);
+            }
+        }
         // Fixture models depend on these; render settings apply live.
         let rebuild = project.render.quality != state.project.render.quality
             || project.fixtures != state.project.fixtures
@@ -751,6 +761,103 @@ fn object_editor(ui: &mut egui::Ui, state: &ShowState, project: &mut tapetum_pro
     close
 }
 
+/// "3 days ago", or the date for older times (Unix seconds; 0 = unknown).
+fn ago(t: u64) -> String {
+    if t == 0 {
+        return tr("älter", "older").into();
+    }
+    let s = tapetum_project::now().saturating_sub(t);
+    match s {
+        0..60 => tr("gerade eben", "just now").into(),
+        60..3600 => trf!("vor {} min", "{} min ago", s / 60),
+        3600..86400 => trf!("vor {} h", "{} h ago", s / 3600),
+        86400..2_592_000 => match s / 86400 {
+            1 => tr("gestern", "yesterday").into(),
+            d => trf!("vor {d} Tagen", "{d} days ago", d = d),
+        },
+        _ => {
+            // The date (UTC), from days since 1970 (Howard Hinnant's civil_from_days).
+            let z = (t / 86400) as i64 + 719_468;
+            let era = z.div_euclid(146_097);
+            let doe = z - era * 146_097;
+            let yoe = (doe - doe / 1460 + doe / 36524 - doe / 146_096) / 365;
+            let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+            let mp = (5 * doy + 2) / 153;
+            let d = doy - (153 * mp + 2) / 5 + 1;
+            let m = if mp < 10 { mp + 3 } else { mp - 9 };
+            let y = yoe + era * 400 + i64::from(m <= 2);
+            if crate::i18n::english() { format!("{y}-{m:02}-{d:02}") } else { format!("{d}.{m}.{y}") }
+        }
+    }
+}
+
+/// Newer fixture definitions in the library than in this project: in the
+/// middle of the screen, to take over all, some or none of them.
+fn library_offers(ctx: &egui::Context, offers: &mut LibraryUpdates, project: &mut tapetum_project::Project, state: &mut ShowState) {
+    if offers.offers.is_empty() {
+        return;
+    }
+    let mut done: Option<bool> = None;
+    egui::Window::new(egui::RichText::new(tr("Neuere Gerätedefinitionen", "Newer fixture definitions")).size(18.0).strong())
+        .id(egui::Id::new("library_offers"))
+        .collapsible(false)
+        .resizable(false)
+        .order(egui::Order::Foreground)
+        .anchor(egui::Align2::CENTER_CENTER, egui::vec2(0.0, 0.0))
+        .show(ctx, |ui| {
+            ui.set_width(460.0);
+            ui.label(tr(
+                "In der Gerätebibliothek gibt es für Geräte dieses Projekts neuere Einstellungen. Welche sollen übernommen werden? Die anderen bleiben, wie sie sind.",
+                "The fixture library has newer settings for fixtures of this project. Which shall be taken over? The others stay as they are.",
+            ));
+            ui.add_space(6.0);
+            egui::Grid::new("offers").num_columns(3).spacing([12.0, 4.0]).show(ui, |ui| {
+                ui.label("");
+                ui.strong(tr("Bibliothek", "Library"));
+                ui.strong(tr("Projekt", "Project"));
+                ui.end_row();
+                for (u, on) in &mut offers.offers {
+                    ui.checkbox(on, &u.type_name);
+                    ui.label(ago(u.library));
+                    ui.label(ago(u.project));
+                    ui.end_row();
+                }
+            });
+            ui.add_space(6.0);
+            ui.horizontal(|ui| {
+                if ui.small_button(tr("Alle auswählen", "Select all")).clicked() {
+                    offers.offers.iter_mut().for_each(|(_, on)| *on = true);
+                }
+                if ui.small_button(tr("Keine auswählen", "Select none")).clicked() {
+                    offers.offers.iter_mut().for_each(|(_, on)| *on = false);
+                }
+            });
+            ui.add_space(6.0);
+            ui.horizontal(|ui| {
+                let n = offers.offers.iter().filter(|(_, on)| *on).count();
+                if ui.add_enabled(n > 0, egui::Button::new(egui::RichText::new(trf!("{n} übernehmen", "Take over {n}", n = n)).strong())).clicked() {
+                    done = Some(true);
+                }
+                if ui.button(tr("Ignorieren", "Ignore")).on_hover_text(tr("Diese Fassungen werden nicht mehr angeboten; neuere schon.", "These versions aren't offered again; newer ones are.")).clicked() {
+                    done = Some(false);
+                }
+            });
+        });
+    let Some(take) = done else { return };
+    let mut taken = Vec::new();
+    for (u, on) in std::mem::take(&mut offers.offers) {
+        // What isn't taken over is declined in this version.
+        if take && on && crate::fixture_library::take_over(project, &u.short_name, &u.file, &state.project_dir()).is_ok() {
+            taken.push(u.type_name);
+        } else {
+            crate::fixture_library::decline(project, &u);
+        }
+    }
+    if !taken.is_empty() {
+        state.status = Some(trf!("Aus der Gerätebibliothek übernommen: {}", "Taken over from the fixture library: {}", taken.join(", ")));
+    }
+}
+
 /// Where this type's settings stand with the fixture library, and its buttons.
 fn library_row(ui: &mut egui::Ui, state: &ShowState, project: &tapetum_project::Project, ty: &bk_olga::FixtureType, library: &mut LibraryJobs) {
     let current = project.fixture_types.get(&ty.short_name).cloned().unwrap_or_default();
@@ -769,7 +876,8 @@ fn library_row(ui: &mut egui::Ui, state: &ShowState, project: &tapetum_project::
                 .on_hover_text(tr("Speichert die Einstellungen dieses Typs in der Gerätebibliothek. Neue Projekte mit einem Gerätetyp gleichen Namens übernehmen sie automatisch.", "Saves this type's settings in the fixture library. New projects with a fixture type of the same name take them over automatically."))
                 .clicked()
             {
-                library.export(ty.short_name.clone(), ty.name.clone(), current.clone(), state.project_dir());
+                let modified = project.fixture_types_changed.get(&ty.short_name).copied().unwrap_or_else(tapetum_project::now);
+                library.export(ty.short_name.clone(), ty.name.clone(), current.clone(), state.project_dir(), modified);
             }
             if ui.small_button(tr("Laden …", "Load …")).on_hover_text(tr("Einstellungen aus einer Gerätedatei übernehmen (ersetzt die jetzigen).", "Take over the settings from a fixture file (replaces the current ones).")).clicked() {
                 library.pick(ty.short_name.clone());

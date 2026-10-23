@@ -31,6 +31,9 @@ pub struct Project {
     /// Fixture types whose settings came from the fixture library, by type short name.
     #[serde(skip_serializing_if = "BTreeMap::is_empty")]
     pub library_links: BTreeMap<String, LibraryLink>,
+    /// When a fixture type's settings last changed (Unix seconds), by type short name.
+    #[serde(skip_serializing_if = "BTreeMap::is_empty")]
+    pub fixture_types_changed: BTreeMap<String, u64>,
     /// Keyed by fixture ID; wins over `fixture_types`.
     pub fixtures: BTreeMap<i64, FixtureOverride>,
     /// Placements edited while BlinderKitten was not connected, keyed by fixture ID.
@@ -139,6 +142,13 @@ pub struct LibraryLink {
     /// Fingerprint of the library file's settings then: if the file now has
     /// others, it was updated since.
     pub source: String,
+    /// The library file's time stamp last taken over or declined: newer ones are offered.
+    pub seen: u64,
+}
+
+/// Now in Unix seconds.
+pub fn now() -> u64 {
+    std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_or(0, |d| d.as_secs())
 }
 
 /// Settings of the generic fixture model; `None` fields keep the automatic choice.

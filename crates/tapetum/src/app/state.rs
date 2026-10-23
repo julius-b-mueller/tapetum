@@ -278,7 +278,7 @@ impl Watch {
 }
 
 /// Picks up shows saved by BlinderKitten.
-pub fn poll_reload(watch: Option<Res<Watch>>, mut state: ResMut<ShowState>, mut undo: ResMut<super::undo::UndoHistory>) {
+pub fn poll_reload(watch: Option<Res<Watch>>, mut state: ResMut<ShowState>, mut undo: ResMut<super::undo::UndoHistory>, mut offers: ResMut<LibraryUpdates>) {
     let Some(watch) = watch else { return };
     let Ok(w) = watch.0.lock() else { return };
     while let Ok(result) = w.updates.try_recv() {
@@ -312,6 +312,8 @@ pub fn poll_reload(watch: Option<Res<Watch>>, mut state: ResMut<ShowState>, mut 
                     state.project = project;
                     state.save_project();
                 }
+                // New fixture types may have newer library files, too.
+                *offers = LibraryUpdates::find(&show, &state.project);
                 state.show = show;
                 state.generation += 1;
                 state.status = Some(if taken.is_empty() {
@@ -462,10 +464,24 @@ impl GoboImport {
     }
 }
 
+/// Library files newer than the project's settings of their fixture type, to
+/// offer when the project opens; each with whether it is ticked.
+#[derive(Resource, Default)]
+pub struct LibraryUpdates {
+    pub offers: Vec<(crate::fixture_library::Update, bool)>,
+}
+
+impl LibraryUpdates {
+    pub fn find(show: &Show, project: &Project) -> Self {
+        let offers = crate::fixture_library::dir().map(|lib| crate::fixture_library::updates(show, project, &lib)).unwrap_or_default();
+        LibraryUpdates { offers: offers.into_iter().map(|u| (u, true)).collect() }
+    }
+}
+
 /// What a fixture library dialog came back with.
 pub enum LibraryDone {
-    /// Saved: (type short name, file, fingerprint of the file's settings).
-    Exported(String, PathBuf, String),
+    /// Saved: (type short name, file, fingerprint of the file's settings, its time stamp).
+    Exported(String, PathBuf, String, u64),
     /// A file chosen for a type.
     Picked(String, PathBuf),
     Failed(String),
@@ -494,7 +510,7 @@ impl LibraryJobs {
     }
 
     /// Saves a type's settings to the library, asking before replacing a file there.
-    pub fn export(&mut self, short_name: String, type_name: String, settings: tapetum_project::FixtureOverride, project_dir: PathBuf) {
+    pub fn export(&mut self, short_name: String, type_name: String, settings: tapetum_project::FixtureOverride, project_dir: PathBuf, modified: u64) {
         self.start(move || {
             let Some(dir) = crate::fixture_library::dir() else { return Some(LibraryDone::Failed(tr("Kein Ordner für die Gerätebibliothek", "No folder for the fixture library").into())) };
             let file = crate::fixture_library::file_for(&dir, &type_name);
@@ -509,8 +525,8 @@ impl LibraryJobs {
                     return None;
                 }
             }
-            Some(match crate::fixture_library::export(&file, &type_name, &settings, &project_dir) {
-                Ok(source) => LibraryDone::Exported(short_name, file, source),
+            Some(match crate::fixture_library::export(&file, &type_name, &settings, &project_dir, modified) {
+                Ok(source) => LibraryDone::Exported(short_name, file, source, modified),
                 Err(e) => LibraryDone::Failed(e),
             })
         });
