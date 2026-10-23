@@ -32,7 +32,12 @@ rfd = { version = "0.17", default-features = false, features = ["xdg-portal", "w
 clap.workspace = true
 notify.workspace = true
 # Bevy without audio (no ALSA on Linux) and without 2D/UI crates we don't use.
-bevy = { version = "0.20", default-features = false, features = ["3d", "tonemapping_luts"] }
+# Bevy's "3d" bundle without gamepads (gilrs): Tapetum doesn't use them, and on
+# macOS gilrs logs an error at every start without the input monitoring permission.
+bevy = { version = "0.20", default-features = false, features = [
+    "default_app", "3d_bevy_render", "scene", "picking", "tonemapping_luts",
+    "std", "bevy_winit", "bevy_clipboard", "default_font", "multi_threaded", "webgl2", "x11", "wayland", "custom_cursor", "sysinfo_plugin",
+] }
 bevy_egui = { version = "0.43", default-features = false, features = ["render", "default_fonts", "manage_clipboard", "open_url"] }
 # 3Dconnexion SpaceMouse over HID; shared on macOS so the 3Dconnexion driver keeps working.
 hidapi = { version = "2.6", default-features = false, features = ["linux-static-hidraw", "macos-shared-device"] }

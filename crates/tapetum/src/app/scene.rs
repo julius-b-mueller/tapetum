@@ -168,6 +168,8 @@ pub fn setup_scene(
         // Beams and gobo projectors read the depth of the surfaces they meet.
         DepthPrepass,
         RenderTarget::Image(image.into()),
+        // Renders into an image, so Bevy wouldn't pick it for the shadow LOD by itself.
+        bevy::camera::ShadowLodOrigin,
         // Shadow maps exist only on High; one tap is plenty with TAA.
         ShadowFilteringMethod::Hardware2x2,
     ));
