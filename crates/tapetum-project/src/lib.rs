@@ -73,6 +73,8 @@ pub struct RenderSettings {
     pub haze: Haze,
     /// Work light level 0..1.
     pub ambient: f32,
+    /// Colour of the house light (linear RGB); `None` is warm white (3000 K).
+    pub house_color: Option<[f32; 3]>,
     pub bloom: bool,
     /// Camera exposure (EV100); lower is brighter.
     pub exposure_ev: f32,
@@ -83,7 +85,7 @@ pub struct RenderSettings {
 
 impl Default for RenderSettings {
     fn default() -> Self {
-        RenderSettings { quality: Quality::default(), haze: Haze::default(), ambient: 0.05, bloom: true, exposure_ev: 6.0, resolution: None }
+        RenderSettings { quality: Quality::default(), haze: Haze::default(), ambient: 0.05, house_color: None, bloom: true, exposure_ev: 6.0, resolution: None }
     }
 }
 

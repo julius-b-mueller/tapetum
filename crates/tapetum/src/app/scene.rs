@@ -62,6 +62,12 @@ const HOUSE_LIGHTS: usize = 6;
 /// Illuminance on the floor at full house light (lux).
 const HOUSE_LUX: f32 = 600.0;
 
+/// The house light's colour: the project's, else warm white (3000 K).
+pub fn house_color(r: &tapetum_project::RenderSettings) -> Color {
+    let [cr, cg, cb] = r.house_color.unwrap_or_else(|| bk_olga::light::kelvin_to_rgb(3000.0));
+    Color::linear_rgb(cr, cg, cb)
+}
+
 /// Lumens per house light at `height` above the floor for a slider value
 /// 0..1. Bevy spreads a spot light's lumens like a point light's: I = lm / 4π;
 /// about three lights reach a point on the floor.
@@ -106,9 +112,11 @@ pub fn place_house_lights(
         let p = spots[light.0];
         tf.set_if_neq(Transform::from_translation(p).looking_at(p - Vec3::Y, Vec3::NEG_Z));
         let intensity = house_lumens(level, height);
-        if spot.intensity != intensity || spot.range != height * 3.0 {
+        let color = house_color(&state.project.render);
+        if spot.intensity != intensity || spot.range != height * 3.0 || spot.color != color {
             spot.intensity = intensity;
             spot.range = height * 3.0;
+            spot.color = color;
         }
         vis.set_if_neq(if level > 0.0 { Visibility::Inherited } else { Visibility::Hidden });
     }
@@ -291,6 +299,5 @@ pub fn apply_render_settings(
     // ceiling lights would cost every pixel six more lights: plain ambient of
     // the same brightness instead (illuminance ≈ π × brightness).
     ambient.brightness = r.ambient * if r.quality == Quality::Low { 30.0 + HOUSE_LUX / std::f32::consts::PI } else { 30.0 };
-    let [cr, cg, cb] = bk_olga::light::kelvin_to_rgb(3000.0);
-    ambient.color = Color::linear_rgb(cr, cg, cb);
+    ambient.color = house_color(r);
 }

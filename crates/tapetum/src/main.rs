@@ -68,6 +68,9 @@ struct ViewArgs {
     /// Start with the sidebar hidden (for screenshots).
     #[arg(long, hide = true)]
     no_sidebar: bool,
+    /// Keep the faders and the scene bar out (for screenshots).
+    #[arg(long, hide = true)]
+    overlays_open: bool,
     /// Frame everything at start (for screenshots): "audience" or "top".
     #[arg(long, hide = true, value_parser = ["audience", "top"])]
     fit: Option<String>,
@@ -142,6 +145,9 @@ fn main() -> Result<()> {
             }
             if v.no_sidebar {
                 app::hide_sidebar_at_start();
+            }
+            if v.overlays_open {
+                app::keep_overlays_open();
             }
             if v.about {
                 app::open_about_at_start();

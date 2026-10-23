@@ -30,7 +30,7 @@ pub fn panel(
     (mut sync, mut undo): (ResMut<RangeSync>, ResMut<UndoHistory>),
     mut placement_sync: ResMut<PlacementSync>,
     mut gizmo_state: ResMut<GizmoState>,
-    (mut object_import, stage_objects, scene_rt, spacemouse): (ResMut<ObjectImport>, Res<StageObjects>, Res<SceneRuntime>, Res<super::spacemouse::SpaceMouse>),
+    (mut object_import, stage_objects, mut scene_rt, spacemouse): (ResMut<ObjectImport>, Res<StageObjects>, ResMut<SceneRuntime>, Res<super::spacemouse::SpaceMouse>),
     mut import: ResMut<GoboImport>,
     view: Res<View3d>,
     mut ui_rects: ResMut<UiRects>,
@@ -89,6 +89,11 @@ pub fn panel(
     let mut pick: Option<Pick> = None;
     let mut brush = state.led_brush;
     let mut manual_scene = state.manual_scene;
+    super::settings::window(ctx, &mut project, spacemouse.device());
+    // Esc clears the selection (not while typing, where it ends the edit).
+    if !ctx.egui_wants_keyboard_input() && ctx.input(|i| i.key_pressed(egui::Key::Escape)) {
+        pick = Some(Pick::Clear);
+    }
     if let Some(file) = object_import.poll() {
         let (unit_scale, up) = crate::stage::defaults_for(&file);
         let id = project.objects.iter().map(|o| o.id).max().map_or(1, |m| m + 1);
@@ -108,12 +113,30 @@ pub fn panel(
         None => {}
     }
 
+    // Over the 3D view: light and haze below, the scenes above.
+    let mut rects = Vec::new();
+    let spacemouse_on = spacemouse.device().is_some() && project.spacemouse.enabled;
+    rects.push(super::overlays::faders(ctx, &mut project, spacemouse_on));
+    let (scene_pick, bar) = super::overlays::scene_bar(ctx, &state, &mut project, &scene_rt);
+    rects.push(bar);
+    match scene_pick {
+        // While the main cuelist runs, a scene chosen by hand holds until its next cue.
+        Some(super::overlays::ScenePick::Show(scene)) => match scene_rt.following_cue {
+            Some(cue) => scene_rt.detached = Some((scene, cue)),
+            None => {
+                manual_scene = scene;
+                scene_rt.detached = None;
+            }
+        },
+        Some(super::overlays::ScenePick::Follow) => scene_rt.detached = None,
+        None => {}
+    }
+
     let mut root = egui::Ui::new(
         ctx.clone(),
         "viewport".into(),
         egui::UiBuilder::new().layer_id(egui::LayerId::background()).max_rect(ctx.viewport_rect()),
     );
-    let mut rects = Vec::new();
     let mut hide = false;
     if HIDE_SIDEBAR_AT_START.swap(false, std::sync::atomic::Ordering::Relaxed) {
         *sidebar_hidden = true;
@@ -155,6 +178,18 @@ pub fn panel(
                 for w in &state.show.warnings {
                     ui.colored_label(egui::Color32::LIGHT_RED, w);
                 }
+                // Running slowly for a while: offer the next lower quality.
+                let r = &mut project.render;
+                if *slow_since.get_or_insert(0.0) > 5.0 && r.quality != Quality::Low {
+                    ui.horizontal_wrapped(|ui| {
+                        ui.colored_label(egui::Color32::LIGHT_YELLOW, trf!("Läuft langsam ({:.0} fps).", "Running slowly ({:.0} fps).", *fps));
+                        let lower = if r.quality == Quality::High { Quality::Medium } else { Quality::Low };
+                        if ui.small_button(trf!("Auf „{}“ stellen", "Switch to “{}”", super::settings::quality_label(lower))).clicked() {
+                            r.quality = lower;
+                            *slow_since = Some(0.0);
+                        }
+                    });
+                }
 
                 ui.separator();
                 ui.strong("Art-Net");
@@ -174,59 +209,7 @@ pub fn panel(
                 ui.add_space(4.0);
                 setup_action = setup_section(ui, &state, &link, bk.as_ref(), dmx.receiver.local_addr.port(), receiving);
 
-                ui.separator();
-                ui.strong(tr("Darstellung", "Display"));
-                let r = &mut project.render;
-                egui::ComboBox::from_label(tr("Qualität", "Quality"))
-                    .selected_text(quality_label(r.quality))
-                    .show_ui(ui, |ui| {
-                        for q in [Quality::Low, Quality::Medium, Quality::High] {
-                            ui.selectable_value(&mut r.quality, q, quality_label(q)).on_hover_text(quality_hint(q));
-                        }
-                    })
-                    .response
-                    .on_hover_text(quality_hint(r.quality));
-                // Running slowly for a while: offer the next lower quality.
-                if *slow_since.get_or_insert(0.0) > 5.0 && r.quality != Quality::Low {
-                    ui.horizontal_wrapped(|ui| {
-                        ui.colored_label(egui::Color32::LIGHT_YELLOW, trf!("Läuft langsam ({:.0} fps).", "Running slowly ({:.0} fps).", *fps));
-                        let lower = if r.quality == Quality::High { Quality::Medium } else { Quality::Low };
-                        if ui.small_button(trf!("Auf „{}“ stellen", "Switch to “{}”", quality_label(lower))).clicked() {
-                            r.quality = lower;
-                            *slow_since = Some(0.0);
-                        }
-                    });
-                }
-                let res_label = |v: Option<f32>| match v {
-                    None => tr("Automatisch", "Automatic").to_string(),
-                    Some(f) => format!("{:.0} %", f * 100.0),
-                };
-                egui::ComboBox::from_label(tr("3D-Auflösung", "3D resolution"))
-                    .selected_text(res_label(r.resolution))
-                    .show_ui(ui, |ui| {
-                        for v in [None, Some(0.5), Some(0.75), Some(1.0)] {
-                            ui.selectable_value(&mut r.resolution, v, res_label(v));
-                        }
-                    })
-                    .response
-                    .on_hover_text(tr("Auflösung der 3D-Ansicht (Haze-Berechnung) im Verhältnis zu den Bildschirmpixeln. Automatisch: halbe Auflösung auf Retina-Displays. Die Bedienoberfläche bleibt immer scharf.", "Resolution of the 3D view (haze computation) relative to the screen pixels. Automatic: half resolution on Retina displays. The user interface always stays sharp."));
-                ui.add(egui::Slider::new(&mut r.exposure_ev, 0.0..=12.0).text(tr("Belichtung (EV)", "Exposure (EV)")).step_by(0.1));
-                ui.add(egui::Slider::new(&mut r.ambient, 0.0..=1.0).text(tr("Saallicht", "House light")));
-                ui.add_enabled(r.quality != Quality::Low, egui::Checkbox::new(&mut r.bloom, "Bloom"))
-                    .on_disabled_hover_text(tr("Auf „Niedrig“ aus, um schwache Grafik zu entlasten.", "Off on “Low” to spare weak graphics."));
-                ui.checkbox(&mut r.haze.enabled, "Haze");
-                ui.add_enabled_ui(r.haze.enabled, |ui| {
-                    ui.add(egui::Slider::new(&mut r.haze.density, 0.0..=0.5).text(tr("Dichte", "Density")));
-                    ui.add(egui::Slider::new(&mut r.haze.anisotropy, -0.9..=0.95).text(tr("Streuung vorwärts", "Forward scattering")));
-                    ui.horizontal(|ui| {
-                        ui.label(tr("Farbe", "Colour"));
-                        ui.color_edit_button_rgb(&mut r.haze.color);
-                    });
-                });
-                spacemouse_section(ui, &mut project.spacemouse, spacemouse.device());
 
-                ui.separator();
-                scenes_section(ui, &state, &mut project, &scene_rt, &mut manual_scene);
                 ui.separator();
                 if let Some(p) = objects_section(ui, &state, &mut project, &stage_objects, &mut object_import) {
                     pick = Some(p);
@@ -476,79 +459,6 @@ pub fn panel(
         state.save_project();
     }
     Ok(())
-}
-
-/// Scenes: the base scene (the files as they are) and scenes bound to cues
-/// of the main cuelist. While that cuelist runs in BK it picks the scene.
-fn scenes_section(ui: &mut egui::Ui, state: &ShowState, project: &mut tapetum_project::Project, rt: &SceneRuntime, manual: &mut Option<u64>) {
-    ui.horizontal(|ui| {
-        ui.strong(tr("Szenen", "Scenes"));
-        if ui.button(tr("+ Szene", "+ Scene")).on_hover_text(tr("Neue Szene; zeigt zunächst die Grundszene. Objekte darin verschieben, drehen oder ausblenden.", "New scene; starts out as the base scene. Move, turn or hide objects in it.")).clicked() {
-            let id = project.scenes.iter().map(|s| s.id).max().map_or(1, |m| m + 1);
-            project.scenes.push(tapetum_project::Scene { id, name: trf!("Szene {id}", "Scene {id}", id = id), cue_id: rt.following_cue, ..Default::default() });
-            *manual = Some(id);
-        }
-    });
-    match rt.following_cue {
-        Some(cue) => ui.colored_label(egui::Color32::LIGHT_GREEN, trf!("Folgt der Main-Cuelist (Cue {})", "Follows the main cuelist (cue {})", fmt_cue(cue))),
-        None => ui.colored_label(egui::Color32::GRAY, tr("Main-Cuelist läuft nicht – Szene hier wählen.", "The main cuelist isn't running – choose the scene here.")),
-    };
-    if rt.moving() {
-        ui.colored_label(egui::Color32::LIGHT_YELLOW, tr("Übergang läuft …", "Transition running …"));
-    }
-    if ui.selectable_label(rt.active.is_none(), tr("Grundszene (wie in den Dateien)", "Base scene (as in the files)")).clicked() {
-        *manual = None;
-    }
-    let mut order: Vec<usize> = (0..project.scenes.len()).collect();
-    order.sort_by(|&a, &b| {
-        let (sa, sb) = (&project.scenes[a], &project.scenes[b]);
-        sa.cue_id.unwrap_or(f64::MAX).total_cmp(&sb.cue_id.unwrap_or(f64::MAX)).then(sa.id.cmp(&sb.id))
-    });
-    let mut delete = None;
-    let cues: Vec<(f64, String)> = state.show.conductor().map(|c| c.cues.iter().map(|q| (q.id, q.name.clone())).collect()).unwrap_or_default();
-    for i in order {
-        let id = project.scenes[i].id;
-        let active = rt.active == Some(id);
-        let label = match project.scenes[i].cue_id {
-            Some(c) => trf!("{}  ·  ab Cue {}", "{}  ·  from cue {}", project.scenes[i].name, fmt_cue(c)),
-            None => trf!("{}  ·  ohne Cue", "{}  ·  no cue", project.scenes[i].name),
-        };
-        if ui.selectable_label(active, label).clicked() {
-            *manual = Some(id);
-        }
-        if !active {
-            continue;
-        }
-        // The active scene is the one being edited.
-        let scene = &mut project.scenes[i];
-        ui.indent(("scene", id), |ui| {
-            ui.add(egui::TextEdit::singleline(&mut scene.name).desired_width(200.0));
-            let cue_text = scene.cue_id.map_or(tr("keine (nur von Hand)", "none (manual only)").to_string(), |c| {
-                let name = cues.iter().find(|(q, _)| (q - c).abs() < 1e-6).map_or(String::new(), |(_, n)| format!(" – {n}"));
-                trf!("Cue {}{name}", "Cue {}{name}", fmt_cue(c), name = name)
-            });
-            egui::ComboBox::from_id_salt(("cue", id)).selected_text(cue_text).width(220.0).show_ui(ui, |ui| {
-                ui.selectable_value(&mut scene.cue_id, None, tr("keine (nur von Hand)", "none (manual only)"));
-                for (q, n) in &cues {
-                    ui.selectable_value(&mut scene.cue_id, Some(*q), trf!("Cue {} – {n}", "Cue {} – {n}", fmt_cue(*q), n = n));
-                }
-            });
-            ui.add(egui::DragValue::new(&mut scene.transition).range(0.0..=60.0).speed(0.1).suffix(" s").prefix(tr("Übergang ", "Transition ")));
-            if ui.small_button(tr("Szene löschen", "Delete scene")).clicked() {
-                delete = Some(id);
-            }
-        });
-    }
-    if let Some(id) = delete {
-        project.scenes.retain(|s| s.id != id);
-        if *manual == Some(id) {
-            *manual = None;
-        }
-    }
-}
-
-fn fmt_cue(c: f64) -> String {
-    if c.fract().abs() < 1e-9 { format!("{c:.0}") } else { format!("{c}") }
 }
 
 /// Model files and the objects in them.
@@ -1104,56 +1014,6 @@ fn setup_section(ui: &mut egui::Ui, state: &ShowState, link: &BkLink, bk: Option
             }
         });
     action
-}
-
-fn spacemouse_section(ui: &mut egui::Ui, s: &mut tapetum_project::SpaceMouseSettings, device: Option<String>) {
-    let title = match &device {
-        Some(name) => format!("SpaceMouse: {name}"),
-        None => tr("SpaceMouse (nicht gefunden)", "SpaceMouse (not found)").to_string(),
-    };
-    egui::CollapsingHeader::new(title).id_salt("spacemouse").show(ui, |ui| {
-        ui.checkbox(&mut s.enabled, tr("Kamera mit der SpaceMouse steuern", "Control the camera with the SpaceMouse"));
-        ui.add_enabled_ui(s.enabled, |ui| {
-            ui.add(egui::Slider::new(&mut s.speed, 0.1..=4.0).logarithmic(true).text(tr("Tempo", "Speed")));
-            ui.horizontal(|ui| {
-                ui.label(tr("Die Kappe bewegt", "The cap moves"));
-                ui.selectable_value(&mut s.move_stage, true, tr("die Bühne", "the stage"));
-                ui.selectable_value(&mut s.move_stage, false, tr("die Kamera", "the camera"));
-            });
-            ui.checkbox(&mut s.keep_in_background, tr("Auch steuern, während ein anderes Programm vorne ist", "Keep control while another program is in front"))
-                .on_hover_text(tr("Zum Beispiel beim Bedienen von BlinderKitten. Andere Programme bekommen die SpaceMouse dann nicht, solange Tapetum läuft.", "For example while operating BlinderKitten. Other programs then don't get the SpaceMouse while Tapetum runs."));
-        });
-        ui.colored_label(
-            egui::Color32::GRAY,
-            tr("Schieben: seitlich und hoch/runter, Ziehen/Drücken: näher/weiter, Verdrehen: um die Bühne herum, Kippen: von oben/unten. Linke Taste: Zuschauersicht, rechte Taste: Draufsicht – jeweils so, dass alles zu sehen ist.", "Push: sideways and up/down, pull/press: closer/further, twist: around the stage, tilt: from above/below. Left button: audience view, right button: top view – each framing everything."),
-        );
-        if device.is_none() {
-            ui.colored_label(
-                egui::Color32::GRAY,
-                if cfg!(target_os = "linux") {
-                    tr("Unter Linux braucht der Zugriff auf /dev/hidraw* eine udev-Regel für 3Dconnexion (Hersteller 256f bzw. 046d).", "On Linux, access to /dev/hidraw* needs a udev rule for 3Dconnexion (vendor 256f or 046d).")
-                } else {
-                    tr("Wird automatisch erkannt, sobald sie angeschlossen ist.", "Detected automatically as soon as it's plugged in.")
-                },
-            );
-        }
-    });
-}
-
-fn quality_label(q: Quality) -> &'static str {
-    match q {
-        Quality::Low => tr("Niedrig – ältere Rechner", "Low – older computers"),
-        Quality::Medium => tr("Mittel – Standard", "Medium – standard"),
-        Quality::High => tr("Hoch – starke Grafik", "High – strong graphics"),
-    }
-}
-
-fn quality_hint(q: Quality) -> &'static str {
-    match q {
-        Quality::Low => tr("Für ältere oder günstige Rechner und integrierte Grafik: einfachere Lichtstrahlen, keine Schatten, kein Bloom, Saallicht als gleichmäßiges Licht, Kantenglättung FXAA, 3D etwas unter der Bildschirmauflösung.", "For older or low-cost computers and integrated graphics: simpler beams, no shadows, no bloom, house light as even light, FXAA anti-aliasing, 3D a bit below screen resolution."),
-        Quality::Medium => tr("Für die meisten Rechner: weiche Lichtstrahlen (TAA), Strahlen enden an Bühnenobjekten und werfen dort Schatten.", "For most computers: smooth beams (TAA), beams end at stage objects and cast shadows there."),
-        Quality::High => tr("Für starke Grafikkarten: feinere Strahlen, Schatten auch für jede einzelne Zelle, 3D in voller (Retina-)Auflösung.", "For strong graphics cards: finer beams, shadows for every single cell too, 3D at full (Retina) resolution."),
-    }
 }
 
 const EXAMPLE_ACCENT: egui::Color32 = egui::Color32::from_rgb(255, 194, 77);

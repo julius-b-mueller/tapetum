@@ -482,6 +482,9 @@ pub struct SceneRuntime {
     pub active: Option<u64>,
     /// The main cuelist decides (it runs in BK); otherwise the manual choice.
     pub following_cue: Option<f64>,
+    /// A scene chosen by hand while the main cuelist runs, and the cue it was
+    /// chosen at: shown until BK goes to another cue, then the cuelist decides again.
+    pub detached: Option<(Option<u64>, f64)>,
     started: Option<f64>,
     duration: f32,
     from: HashMap<String, (Vec3, Quat)>,
@@ -509,9 +512,14 @@ pub fn select_scene(mut rt: ResMut<SceneRuntime>, state: Res<ShowState>, bk: Res
     bk.set_conductor_path(state.show.conductor().map(|c| c.short_name.clone()));
     let live = bk.conductor().filter(|c| c.on && bk.info().is_some_and(|i| i.has_open(&state.show_path)));
     let following = live.map(|c| c.current_id);
-    let active = match following {
-        Some(cue) => state.project.scene_for_cue(cue),
-        None => state.manual_scene.filter(|id| state.project.scenes.iter().any(|s| s.id == *id)),
+    if rt.detached.is_some_and(|(_, at)| following != Some(at)) {
+        rt.detached = None;
+    }
+    let exists = |id: &u64| state.project.scenes.iter().any(|s| s.id == *id);
+    let active = match (following, rt.detached) {
+        (Some(_), Some((scene, _))) => scene.filter(exists),
+        (Some(cue), None) => state.project.scene_for_cue(cue),
+        (None, _) => state.manual_scene.filter(exists),
     };
     if rt.following_cue != following {
         rt.following_cue = following;

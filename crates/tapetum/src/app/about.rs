@@ -50,6 +50,10 @@ pub fn menu(ui: &mut egui::Ui) {
             }
             ui.close();
         }
+        if ui.button(tr("Einstellungen …", "Settings …")).clicked() {
+            super::settings::open(ui.ctx());
+            ui.close();
+        }
         if ui.button(tr("Über Tapetum …", "About Tapetum …")).clicked() {
             ui.ctx().data_mut(|d| d.insert_temp(about_id(), true));
             ui.close();

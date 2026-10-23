@@ -3,6 +3,7 @@
 mod about;
 pub use about::open_at_start as open_about_at_start;
 pub use ui::hide_sidebar_at_start;
+pub use overlays::keep_open as keep_overlays_open;
 mod beam;
 mod fixtures;
 mod gizmo;
@@ -11,7 +12,9 @@ pub mod layout;
 mod motion;
 pub mod objects;
 mod orbit;
+mod overlays;
 mod scene;
+mod settings;
 mod spacemouse;
 pub use spacemouse::diagnose as spacemouse_diagnose;
 mod state;
