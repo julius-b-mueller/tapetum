@@ -580,7 +580,10 @@ def write_olga(lang):
         cue["containers"]["commands"]["items"] = items
         cues.append(cue)
     cuelist["containers"]["cues"]["items"] = cues
-    # The cues rely on move in black for position (see CUES).
+    # The cues rely on tracking (BlinderKitten's default is none: every cue would
+    # release what it doesn't set, so a head fading out swung to pan/tilt 0).
+    set_param(cuelist, "/tracking", "Cuelist order")
+    # And on move in black for position (see CUES).
     mib = cuelist["containers"]["moveInBlack"]["parameters"]
     assert any(p["value"] == "/position" and p.get("enabled", True) for p in mib), "the cuelist moves position in black"
     (OUT / lang / f"{NAME}.olga").write_text(json.dumps(show, indent=1, ensure_ascii=False))

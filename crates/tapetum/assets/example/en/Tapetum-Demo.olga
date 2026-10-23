@@ -16328,6 +16328,10 @@
             "value": "",
             "controlAddress": "/timecodeInterface",
             "enabled": true
+          },
+          {
+            "value": "Cuelist order",
+            "controlAddress": "/tracking"
           }
         ],
         "niceName": "1 - Main",
