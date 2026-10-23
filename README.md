@@ -19,13 +19,14 @@ Website and downloads: **https://tapetum.org/**
 3. [Stage objects and IngeTrazo](#stage-objects-and-ingetrazo)
 4. [Scenes](#scenes)
 5. [Fixtures](#fixtures)
-6. [Quality levels](#quality-levels)
-7. [Navigation, SpaceMouse and shortcuts](#navigation-spacemouse-and-shortcuts)
-8. [Files](#files)
-9. [Tested versions](#tested-versions)
-10. [Development and build](#development-and-build)
-11. [Security](#security)
-12. [License and credits](#license-and-credits)
+6. [Fixture library](#fixture-library)
+7. [Quality levels](#quality-levels)
+8. [Navigation, SpaceMouse and shortcuts](#navigation-spacemouse-and-shortcuts)
+9. [Files](#files)
+10. [Tested versions](#tested-versions)
+11. [Development and build](#development-and-build)
+12. [Security](#security)
+13. [License and credits](#license-and-credits)
 
 ---
 
@@ -73,12 +74,27 @@ The **base scene** is the files as they are. Further scenes move, turn or hide o
 Fixture types are recognized from their channels (moving head, spot/PAR, bar, wash, conventional) and can be tuned per type:
 
 - beam type spot/wash, beam angle (up to 360°) or zoom range, lumens, body size, white colour temperature, strobe range
-- LED layouts (rectangular or rings) with LED-to-cell assignment; cells as separate lights or one mixed beam
+- LED layouts (rectangular or rings) with LED-to-cell assignment – several LEDs per cell, each lens lit in its cell's colour; cells as separate lights or one mixed beam
 - colour wheel and gobo wheel (built-in patterns incl. moving water, or your own pictures), fixed gobos for fixtures without a gobo channel
 - pan/tilt range, speed and acceleration – heads travel instead of jumping; the zoom travels at its own top speed too
 - a selected moving head shows its middle direction (level, at the middle of its pan range – ideally towards the stage), with the ends of the range if it is less than a full turn
 
-**Fixture library:** *Export* in a fixture's settings saves its type as `<type name>.tapetum-fixture` in the library folder (default `Documents/Tapetum/Fixtures`, changeable under *⚙ Settings (top of the sidebar)*), its own gobo pictures alongside – and the fixture type itself as `<type name>.mochi` for BlinderKitten (*File → Import…* there), so the two stay together. If the show already has a type of that name, BlinderKitten renames the imported one, and it no longer matches. When a project opens, every fixture type not set up in it takes what the library has for a BlinderKitten type of the same name. Both the library files and the project note when a type's settings last changed: library files newer than the project's settings are offered in a window – take over all, some or none (declined versions aren't offered again). *Load …* takes any fixture file over for a type. The project keeps its own copy of the settings either way, so it needs no library to work.
+Select a fixture and its type's settings open on the right; they apply to every fixture of that type.
+
+## Fixture library
+
+Set a fixture type up once and use it in every show: the fixture library keeps types – Tapetum's settings and BlinderKitten's channels together.
+
+1. **Export:** select a fixture, tune its type, click *Export* at the top of the type's settings. Tapetum saves three things in the library folder (default `Documents/Tapetum/Fixtures`, *⚙ Settings → Fixture library* changes it, *Show in file manager* opens it):
+   - `<type name>.tapetum-fixture` – the settings (plain JSON, with the time they last changed),
+   - `<type name> gobos/` – the type's own gobo pictures, if it has any,
+   - `<type name>.mochi` – the fixture type itself for BlinderKitten, with the channel families it uses.
+2. **Into another show:** in BlinderKitten, *File → Import…* the `.mochi` and patch fixtures of that type. If the show already has a type of that name, BlinderKitten renames the imported one – then it no longer matches; import into shows that don't have it yet.
+3. **Open the show in Tapetum:** every fixture type not set up in the project takes what the library has for a BlinderKitten type of the same name, by itself. The type's settings say where they come from (*from the fixture library*, *changed here*, *not in the fixture library*).
+4. **Updates:** export a type again after improving it, and projects that use it offer the newer settings when they open (*Newer fixture definitions*): take over all, some or none. Declined versions aren't offered again, newer ones are. Settings changed in a project later than the library file are left alone.
+5. **Any file:** *Load …* in a type's settings takes a `.tapetum-fixture` from anywhere over (it replaces the type's current settings).
+
+**Sharing:** give colleagues the `.tapetum-fixture`, the `gobos` folder and the `.mochi` – they put them in their library folder and import the `.mochi` in BlinderKitten. Tapetum only takes gobo pictures from the fixture file's own folder. Every project keeps its own copy of the settings, so it works without the library, on another computer too.
 
 ## Quality levels
 
@@ -101,7 +117,8 @@ Choose it under *⚙ Settings (top of the sidebar)*. If it runs below 25 fps for
 | Gizmo arrows / rings | move (Shift: 10 cm steps) / turn (15° steps, Shift: free) |
 | Cmd/Ctrl+Z, Shift+Cmd/Ctrl+Z, Ctrl+Y | undo / redo |
 | Esc | clear the selection |
-| Tab | hide/show the sidebar |
+| ← → | previous / next scene |
+| Tab | hide/show the sidebar (also right after clicking a button) |
 | F11 | full screen |
 
 A **3Dconnexion SpaceMouse** moves the stage (or the camera, switchable). Its buttons jump to the audience view and the top view, framed to show everything. On macOS Tapetum uses the 3Dconnexion driver; it can keep the SpaceMouse while you operate BlinderKitten. On Linux, `/dev/hidraw*` needs a udev rule for vendor `256f` (and `046d` for older models).
@@ -110,6 +127,7 @@ A **3Dconnexion SpaceMouse** moves the stage (or the camera, switchable). Its bu
 
 - `<show>.tapetum` next to the show: everything BlinderKitten doesn't know (fixture settings, objects, scenes, render settings, positions not yet in BlinderKitten). Plain JSON, saved as you go.
 - `tapetum-gobos/` next to the show: imported gobo pictures.
+- The fixture library (`Documents/Tapetum/Fixtures` unless changed): `.tapetum-fixture`, `.mochi` and `gobos` folders, see [Fixture library](#fixture-library).
 - Language and the last show: `~/Library/Application Support/Tapetum` (macOS), `%APPDATA%\Tapetum` (Windows), `~/.config/tapetum` (Linux).
 
 ## Tested versions
@@ -132,7 +150,7 @@ Developer commands: `tapetum dump <show>`, `tapetum monitor --show <show>`, `tap
 
 ## Security
 
-Show, project and model files can come from anywhere. Tapetum only reads them: it never runs anything from them, limits the size of every file it reads (including files a model refers to and entries of `.igz` archives) and refuses devices and pipes. It talks to BlinderKitten on `127.0.0.1` only; Art-Net is received on all network interfaces (so BlinderKitten may run on another computer) and only ever changes what you see. Tapetum sends nothing to the internet. Please report vulnerabilities privately to hello@tapetum.org.
+Show, project, fixture and model files can come from anywhere. Tapetum only reads them: it never runs anything from them, limits the size of every file it reads (including files a model refers to and entries of `.igz` archives) and refuses devices and pipes. Gobo pictures only travel between a project and the fixture library from inside their own folders, and only if they are real pictures. It talks to BlinderKitten on `127.0.0.1` only; Art-Net is received on all network interfaces (so BlinderKitten may run on another computer) and only ever changes what you see. Tapetum sends nothing to the internet. Please report vulnerabilities privately to hello@tapetum.org.
 
 ## License and credits
 

@@ -29,7 +29,7 @@
     "name": "Tapetum",
     "applicationCategory": "MultimediaApplication",
     "operatingSystem": "macOS, Windows, Linux",
-    "softwareVersion": "1.1.0",
+    "softwareVersion": "1.2.0",
     "license": "https://opensource.org/license/mit",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
     "url": "https://tapetum.org/",
@@ -57,7 +57,7 @@
   </nav>
 
   <header class="hero">
-    <div class="hero-img" role="img" aria-label="Theaterbühne in Tapetum: blaue Moving-Head-Strahlen im Haze, roter Vorhang, warm beleuchteter Rundhorizont"></div>
+    <div class="hero-img" role="img" aria-label="Theaterbühne in Tapetum: Moving-Head-Strahlen im Haze, Stern-Gobos auf dem Boden, roter Vorhang, rosa beleuchteter Rundhorizont"></div>
     <div class="hero-inner">
       <div class="eyebrow" data-de="3D-Lichtvisualisierung für BlinderKitten" data-en="3D lighting visualizer for BlinderKitten">3D-Lichtvisualisierung für BlinderKitten</div>
       <h1><span data-de="Licht sehen," data-en="See the light">Licht sehen,</span><br><span class="grad" data-de="bevor es leuchtet." data-en="before it shines.">bevor es leuchtet.</span></h1>
@@ -67,7 +67,7 @@
         <a class="btn-primary" href="#download" data-de="Kostenlos herunterladen" data-en="Download for free">Kostenlos herunterladen</a>
         <a class="btn-secondary" href="start.html" data-de="Erste Schritte →" data-en="Getting started →">Erste Schritte →</a>
       </div>
-      <p class="hero-meta" data-de="Version 1.1.0 · macOS, Windows, Linux · frei und quelloffen" data-en="Version 1.1.0 · macOS, Windows, Linux · free and open source">Version 1.1.0 · macOS, Windows, Linux · frei und quelloffen</p>
+      <p class="hero-meta" data-de="Version 1.2.0 · macOS, Windows, Linux · frei und quelloffen" data-en="Version 1.2.0 · macOS, Windows, Linux · free and open source">Version 1.2.0 · macOS, Windows, Linux · frei und quelloffen</p>
     </div>
   </header>
 
@@ -106,7 +106,7 @@
 
       <div class="row">
         <div>
-          <div class="shot"><img src="assets/set.jpg" alt="Bank aus IngeTrazo auf der Bühne, Wasser-Gobo auf dem Boden, Strahlen im Haze" loading="lazy"></div>
+          <div class="shot"><img src="assets/set.jpg" alt="Bank und Laterne aus IngeTrazo auf der Bühne, Stern-Gobos auf dem Boden, Strahlen im Haze" loading="lazy"></div>
         </div>
         <div>
           <div class="kicker amber">IngeTrazo</div>
@@ -136,15 +136,38 @@
           <p class="de">Tapetum kennt deine Lampen, Gruppen und Cues aus der Show-Datei – du musst nichts doppelt anlegen. Was du in BlinderKitten programmierst, siehst du sofort auf der Bühne. Und wenn du in Tapetum eine Lampe an ihren Platz ziehst, landet die Position direkt in BlinderKitten.</p>
           <p class="en">Tapetum knows your fixtures, groups and cues from the show file – nothing to set up twice. What you program in BlinderKitten, you see on stage at once. And when you drag a fixture into place in Tapetum, its position goes straight to BlinderKitten.</p>
           <ul class="checks de">
-            <li>Keine Fixture-Bibliothek nötig: Lampen werden an ihren Kanälen erkannt</li>
+            <li>Kein Fixture-Import nötig: Lampen werden an ihren Kanälen erkannt</li>
             <li>Auswahl wie im Pult: Klick auf eine Lampe, Rechtsklick auf ihre Gruppe</li>
             <li>Umbauten folgen automatisch den Cues der Main-Cuelist</li>
           </ul>
           <ul class="checks en">
-            <li>No fixture library needed: fixtures are recognized by their channels</li>
+            <li>No fixture import needed: fixtures are recognized by their channels</li>
             <li>Selection like on the desk: click a fixture, right-click for its group</li>
             <li>Set changes follow the cues of the main cuelist automatically</li>
           </ul>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <div class="shot"><img src="assets/cells.jpg" alt="Moving Head von unten: eine LED in der Mitte, zwei Ringe darum, jede Zelle in einer anderen Farbe" loading="lazy"></div>
+        </div>
+        <div>
+          <div class="kicker" data-de="Gerätebibliothek" data-en="Fixture library">Gerätebibliothek</div>
+          <h3 style="font-size:1.5rem" data-de="Einmal einrichten, in jeder Show nutzen" data-en="Set up once, use in every show">Einmal einrichten, in jeder Show nutzen</h3>
+          <p class="de">Strahlwinkel, Gobos, LED-Ringe: Was du für einen Gerätetyp einstellst, exportierst du mit einem Klick in deine Gerätebibliothek – zusammen mit dem Gerätetyp für BlinderKitten. Jede Show mit diesem Typ übernimmt die Einstellungen von selbst.</p>
+          <p class="en">Beam angle, gobos, LED rings: what you set for a fixture type, you export to your fixture library with one click – together with the fixture type for BlinderKitten. Every show with that type takes the settings over by itself.</p>
+          <ul class="checks de">
+            <li>Jede LED einzeln: Ringe oder Raster, mehrere LEDs pro Zelle, jede Linse in ihrer Farbe</li>
+            <li>Neben den Einstellungen liegt eine <code>.mochi</code> – in BlinderKitten importieren, fertig</li>
+            <li>Neuere Fassungen bietet Tapetum beim Öffnen an; Dateien lassen sich einfach weitergeben</li>
+          </ul>
+          <ul class="checks en">
+            <li>Every LED on its own: rings or grids, several LEDs per cell, each lens in its colour</li>
+            <li>Next to the settings lies a <code>.mochi</code> – import it in BlinderKitten, done</li>
+            <li>Tapetum offers newer versions when a show opens; files are easy to pass on</li>
+          </ul>
+          <p><a href="start.html#bibliothek" data-de="So funktioniert die Gerätebibliothek →" data-en="How the fixture library works →">So funktioniert die Gerätebibliothek →</a></p>
         </div>
       </div>
     </section>
@@ -165,10 +188,10 @@
         <div class="card"><div class="icon">🔒</div><h3 data-de="Frei, lokal, ohne Konto" data-en="Free, local, no account">Frei, lokal, ohne Konto</h3><p class="de">Kostenlos und quelloffen. Keine Cloud, kein Tracking – deine Shows und Bühnenbilder bleiben auf deinem Rechner.</p><p class="en">Free and open source. No cloud, no tracking – your shows and sets stay on your computer.</p></div>
       </div>
       <div class="chips de">
-        <span>Moving Heads mit Trägheit</span><span>LED-Zellen &amp; -Ringe</span><span>Farb- und Goboräder</span><span>eigene Gobo-Bilder</span><span>bewegtes Wasser</span><span>Zoom mit Fahrzeit</span><span>Strobe</span><span>Lampen bis 360°</span><span>Gaze &amp; Schattenspiel</span><span>SpaceMouse</span><span>Rückgängig</span><span>Deutsch &amp; Englisch</span>
+        <span>Moving Heads mit Trägheit</span><span>LED-Zellen &amp; -Ringe</span><span>Gerätebibliothek</span><span>Farb- und Goboräder</span><span>eigene Gobo-Bilder</span><span>bewegtes Wasser</span><span>Zoom mit Fahrzeit</span><span>Strobe</span><span>Lampen bis 360°</span><span>Gaze &amp; Schattenspiel</span><span>SpaceMouse</span><span>Rückgängig</span><span>Deutsch &amp; Englisch</span>
       </div>
       <div class="chips en">
-        <span>Moving heads with inertia</span><span>LED cells &amp; rings</span><span>Colour and gobo wheels</span><span>your own gobo pictures</span><span>moving water</span><span>Zoom with travel time</span><span>Strobe</span><span>fixtures up to 360°</span><span>Gauze &amp; shadow play</span><span>SpaceMouse</span><span>Undo</span><span>German &amp; English</span>
+        <span>Moving heads with inertia</span><span>LED cells &amp; rings</span><span>Fixture library</span><span>Colour and gobo wheels</span><span>your own gobo pictures</span><span>moving water</span><span>Zoom with travel time</span><span>Strobe</span><span>fixtures up to 360°</span><span>Gauze &amp; shadow play</span><span>SpaceMouse</span><span>Undo</span><span>German &amp; English</span>
       </div>
     </section>
 
@@ -210,8 +233,8 @@
     <section id="download">
       <div class="kicker">Download</div>
       <h2 data-de="Tapetum herunterladen" data-en="Download Tapetum">Tapetum herunterladen</h2>
-      <p class="sub de">Version 1.1.0 · frei unter der MIT-Lizenz · getestet mit BlinderKitten 1.0.1b98 und IngeTrazo 0.5.7</p>
-      <p class="sub en">Version 1.1.0 · free under the MIT License · tested with BlinderKitten 1.0.1b98 and IngeTrazo 0.5.7</p>
+      <p class="sub de">Version 1.2.0 · frei unter der MIT-Lizenz · getestet mit BlinderKitten 1.0.1b98 und IngeTrazo 0.5.7</p>
+      <p class="sub en">Version 1.2.0 · free under the MIT License · tested with BlinderKitten 1.0.1b98 and IngeTrazo 0.5.7</p>
       <div class="dl">
         <div class="card" data-platform="mac">
           <h3> macOS</h3>

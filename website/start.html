@@ -43,8 +43,9 @@
         <a href="#installieren" data-de="1 · Installieren" data-en="1 · Install">1 · Installieren</a>
         <a href="#verbinden" data-de="2 · BlinderKitten verbinden" data-en="2 · Connect BlinderKitten">2 · BlinderKitten verbinden</a>
         <a href="#lampen" data-de="3 · Lampen einrichten" data-en="3 · Set up fixtures">3 · Lampen einrichten</a>
-        <a href="#buehnenbild" data-de="4 · Bühnenbild aus IngeTrazo" data-en="4 · The set from IngeTrazo">4 · Bühnenbild aus IngeTrazo</a>
-        <a href="#szenen" data-de="5 · Umbauten als Szenen" data-en="5 · Set changes as scenes">5 · Umbauten als Szenen</a>
+        <a href="#bibliothek" data-de="4 · Gerätebibliothek" data-en="4 · Fixture library">4 · Gerätebibliothek</a>
+        <a href="#buehnenbild" data-de="5 · Bühnenbild aus IngeTrazo" data-en="5 · The set from IngeTrazo">5 · Bühnenbild aus IngeTrazo</a>
+        <a href="#szenen" data-de="6 · Umbauten als Szenen" data-en="6 · Set changes as scenes">6 · Umbauten als Szenen</a>
       </div>
     </div>
 
@@ -96,19 +97,44 @@
             <li><strong>Lampen ohne Position</strong> in BlinderKitten stellt Tapetum automatisch in Reihen auf. Eine Lampe anklicken, dann an den Pfeilen ziehen (verschieben) oder an den Ringen (drehen). Drehen rastet in 15°-Schritten ein, mit gedrückter Shift-Taste frei.</li>
             <li>Tapetum trägt die Position <strong>live in BlinderKitten</strong> ein. Dort speichern, damit sie bleibt. Ist BK gerade nicht offen, merkt sich Tapetum die Position und überträgt sie später.</li>
             <li><strong>Gruppen</strong> aus BK wählst du per Rechtsklick auf eine Lampe – praktisch, um eine ganze Traverse auf einmal zu verschieben.</li>
-            <li><strong>Gerätetyp anpassen</strong> (einmal pro Typ): Strahlwinkel bzw. Zoombereich, Lichtstrom, Farbrad, Goborad (eingebaute Muster oder eigene Bilder), LED-Anordnung, Pan/Tilt-Bereich. Pan/Tilt/Zoom-Bereiche schreibt Tapetum als „Physical range“ nach BK zurück. Mit <strong><em>Exportieren</em></strong> landet der Gerätetyp in deiner Gerätebibliothek (Ordner unter <em>⚙ Einstellungen (oben in der Seitenleiste)</em>): Jedes neue Projekt mit einem Gerätetyp gleichen Namens übernimmt die Einstellungen automatisch.</li>
+            <li><strong>Gerätetyp anpassen</strong> (einmal pro Typ): Strahlwinkel bzw. Zoombereich, Lichtstrom, Farbrad, Goborad (eingebaute Muster oder eigene Bilder), LED-Anordnung, Pan/Tilt-Bereich. Pan/Tilt/Zoom-Bereiche schreibt Tapetum als „Physical range“ nach BK zurück. Die Einstellungen gelten für alle Lampen dieses Typs; mit der <a href="#bibliothek">Gerätebibliothek</a> auch in jeder weiteren Show.</li>
           </ol>
           <ol class="steps en">
             <li><strong>Fixtures without a position</strong> in BlinderKitten are lined up automatically. Click a fixture, then drag the arrows (move) or the rings (turn). Turning snaps in 15° steps, hold Shift to turn freely.</li>
             <li>Tapetum enters the position <strong>live in BlinderKitten</strong>. Save there to keep it. If BK isn't open, Tapetum remembers the position and sends it later.</li>
             <li><strong>Groups</strong> from BK are selected with a right click on a fixture – handy for moving a whole truss at once.</li>
-            <li><strong>Tune the fixture type</strong> (once per type): beam angle or zoom range, lumens, colour wheel, gobo wheel (built-in patterns or your own pictures), LED layout, pan/tilt range. Tapetum writes pan/tilt/zoom ranges back to BK as “Physical range”. With <strong><em>Export</em></strong> the fixture type goes into your fixture library (folder under <em>⚙ Settings (top of the sidebar)</em>): every new project with a fixture type of the same name takes the settings over automatically.</li>
+            <li><strong>Tune the fixture type</strong> (once per type): beam angle or zoom range, lumens, colour wheel, gobo wheel (built-in patterns or your own pictures), LED layout, pan/tilt range. Tapetum writes pan/tilt/zoom ranges back to BK as “Physical range”. The settings apply to every fixture of that type; with the <a href="#bibliothek">fixture library</a> in every further show too.</li>
           </ol>
         </div>
 
+        <div class="phase" id="bibliothek">
+          <h2><span class="tag" data-de="Teil 4" data-en="Part 4">Teil 4</span> <span data-de="Gerätebibliothek" data-en="Fixture library">Gerätebibliothek</span></h2>
+          <div class="shot"><img src="assets/cells.jpg" alt="Moving Head im Beispiel von unten: eine LED in der Mitte, Ringe aus 6 und 12 LEDs, jede Zelle in einer anderen Farbe" loading="lazy"></div>
+          <p style="margin-bottom:1.2rem" class="de">Einen Gerätetyp richtest du einmal ein – die Gerätebibliothek nimmt ihn in jede weitere Show mit. Darin liegen Tapetums Einstellungen und der Gerätetyp für BlinderKitten zusammen. Im Bild: der Moving Head des Beispiels mit drei LED-Ringen und sieben Zellen, jede LED als eigene Linse.</p>
+          <p style="margin-bottom:1.2rem" class="en">You set a fixture type up once – the fixture library takes it into every further show. It holds Tapetum's settings and the fixture type for BlinderKitten together. In the picture: the example's moving head with three LED rings and seven cells, every LED a lens of its own.</p>
+          <ol class="steps de">
+            <li><strong>Exportieren:</strong> Eine Lampe anklicken, ihren Gerätetyp einrichten und oben in den Typ-Einstellungen auf <strong><em>Exportieren</em></strong> klicken. Tapetum legt im Bibliotheksordner drei Dinge ab: <code>&lt;Typname&gt;.tapetum-fixture</code> mit den Einstellungen, den Ordner <code>&lt;Typname&gt; gobos</code> mit eigenen Gobo-Bildern (falls es welche gibt) und <code>&lt;Typname&gt;.mochi</code> – den Gerätetyp selbst für BlinderKitten. <em>Im Dateimanager zeigen</em> öffnet den Ordner.</li>
+            <li><strong>Bibliotheksordner:</strong> Standard ist <code>Dokumente/Tapetum/Fixtures</code>. Unter <em>⚙ Einstellungen → Gerätebibliothek</em> wählst du einen anderen, etwa einen geteilten Ordner für das ganze Team.</li>
+            <li><strong>In einer anderen Show nutzen:</strong> In BlinderKitten <em>File → Import…</em> wählen, die <code>.mochi</code> importieren und Lampen dieses Typs patchen. Gibt es in der Show schon einen Typ gleichen Namens, benennt BlinderKitten den importierten um – dann passt er nicht mehr. Also nur in Shows importieren, die den Typ noch nicht haben.</li>
+            <li><strong>Show in Tapetum öffnen:</strong> Jeder Gerätetyp, der im Projekt noch nicht eingerichtet ist, übernimmt die Einstellungen aus der Bibliothek von selbst – über den Namen des Typs in BlinderKitten. In den Typ-Einstellungen steht, woher sie kommen: <em>aus der Gerätebibliothek</em>, <em>hier geändert</em> oder <em>nicht in der Gerätebibliothek</em>.</li>
+            <li><strong>Verbessern und verteilen:</strong> Exportierst du einen Typ erneut, bieten Projekte, die ihn nutzen, beim Öffnen die neueren Einstellungen an (<em>Neuere Gerätedefinitionen</em>): alle, einige oder keine übernehmen. Abgelehnte Fassungen kommen nicht wieder, neuere schon. Was du im Projekt später geändert hast, bleibt unangetastet.</li>
+            <li><strong>Einzelne Datei übernehmen:</strong> <em>Laden …</em> in den Typ-Einstellungen nimmt eine <code>.tapetum-fixture</code> von irgendwo – zum Beispiel aus einer Mail – und ersetzt damit die jetzigen Einstellungen.</li>
+          </ol>
+          <ol class="steps en">
+            <li><strong>Export:</strong> click a fixture, set its type up and click <strong><em>Export</em></strong> at the top of the type's settings. Tapetum puts three things into the library folder: <code>&lt;type name&gt;.tapetum-fixture</code> with the settings, the folder <code>&lt;type name&gt; gobos</code> with its own gobo pictures (if there are any) and <code>&lt;type name&gt;.mochi</code> – the fixture type itself for BlinderKitten. <em>Show in file manager</em> opens the folder.</li>
+            <li><strong>Library folder:</strong> by default <code>Documents/Tapetum/Fixtures</code>. Under <em>⚙ Settings → Fixture library</em> you choose another one, a shared folder for the whole team for example.</li>
+            <li><strong>Use it in another show:</strong> in BlinderKitten choose <em>File → Import…</em>, import the <code>.mochi</code> and patch fixtures of that type. If the show already has a type of that name, BlinderKitten renames the imported one – then it no longer matches. So import only into shows that don't have the type yet.</li>
+            <li><strong>Open the show in Tapetum:</strong> every fixture type not set up in the project yet takes the settings from the library by itself – by the type's name in BlinderKitten. The type's settings say where they come from: <em>from the fixture library</em>, <em>changed here</em> or <em>not in the fixture library</em>.</li>
+            <li><strong>Improve and pass on:</strong> export a type again and projects that use it offer the newer settings when they open (<em>Newer fixture definitions</em>): take over all, some or none. Declined versions don't come back, newer ones do. What you changed in the project later stays as it is.</li>
+            <li><strong>Take over a single file:</strong> <em>Load …</em> in the type's settings takes a <code>.tapetum-fixture</code> from anywhere – from an email, say – and replaces the current settings with it.</li>
+          </ol>
+          <div class="note de" style="margin-top:1rem"><strong>Weitergeben:</strong> Gib die <code>.tapetum-fixture</code>, den <code>gobos</code>-Ordner und die <code>.mochi</code> zusammen weiter. Gobo-Bilder übernimmt Tapetum nur aus dem Ordner der Gerätedatei selbst. Jedes Projekt behält seine eigene Kopie der Einstellungen – es läuft also auch ohne Bibliothek, zum Beispiel auf einem anderen Rechner.</div>
+          <div class="note en" style="margin-top:1rem"><strong>Passing on:</strong> hand over the <code>.tapetum-fixture</code>, the <code>gobos</code> folder and the <code>.mochi</code> together. Tapetum only takes gobo pictures from the fixture file's own folder. Every project keeps its own copy of the settings – so it runs without the library too, on another computer for example.</div>
+        </div>
+
         <div class="phase amber" id="buehnenbild">
-          <h2><span class="tag" data-de="Teil 4" data-en="Part 4">Teil 4</span> <span data-de="Bühnenbild aus IngeTrazo" data-en="The set from IngeTrazo">Bühnenbild aus IngeTrazo</span></h2>
-          <div class="shot"><img src="assets/set.jpg" alt="Bank aus IngeTrazo auf der Bühne, Wasser-Gobo auf dem Boden" loading="lazy"></div>
+          <h2><span class="tag" data-de="Teil 5" data-en="Part 5">Teil 5</span> <span data-de="Bühnenbild aus IngeTrazo" data-en="The set from IngeTrazo">Bühnenbild aus IngeTrazo</span></h2>
+          <div class="shot"><img src="assets/set.jpg" alt="Bank und Laterne aus IngeTrazo auf der Bühne, Stern-Gobos auf dem Boden" loading="lazy"></div>
           <ol class="steps de">
             <li><strong>In IngeTrazo zeichnen</strong> wie gewohnt und als <code>.igz</code> speichern – am besten neben der Show-Datei. Die Vorderansicht von IngeTrazo ist die Zuschauersicht in Tapetum; Maße in Metern passen direkt zu den Lampenpositionen in BK.</li>
             <li>In Tapetum unter <em>Bühnenobjekte</em> auf <strong><em>Importieren …</em></strong> klicken und die <code>.igz</code> wählen. Jede Gruppe und Komponente wird ein eigenes Objekt; Materialien und Texturen kommen mit. Ein Exportschritt ist nicht nötig.</li>
@@ -124,8 +150,8 @@
         </div>
 
         <div class="phase amber" id="szenen">
-          <h2><span class="tag" data-de="Teil 5" data-en="Part 5">Teil 5</span> <span data-de="Umbauten als Szenen" data-en="Set changes as scenes">Umbauten als Szenen</span></h2>
-          <div class="shot"><img src="assets/party.jpg" alt="Szene „Fest“ im Beispiel: der Tisch in der Mitte, Bank und Podest auf den Seitenbühnen, farbige Moving Heads treffen sich auf dem Tisch" loading="lazy"></div>
+          <h2><span class="tag" data-de="Teil 6" data-en="Part 6">Teil 6</span> <span data-de="Umbauten als Szenen" data-en="Set changes as scenes">Umbauten als Szenen</span></h2>
+          <div class="shot"><img src="assets/party.jpg" alt="Szene „Fest“ im Beispiel: der Tisch in der Mitte, zwei Personen davor, gelbe und türkise Stern-Gobos daneben, Strahlen im Haze" loading="lazy"></div>
           <ol class="steps de">
             <li>Die <strong>Grundszene</strong> zeigt alles wie in den Dateien. Die Szenen hängen wie Lesezeichen von der oberen Bildschirmkante: Fährst du mit der Maus darüber, erscheinen alle, dazu <strong><em>+</em></strong> für eine neue. In einer Szene verschiebst, drehst oder versteckst du Objekte; ein Rechtsklick auf das Lesezeichen ändert Name, Cue und Übergang.</li>
             <li>Die Szene an eine <strong>Cue der Main-Cuelist</strong> koppeln. Läuft die Cuelist in BlinderKitten, zeigt Tapetum jeweils die Szene mit der höchsten Cue-ID bis zur aktuellen Cue – mit weichem Übergang.</li>
