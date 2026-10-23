@@ -4,6 +4,7 @@ mod about;
 pub use about::open_at_start as open_about_at_start;
 pub use ui::hide_sidebar_at_start;
 pub use overlays::keep_open as keep_overlays_open;
+pub use settings::open_at_start as open_settings_at_start;
 mod beam;
 mod fixtures;
 mod gizmo;
@@ -35,7 +36,7 @@ use bevy::window::{PresentMode, WindowResolution};
 use bevy_egui::{EguiGlobalSettings, EguiPlugin, EguiPrimaryContextPass};
 use tapetum_project::Project;
 
-use state::{BkLink, BkStatus, Dmx, GoboImport, ObjectImport, PlacementSync, RangeSync, ShowState, Watch};
+use state::{BkLink, BkStatus, Dmx, GoboImport, LibraryJobs, ObjectImport, PlacementSync, RangeSync, ShowState, Watch};
 
 #[derive(Resource)]
 struct Offscreen(Handle<Image>);
@@ -79,7 +80,14 @@ pub const PORT_GRACE: std::time::Duration = std::time::Duration::from_millis(150
 pub fn run(opts: Options) -> Result<()> {
     let show = bk_olga::load(&opts.show)?;
     let project_path = Project::path_for_show(&opts.show);
-    let project = Project::load_or_default(&project_path)?;
+    let mut project = Project::load_or_default(&project_path)?;
+    // Fixture types not set up in this project take what the fixture library has for them.
+    let project_dir = project_path.parent().map(std::path::PathBuf::from).unwrap_or_default();
+    let taken = crate::fixture_library::dir().map(|lib| crate::fixture_library::apply(&show, &mut project, &project_dir, &lib)).unwrap_or_default();
+    if !taken.is_empty() {
+        project.save(&project_path)?;
+    }
+    let library_status = (!taken.is_empty()).then(|| trf!("Aus der Gerätebibliothek: {}", "From the fixture library: {}", taken.join(", ")));
     // A port given on the command line is taken as it is; the project's, if
     // another program holds it, gives way to the next free one (the sidebar
     // then offers to move the Tapetum interfaces in BK there).
@@ -122,7 +130,7 @@ pub fn run(opts: Options) -> Result<()> {
         anchor_object: None,
         manual_scene: opts.scene,
         led_brush: 0,
-        status: None,
+        status: library_status,
     })
     .insert_resource(Dmx { receiver, bind: opts.bind })
     .insert_resource(bk_status)
@@ -139,6 +147,7 @@ pub fn run(opts: Options) -> Result<()> {
     .init_resource::<objects::Occluders>()
     .init_resource::<gizmo::GizmoState>()
     .init_resource::<GoboImport>()
+    .init_resource::<LibraryJobs>()
     .init_resource::<ObjectImport>()
     .add_systems(Startup, (fixtures::setup_assets, scene::setup_scene, setup_gizmos))
     .add_systems(

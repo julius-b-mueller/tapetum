@@ -9,12 +9,54 @@ fn open_id() -> egui::Id {
     egui::Id::new("settings_open")
 }
 
+static OPEN_AT_START: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+
+/// Open the settings at start (for screenshots).
+pub fn open_at_start() {
+    OPEN_AT_START.store(true, std::sync::atomic::Ordering::Relaxed);
+}
+
 pub fn open(ctx: &egui::Context) {
     ctx.data_mut(|d| d.insert_temp(open_id(), true));
 }
 
+/// A folder chosen in the dialog, on its way from the dialog's thread.
+static PICKED: std::sync::Mutex<Option<std::path::PathBuf>> = std::sync::Mutex::new(None);
+
+/// Where exported fixtures go and where new projects look for them.
+fn library_folder(ui: &mut egui::Ui) {
+    if let Some(dir) = PICKED.lock().ok().and_then(|mut p| p.take()) {
+        crate::fixture_library::set_dir(Some(dir));
+    }
+    ui.strong(tr("Gerätebibliothek", "Fixture library"));
+    ui.colored_label(egui::Color32::GRAY, tr("Exportierte Geräte landen hier. Projekte übernehmen sie automatisch für Gerätetypen gleichen Namens, die dort noch nicht eingestellt sind.", "Exported fixtures go here. Projects take them over automatically for fixture types of the same name not set up there yet."));
+    let dir = crate::fixture_library::dir();
+    ui.label(dir.as_ref().map_or_else(|| tr("kein Ordner", "no folder").to_string(), |d| d.display().to_string()));
+    ui.horizontal(|ui| {
+        if ui.button(tr("Ändern …", "Change …")).clicked() {
+            std::thread::spawn(|| {
+                if let Some(d) = rfd::FileDialog::new().set_title(tr("Ordner der Gerätebibliothek", "Fixture library folder")).pick_folder()
+                    && let Ok(mut p) = PICKED.lock()
+                {
+                    *p = Some(d);
+                }
+            });
+        }
+        if let Some(d) = &dir
+            && ui.button(tr("Im Dateimanager zeigen", "Show in file manager")).clicked()
+        {
+            let _ = std::fs::create_dir_all(d);
+            crate::example::reveal(d);
+        }
+        let custom = crate::i18n::UserSettings::load().fixture_library.is_some();
+        if custom && ui.button(tr("Standard", "Default")).on_hover_text(crate::fixture_library::default_dir().map(|d| d.display().to_string()).unwrap_or_default()).clicked() {
+            crate::fixture_library::set_dir(None);
+        }
+    });
+}
+
 pub fn window(ctx: &egui::Context, project: &mut Project, spacemouse: Option<String>) {
-    let mut open = ctx.data(|d| d.get_temp::<bool>(open_id()).unwrap_or(false));
+    let mut open = ctx.data(|d| d.get_temp::<bool>(open_id()).unwrap_or(false)) || OPEN_AT_START.swap(false, std::sync::atomic::Ordering::Relaxed);
     if !open {
         return;
     }
@@ -65,6 +107,8 @@ pub fn window(ctx: &egui::Context, project: &mut Project, spacemouse: Option<Str
                         r.house_color = None;
                     }
                 });
+                ui.separator();
+                library_folder(ui);
                 ui.separator();
                 spacemouse_section(ui, &mut project.spacemouse, spacemouse);
             });

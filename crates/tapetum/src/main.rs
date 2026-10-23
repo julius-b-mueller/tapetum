@@ -8,6 +8,7 @@ mod i18n;
 mod app;
 mod bk_link;
 mod example;
+mod fixture_library;
 mod routing;
 mod stage;
 
@@ -68,6 +69,9 @@ struct ViewArgs {
     /// Start with the sidebar hidden (for screenshots).
     #[arg(long, hide = true)]
     no_sidebar: bool,
+    /// Open the settings at start (for screenshots).
+    #[arg(long, hide = true)]
+    settings: bool,
     /// Keep the faders and the scene bar out (for screenshots).
     #[arg(long, hide = true)]
     overlays_open: bool,
@@ -145,6 +149,9 @@ fn main() -> Result<()> {
             }
             if v.no_sidebar {
                 app::hide_sidebar_at_start();
+            }
+            if v.settings {
+                app::open_settings_at_start();
             }
             if v.overlays_open {
                 app::keep_overlays_open();

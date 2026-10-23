@@ -71,6 +71,8 @@ pub struct UserSettings {
     pub language: Option<Language>,
     /// Opened when Tapetum starts without a show (from the dock, the start menu).
     pub last_show: Option<PathBuf>,
+    /// The fixture library folder; `None` is `Documents/Tapetum/Fixtures`.
+    pub fixture_library: Option<PathBuf>,
 }
 
 /// Tapetum's folder for per-user files (settings, the built-in example).

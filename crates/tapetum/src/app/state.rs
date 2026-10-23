@@ -299,6 +299,8 @@ pub fn poll_reload(watch: Option<Res<Watch>>, mut state: ResMut<ShowState>, mut 
                         }
                     }
                 }
+                // New fixture types take what the fixture library has for them.
+                let taken = crate::fixture_library::dir().map(|lib| crate::fixture_library::apply(&show, &mut project, &state.project_dir(), &lib)).unwrap_or_default();
                 // Placements BK now has saved itself, too.
                 project.pending_placements.retain(|id, p| {
                     let Some(f) = show.fixtures.iter().find(|f| f.id == *id) else { return true };
@@ -312,7 +314,11 @@ pub fn poll_reload(watch: Option<Res<Watch>>, mut state: ResMut<ShowState>, mut 
                 }
                 state.show = show;
                 state.generation += 1;
-                state.status = Some(tr("Show neu geladen", "Show reloaded").into());
+                state.status = Some(if taken.is_empty() {
+                    tr("Show neu geladen", "Show reloaded").into()
+                } else {
+                    trf!("Show neu geladen. Aus der Gerätebibliothek: {}", "Show reloaded. From the fixture library: {}", taken.join(", "))
+                });
                 let n = state.show.fixtures.len();
                 if state.selected.is_some_and(|i| i >= n) || state.selection.iter().any(|&i| i >= n) {
                     state.clear_selection();
@@ -453,6 +459,79 @@ impl GoboImport {
         let file = rx.lock().ok()?.try_recv().ok()?;
         let (ty, slot, _) = self.job.take()?;
         Some((ty, slot, crate::app::gobo::import(&file?, &state.project_dir())))
+    }
+}
+
+/// What a fixture library dialog came back with.
+pub enum LibraryDone {
+    /// Saved: (type short name, file, fingerprint of the file's settings).
+    Exported(String, PathBuf, String),
+    /// A file chosen for a type.
+    Picked(String, PathBuf),
+    Failed(String),
+}
+
+/// Exporting to and loading from the fixture library, with their dialogs in the background.
+#[derive(Resource, Default)]
+pub struct LibraryJobs {
+    job: Option<Mutex<mpsc::Receiver<Option<LibraryDone>>>>,
+}
+
+impl LibraryJobs {
+    pub fn busy(&self) -> bool {
+        self.job.is_some()
+    }
+
+    fn start(&mut self, work: impl FnOnce() -> Option<LibraryDone> + Send + 'static) {
+        if self.job.is_some() {
+            return;
+        }
+        let (tx, rx) = mpsc::channel();
+        std::thread::spawn(move || {
+            let _ = tx.send(work());
+        });
+        self.job = Some(Mutex::new(rx));
+    }
+
+    /// Saves a type's settings to the library, asking before replacing a file there.
+    pub fn export(&mut self, short_name: String, type_name: String, settings: tapetum_project::FixtureOverride, project_dir: PathBuf) {
+        self.start(move || {
+            let Some(dir) = crate::fixture_library::dir() else { return Some(LibraryDone::Failed(tr("Kein Ordner für die Gerätebibliothek", "No folder for the fixture library").into())) };
+            let file = crate::fixture_library::file_for(&dir, &type_name);
+            if file.exists() {
+                let answer = rfd::MessageDialog::new()
+                    .set_level(rfd::MessageLevel::Warning)
+                    .set_title(tr("Gerät ersetzen?", "Replace fixture?"))
+                    .set_description(trf!("In der Gerätebibliothek gibt es „{}“ schon. Durch diese Einstellungen ersetzen?", "The fixture library already has “{}”. Replace it with these settings?", type_name))
+                    .set_buttons(rfd::MessageButtons::YesNo)
+                    .show();
+                if answer != rfd::MessageDialogResult::Yes {
+                    return None;
+                }
+            }
+            Some(match crate::fixture_library::export(&file, &type_name, &settings, &project_dir) {
+                Ok(source) => LibraryDone::Exported(short_name, file, source),
+                Err(e) => LibraryDone::Failed(e),
+            })
+        });
+    }
+
+    /// Lets the user choose a library file for a type.
+    pub fn pick(&mut self, short_name: String) {
+        self.start(move || {
+            let mut dialog = rfd::FileDialog::new().set_title(tr("Gerät aus der Bibliothek laden", "Load a fixture from the library")).add_filter(tr("Tapetum-Gerät", "Tapetum fixture"), &[crate::fixture_library::EXTENSION]);
+            if let Some(dir) = crate::fixture_library::dir().filter(|d| d.is_dir()) {
+                dialog = dialog.set_directory(dir);
+            }
+            dialog.pick_file().map(|f| LibraryDone::Picked(short_name, f))
+        });
+    }
+
+    pub fn poll(&mut self) -> Option<LibraryDone> {
+        let rx = self.job.as_ref()?;
+        let done = rx.lock().ok()?.try_recv().ok()?;
+        self.job = None;
+        done
     }
 }
 

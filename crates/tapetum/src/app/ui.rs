@@ -8,7 +8,7 @@ use super::gizmo::GizmoState;
 use super::scene::View3d;
 use super::objects::{SceneRuntime, StageObjects, file_color, file_reflectance, is_igz, object_key, split_key, stored_path};
 use super::undo::{Step, UndoHistory};
-use super::state::{BkLink, BkStatus, Dmx, GoboImport, ObjectImport, PlacementSync, RangeSync, ShowState};
+use super::state::{BkLink, BkStatus, Dmx, GoboImport, LibraryDone, LibraryJobs, ObjectImport, PlacementSync, RangeSync, ShowState};
 use super::type_editor;
 use super::onboarding::SetupAction;
 use crate::bk_link::{Edit, HostInfo};
@@ -31,7 +31,7 @@ pub fn panel(
     mut placement_sync: ResMut<PlacementSync>,
     mut gizmo_state: ResMut<GizmoState>,
     (mut object_import, stage_objects, mut scene_rt, spacemouse): (ResMut<ObjectImport>, Res<StageObjects>, ResMut<SceneRuntime>, Res<super::spacemouse::SpaceMouse>),
-    mut import: ResMut<GoboImport>,
+    (mut import, mut library): (ResMut<GoboImport>, ResMut<LibraryJobs>),
     view: Res<View3d>,
     mut ui_rects: ResMut<UiRects>,
     time: Res<Time>,
@@ -99,6 +99,19 @@ pub fn panel(
         let id = project.objects.iter().map(|o| o.id).max().map_or(1, |m| m + 1);
         let name = file.file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_else(|| trf!("Datei {id}", "File {id}", id = id));
         project.objects.push(tapetum_project::StageObject { id, name, model: stored_path(&state, &file), unit_scale, up, ..Default::default() });
+    }
+    match library.poll() {
+        Some(LibraryDone::Exported(short, file, source)) => {
+            let applied = crate::fixture_library::fingerprint(&project.fixture_types.get(&short).cloned().unwrap_or_default());
+            project.library_links.insert(short, tapetum_project::LibraryLink { file: file.to_string_lossy().into_owned(), applied, source });
+            state.status = Some(trf!("In der Gerätebibliothek gespeichert: {}", "Saved in the fixture library: {}", file.display()));
+        }
+        Some(LibraryDone::Picked(short, file)) => match crate::fixture_library::take_over(&mut project, &short, &file, &state.project_dir()) {
+            Ok(()) => state.status = Some(trf!("Aus der Gerätebibliothek geladen: {}", "Loaded from the fixture library: {}", file.display())),
+            Err(e) => state.status = Some(trf!("Gerätedatei: {e}", "Fixture file: {e}", e = e)),
+        },
+        Some(LibraryDone::Failed(e)) => state.status = Some(trf!("Gerätebibliothek: {e}", "Fixture library: {e}", e = e)),
+        None => {}
     }
     match import.poll(&state) {
         Some((ty, slot, Ok(rel))) if slot == type_editor::FIXED_GOBO => {
@@ -354,6 +367,7 @@ pub fn panel(
                         placement_editor(ui, &state, &mut project, i, &mut placement_sync, bk.as_ref());
                         ui.separator();
                     }
+                    library_row(ui, &state, &project, ty, &mut library);
                     let devices = state.show.fixtures.iter().filter(|g| g.fixture_type == f.fixture_type).count();
                     let entry = project.fixture_types.entry(ty.short_name.clone()).or_default();
                     let mut p = type_editor::Painter { brush };
@@ -368,6 +382,7 @@ pub fn panel(
                     ui.add_space(6.0);
                     if ui.button(tr("Alle Einstellungen dieses Typs zurücksetzen", "Reset all settings of this type")).clicked() {
                         project.fixture_types.remove(&ty.short_name);
+                        project.library_links.remove(&ty.short_name);
                         let ids: Vec<i64> = state.show.fixtures.iter().filter(|g| g.fixture_type == f.fixture_type).map(|g| g.id).collect();
                         project.fixtures.retain(|id, _| !ids.contains(id));
                     }
@@ -734,6 +749,33 @@ fn object_editor(ui: &mut egui::Ui, state: &ShowState, project: &mut tapetum_pro
         }
     }
     close
+}
+
+/// Where this type's settings stand with the fixture library, and its buttons.
+fn library_row(ui: &mut egui::Ui, state: &ShowState, project: &tapetum_project::Project, ty: &bk_olga::FixtureType, library: &mut LibraryJobs) {
+    let current = project.fixture_types.get(&ty.short_name).cloned().unwrap_or_default();
+    let name_of = |p: &str| std::path::Path::new(p).file_name().map_or(p.to_string(), |n| n.to_string_lossy().into_owned());
+    let status = match project.library_links.get(&ty.short_name) {
+        Some(l) if crate::fixture_library::fingerprint(&current) == l.applied => trf!("aus der Gerätebibliothek ({})", "from the fixture library ({})", name_of(&l.file)),
+        Some(l) => trf!("aus der Gerätebibliothek ({}), hier geändert", "from the fixture library ({}), changed here", name_of(&l.file)),
+        None if crate::fixture_library::dir().is_some_and(|d| crate::fixture_library::file_for(&d, &ty.name).is_file()) => tr("in der Gerätebibliothek vorhanden – „Laden“ übernimmt sie", "in the fixture library – “Load” takes it over").to_string(),
+        None => tr("nicht in der Gerätebibliothek", "not in the fixture library").to_string(),
+    };
+    ui.horizontal_wrapped(|ui| {
+        ui.colored_label(egui::Color32::GRAY, status);
+        ui.add_enabled_ui(!library.busy(), |ui| {
+            if ui
+                .small_button(tr("Exportieren", "Export"))
+                .on_hover_text(tr("Speichert die Einstellungen dieses Typs in der Gerätebibliothek. Neue Projekte mit einem Gerätetyp gleichen Namens übernehmen sie automatisch.", "Saves this type's settings in the fixture library. New projects with a fixture type of the same name take them over automatically."))
+                .clicked()
+            {
+                library.export(ty.short_name.clone(), ty.name.clone(), current.clone(), state.project_dir());
+            }
+            if ui.small_button(tr("Laden …", "Load …")).on_hover_text(tr("Einstellungen aus einer Gerätedatei übernehmen (ersetzt die jetzigen).", "Take over the settings from a fixture file (replaces the current ones).")).clicked() {
+                library.pick(ty.short_name.clone());
+            }
+        });
+    });
 }
 
 fn devices(n: usize) -> String {

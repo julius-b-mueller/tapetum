@@ -28,6 +28,9 @@ pub struct Project {
     pub artnet: ArtNetSettings,
     /// Keyed by fixture type short name.
     pub fixture_types: BTreeMap<String, FixtureOverride>,
+    /// Fixture types whose settings came from the fixture library, by type short name.
+    #[serde(skip_serializing_if = "BTreeMap::is_empty")]
+    pub library_links: BTreeMap<String, LibraryLink>,
     /// Keyed by fixture ID; wins over `fixture_types`.
     pub fixtures: BTreeMap<i64, FixtureOverride>,
     /// Placements edited while BlinderKitten was not connected, keyed by fixture ID.
@@ -122,6 +125,20 @@ impl Default for ArtNetSettings {
     fn default() -> Self {
         ArtNetSettings { listen_port: 6454, routes: BTreeMap::new(), bk_remote_port: 42000 }
     }
+}
+
+/// Where a fixture type's settings came from in the fixture library.
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct LibraryLink {
+    /// The library file.
+    pub file: String,
+    /// Fingerprint of the settings as they were taken over: while the project
+    /// still has exactly these, they weren't changed here.
+    pub applied: String,
+    /// Fingerprint of the library file's settings then: if the file now has
+    /// others, it was updated since.
+    pub source: String,
 }
 
 /// Settings of the generic fixture model; `None` fields keep the automatic choice.
