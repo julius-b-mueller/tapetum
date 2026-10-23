@@ -776,7 +776,7 @@
         "type": "FixtureType"
       },
       {
-        "niceName": "Eurolite TMH-W555",
+        "niceName": "Moving Head Wash",
         "editorIsCollapsed": true,
         "containers": {
           "channels": {
@@ -7102,7 +7102,7 @@
         "type": "FixtureType"
       },
       {
-        "niceName": "Elation Paladin Brick",
+        "niceName": "Bar RGBW",
         "editorIsCollapsed": true,
         "containers": {
           "channels": {
@@ -10643,7 +10643,7 @@
         "type": "FixtureType"
       },
       {
-        "niceName": "Varytec LED Theater Spot 120 FC",
+        "niceName": "Theatre Spot RGBW",
         "editorIsCollapsed": true,
         "containers": {
           "channels": {
@@ -11338,7 +11338,7 @@
         "type": "FixtureType"
       },
       {
-        "niceName": "Eurolite WF-40",
+        "niceName": "Water Effect",
         "editorIsCollapsed": true,
         "containers": {
           "channels": {
@@ -13044,11 +13044,11 @@
             "controlAddress": "/id"
           },
           {
-            "value": "Brick",
+            "value": "Bar",
             "controlAddress": "/name"
           }
         ],
-        "niceName": "2 - Brick",
+        "niceName": "2 - Bar",
         "containers": {
           "selections": {
             "items": [
@@ -13255,7 +13255,7 @@
                     "controlAddress": "/thru"
                   },
                   {
-                    "value": 62,
+                    "value": 64,
                     "hexMode": false,
                     "controlAddress": "/lastID"
                   },
@@ -13305,7 +13305,7 @@
             "controlAddress": "/name"
           },
           {
-            "value": "/euroliteTMH_W555",
+            "value": "/movingHeadWash",
             "controlAddress": "/fixtureType"
           },
           {
@@ -13387,7 +13387,7 @@
             "controlAddress": "/name"
           },
           {
-            "value": "/euroliteTMH_W555",
+            "value": "/movingHeadWash",
             "controlAddress": "/fixtureType"
           },
           {
@@ -13469,7 +13469,7 @@
             "controlAddress": "/name"
           },
           {
-            "value": "/euroliteTMH_W555",
+            "value": "/movingHeadWash",
             "controlAddress": "/fixtureType"
           },
           {
@@ -13551,7 +13551,7 @@
             "controlAddress": "/name"
           },
           {
-            "value": "/euroliteTMH_W555",
+            "value": "/movingHeadWash",
             "controlAddress": "/fixtureType"
           },
           {
@@ -13629,11 +13629,11 @@
             "controlAddress": "/id"
           },
           {
-            "value": "Brick 1",
+            "value": "Bar 1",
             "controlAddress": "/name"
           },
           {
-            "value": "/elationPaladinBrick",
+            "value": "/barRGBW",
             "controlAddress": "/fixtureType"
           },
           {
@@ -13653,7 +13653,7 @@
             "controlAddress": "/rotation"
           }
         ],
-        "niceName": "21 - Brick 1",
+        "niceName": "21 - Bar 1",
         "editorIsCollapsed": true,
         "containers": {
           "patch": {
@@ -13711,11 +13711,11 @@
             "controlAddress": "/id"
           },
           {
-            "value": "Brick 2",
+            "value": "Bar 2",
             "controlAddress": "/name"
           },
           {
-            "value": "/elationPaladinBrick",
+            "value": "/barRGBW",
             "controlAddress": "/fixtureType"
           },
           {
@@ -13735,7 +13735,7 @@
             "controlAddress": "/rotation"
           }
         ],
-        "niceName": "22 - Brick 2",
+        "niceName": "22 - Bar 2",
         "editorIsCollapsed": true,
         "containers": {
           "patch": {
@@ -13793,11 +13793,11 @@
             "controlAddress": "/id"
           },
           {
-            "value": "Brick 3",
+            "value": "Bar 3",
             "controlAddress": "/name"
           },
           {
-            "value": "/elationPaladinBrick",
+            "value": "/barRGBW",
             "controlAddress": "/fixtureType"
           },
           {
@@ -13817,7 +13817,7 @@
             "controlAddress": "/rotation"
           }
         ],
-        "niceName": "23 - Brick 3",
+        "niceName": "23 - Bar 3",
         "editorIsCollapsed": true,
         "containers": {
           "patch": {
@@ -13875,11 +13875,11 @@
             "controlAddress": "/id"
           },
           {
-            "value": "Brick 4",
+            "value": "Bar 4",
             "controlAddress": "/name"
           },
           {
-            "value": "/elationPaladinBrick",
+            "value": "/barRGBW",
             "controlAddress": "/fixtureType"
           },
           {
@@ -13899,7 +13899,7 @@
             "controlAddress": "/rotation"
           }
         ],
-        "niceName": "24 - Brick 4",
+        "niceName": "24 - Bar 4",
         "editorIsCollapsed": true,
         "containers": {
           "patch": {
@@ -13961,7 +13961,7 @@
             "controlAddress": "/name"
           },
           {
-            "value": "/varytecLEDTheaterSpot120FC",
+            "value": "/theatreSpotRGBW",
             "controlAddress": "/fixtureType"
           },
           {
@@ -14043,7 +14043,7 @@
             "controlAddress": "/name"
           },
           {
-            "value": "/varytecLEDTheaterSpot120FC",
+            "value": "/theatreSpotRGBW",
             "controlAddress": "/fixtureType"
           },
           {
@@ -14125,7 +14125,7 @@
             "controlAddress": "/name"
           },
           {
-            "value": "/euroliteWF_40",
+            "value": "/waterEffect",
             "controlAddress": "/fixtureType"
           },
           {
@@ -14207,7 +14207,7 @@
             "controlAddress": "/name"
           },
           {
-            "value": "/euroliteWF_40",
+            "value": "/waterEffect",
             "controlAddress": "/fixtureType"
           },
           {
@@ -14367,16 +14367,16 @@
             "controlAddress": "/id"
           },
           {
-            "value": "Front L",
+            "value": "Front 1",
             "controlAddress": "/name"
           },
           {
-            "value": "/varytecLEDTheaterSpot120FC",
+            "value": "/theatreSpotRGBW",
             "controlAddress": "/fixtureType"
           },
           {
             "value": [
-              -2.6,
+              -4.2,
               -10.5,
               4.6
             ],
@@ -14386,12 +14386,12 @@
             "value": [
               72.0,
               0.0,
-              -20.0
+              -6.0
             ],
             "controlAddress": "/rotation"
           }
         ],
-        "niceName": "61 - Front L",
+        "niceName": "61 - Front 1",
         "editorIsCollapsed": true,
         "containers": {
           "patch": {
@@ -14449,16 +14449,16 @@
             "controlAddress": "/id"
           },
           {
-            "value": "Front R",
+            "value": "Front 2",
             "controlAddress": "/name"
           },
           {
-            "value": "/varytecLEDTheaterSpot120FC",
+            "value": "/theatreSpotRGBW",
             "controlAddress": "/fixtureType"
           },
           {
             "value": [
-              2.6,
+              -1.4,
               -10.5,
               4.6
             ],
@@ -14468,12 +14468,12 @@
             "value": [
               72.0,
               0.0,
-              20.0
+              -2.0
             ],
             "controlAddress": "/rotation"
           }
         ],
-        "niceName": "62 - Front R",
+        "niceName": "62 - Front 2",
         "editorIsCollapsed": true,
         "containers": {
           "patch": {
@@ -14490,6 +14490,170 @@
                   },
                   {
                     "value": 450,
+                    "hexMode": false,
+                    "controlAddress": "/address"
+                  }
+                ],
+                "niceName": "Patch",
+                "containers": {
+                  "corrections": {
+                    "viewOffset": [
+                      0,
+                      0
+                    ],
+                    "viewZoom": 1.0
+                  }
+                },
+                "type": "BaseItem"
+              }
+            ],
+            "viewOffset": [
+              0,
+              0
+            ],
+            "viewZoom": 1.0
+          },
+          "mappings": {
+            "viewOffset": [
+              0,
+              0
+            ],
+            "viewZoom": 1.0
+          }
+        },
+        "type": "Fixture"
+      },
+      {
+        "parameters": [
+          {
+            "value": 63,
+            "hexMode": false,
+            "controlAddress": "/id"
+          },
+          {
+            "value": "Front 3",
+            "controlAddress": "/name"
+          },
+          {
+            "value": "/theatreSpotRGBW",
+            "controlAddress": "/fixtureType"
+          },
+          {
+            "value": [
+              1.4,
+              -10.5,
+              4.6
+            ],
+            "controlAddress": "/position"
+          },
+          {
+            "value": [
+              72.0,
+              0.0,
+              2.0
+            ],
+            "controlAddress": "/rotation"
+          }
+        ],
+        "niceName": "63 - Front 3",
+        "editorIsCollapsed": true,
+        "containers": {
+          "patch": {
+            "items": [
+              {
+                "parameters": [
+                  {
+                    "value": true,
+                    "controlAddress": "/enabled"
+                  },
+                  {
+                    "value": "/dmx2",
+                    "controlAddress": "/interface"
+                  },
+                  {
+                    "value": 460,
+                    "hexMode": false,
+                    "controlAddress": "/address"
+                  }
+                ],
+                "niceName": "Patch",
+                "containers": {
+                  "corrections": {
+                    "viewOffset": [
+                      0,
+                      0
+                    ],
+                    "viewZoom": 1.0
+                  }
+                },
+                "type": "BaseItem"
+              }
+            ],
+            "viewOffset": [
+              0,
+              0
+            ],
+            "viewZoom": 1.0
+          },
+          "mappings": {
+            "viewOffset": [
+              0,
+              0
+            ],
+            "viewZoom": 1.0
+          }
+        },
+        "type": "Fixture"
+      },
+      {
+        "parameters": [
+          {
+            "value": 64,
+            "hexMode": false,
+            "controlAddress": "/id"
+          },
+          {
+            "value": "Front 4",
+            "controlAddress": "/name"
+          },
+          {
+            "value": "/theatreSpotRGBW",
+            "controlAddress": "/fixtureType"
+          },
+          {
+            "value": [
+              4.2,
+              -10.5,
+              4.6
+            ],
+            "controlAddress": "/position"
+          },
+          {
+            "value": [
+              72.0,
+              0.0,
+              6.0
+            ],
+            "controlAddress": "/rotation"
+          }
+        ],
+        "niceName": "64 - Front 4",
+        "editorIsCollapsed": true,
+        "containers": {
+          "patch": {
+            "items": [
+              {
+                "parameters": [
+                  {
+                    "value": true,
+                    "controlAddress": "/enabled"
+                  },
+                  {
+                    "value": "/dmx2",
+                    "controlAddress": "/interface"
+                  },
+                  {
+                    "value": 470,
                     "hexMode": false,
                     "controlAddress": "/address"
                   }

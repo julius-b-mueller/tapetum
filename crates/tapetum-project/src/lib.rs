@@ -595,10 +595,10 @@ mod tests {
     #[test]
     fn fixture_settings_override_type_settings() {
         let mut p = Project::new();
-        p.fixture_types.insert("euroliteTMH_W555".into(), FixtureOverride { cell_mode: Some(CellMode::Mixed), beam_angle: Some(20.0), ..Default::default() });
+        p.fixture_types.insert("movingHeadWash".into(), FixtureOverride { cell_mode: Some(CellMode::Mixed), beam_angle: Some(20.0), ..Default::default() });
         p.fixtures.insert(12, FixtureOverride { cell_mode: Some(CellMode::Physical), ..Default::default() });
-        let o = p.fixture_override(12, "euroliteTMH_W555");
+        let o = p.fixture_override(12, "movingHeadWash");
         assert_eq!((o.cell_mode, o.beam_angle), (Some(CellMode::Physical), Some(20.0)));
-        assert_eq!(p.fixture_override(11, "euroliteTMH_W555").cell_mode, Some(CellMode::Mixed));
+        assert_eq!(p.fixture_override(11, "movingHeadWash").cell_mode, Some(CellMode::Mixed));
     }
 }

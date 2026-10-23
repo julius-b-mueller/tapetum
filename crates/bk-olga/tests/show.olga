@@ -618,7 +618,7 @@
     "type": "FixtureType"
    },
    {
-    "niceName": "Eurolite TMH-W555",
+    "niceName": "Moving Head Wash",
     "editorIsCollapsed": true,
     "containers": {
      "channels": {
@@ -6944,7 +6944,7 @@
     "type": "FixtureType"
    },
    {
-    "niceName": "Elation Paladin Brick",
+    "niceName": "Bar RGBW",
     "editorIsCollapsed": true,
     "containers": {
      "channels": {
@@ -10485,7 +10485,7 @@
     "type": "FixtureType"
    },
    {
-    "niceName": "Varytec LED Theater Spot 120 FC",
+    "niceName": "Theatre Spot RGBW",
     "editorIsCollapsed": true,
     "containers": {
      "channels": {
@@ -11180,7 +11180,7 @@
     "type": "FixtureType"
    },
    {
-    "niceName": "Eurolite WF-40",
+    "niceName": "Water Effect",
     "editorIsCollapsed": true,
     "containers": {
      "channels": {
@@ -12886,11 +12886,11 @@
       "controlAddress": "/id"
      },
      {
-      "value": "Brick",
+      "value": "Bar",
       "controlAddress": "/name"
      }
     ],
-    "niceName": "2 - Brick",
+    "niceName": "2 - Bar",
     "containers": {
      "selections": {
       "items": [
@@ -15963,11 +15963,11 @@
       "controlAddress": "/id"
      },
      {
-      "value": "Brick Color Day",
+      "value": "Bar Color Day",
       "controlAddress": "/name"
      }
     ],
-    "niceName": "12 - Brick Color Day",
+    "niceName": "12 - Bar Color Day",
     "editorIsCollapsed": true,
     "containers": {
      "subfixtures": {
@@ -20209,7 +20209,7 @@
       "controlAddress": "/id"
      },
      {
-      "value": "Brick Bright",
+      "value": "Bar Bright",
       "controlAddress": "/name"
      },
      {
@@ -20217,7 +20217,7 @@
       "controlAddress": "/type"
      }
     ],
-    "niceName": "31 - Brick Bright",
+    "niceName": "31 - Bar Bright",
     "editorIsCollapsed": true,
     "containers": {
      "subfixtures": {
@@ -20721,7 +20721,7 @@
       "controlAddress": "/name"
      },
      {
-      "value": "/euroliteTMH_W555",
+      "value": "/movingHeadWash",
       "controlAddress": "/fixtureType"
      }
     ],
@@ -20787,7 +20787,7 @@
       "controlAddress": "/name"
      },
      {
-      "value": "/euroliteTMH_W555",
+      "value": "/movingHeadWash",
       "controlAddress": "/fixtureType"
      }
     ],
@@ -20853,7 +20853,7 @@
       "controlAddress": "/name"
      },
      {
-      "value": "/euroliteTMH_W555",
+      "value": "/movingHeadWash",
       "controlAddress": "/fixtureType"
      }
     ],
@@ -20919,7 +20919,7 @@
       "controlAddress": "/name"
      },
      {
-      "value": "/euroliteTMH_W555",
+      "value": "/movingHeadWash",
       "controlAddress": "/fixtureType"
      }
     ],
@@ -20981,15 +20981,15 @@
       "controlAddress": "/id"
      },
      {
-      "value": "Brick 1",
+      "value": "Bar 1",
       "controlAddress": "/name"
      },
      {
-      "value": "/elationPaladinBrick",
+      "value": "/barRGBW",
       "controlAddress": "/fixtureType"
      }
     ],
-    "niceName": "21 - Brick 1",
+    "niceName": "21 - Bar 1",
     "editorIsCollapsed": true,
     "containers": {
      "patch": {
@@ -21047,15 +21047,15 @@
       "controlAddress": "/id"
      },
      {
-      "value": "Brick 2",
+      "value": "Bar 2",
       "controlAddress": "/name"
      },
      {
-      "value": "/elationPaladinBrick",
+      "value": "/barRGBW",
       "controlAddress": "/fixtureType"
      }
     ],
-    "niceName": "22 - Brick 2",
+    "niceName": "22 - Bar 2",
     "editorIsCollapsed": true,
     "containers": {
      "patch": {
@@ -21113,15 +21113,15 @@
       "controlAddress": "/id"
      },
      {
-      "value": "Brick 3",
+      "value": "Bar 3",
       "controlAddress": "/name"
      },
      {
-      "value": "/elationPaladinBrick",
+      "value": "/barRGBW",
       "controlAddress": "/fixtureType"
      }
     ],
-    "niceName": "23 - Brick 3",
+    "niceName": "23 - Bar 3",
     "editorIsCollapsed": true,
     "containers": {
      "patch": {
@@ -21179,15 +21179,15 @@
       "controlAddress": "/id"
      },
      {
-      "value": "Brick 4",
+      "value": "Bar 4",
       "controlAddress": "/name"
      },
      {
-      "value": "/elationPaladinBrick",
+      "value": "/barRGBW",
       "controlAddress": "/fixtureType"
      }
     ],
-    "niceName": "24 - Brick 4",
+    "niceName": "24 - Bar 4",
     "editorIsCollapsed": true,
     "containers": {
      "patch": {
@@ -21249,7 +21249,7 @@
       "controlAddress": "/name"
      },
      {
-      "value": "/varytecLEDTheaterSpot120FC",
+      "value": "/theatreSpotRGBW",
       "controlAddress": "/fixtureType"
      }
     ],
@@ -21315,7 +21315,7 @@
       "controlAddress": "/name"
      },
      {
-      "value": "/varytecLEDTheaterSpot120FC",
+      "value": "/theatreSpotRGBW",
       "controlAddress": "/fixtureType"
      }
     ],
@@ -21381,7 +21381,7 @@
       "controlAddress": "/name"
      },
      {
-      "value": "/euroliteWF_40",
+      "value": "/waterEffect",
       "controlAddress": "/fixtureType"
      }
     ],
@@ -21447,7 +21447,7 @@
       "controlAddress": "/name"
      },
      {
-      "value": "/euroliteWF_40",
+      "value": "/waterEffect",
       "controlAddress": "/fixtureType"
      }
     ],
@@ -22305,7 +22305,7 @@
          "commands": {
           "items": [
            {
-            "niceName": "Brick Brick Bright, Brick Color Day",
+            "niceName": "Bar Bar Bright, Bar Color Day",
             "containers": {
              "moveInBlack": {},
              "selections": {
@@ -22779,7 +22779,7 @@
          "commands": {
           "items": [
            {
-            "niceName": "Brick Intensity 0.134, Blue 1",
+            "niceName": "Bar Intensity 0.134, Blue 1",
             "containers": {
              "moveInBlack": {},
              "selections": {
@@ -24183,7 +24183,7 @@
             "type": "Command"
            },
            {
-            "niceName": "Brick Brick Color Day, Brick Bright",
+            "niceName": "Bar Bar Color Day, Bar Bright",
             "editorIsCollapsed": true,
             "containers": {
              "moveInBlack": {},

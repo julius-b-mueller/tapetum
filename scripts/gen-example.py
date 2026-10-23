@@ -41,7 +41,7 @@ NAMES = {
         "portal": "Portal", "curtain": "Vorhang", "masking": "Gassen und Soffitten", "truss": "Traversen",
         "podest": "Podest", "columns": "Säulen", "table": "Tisch", "chairs": "Stühle", "lantern": "Laterne",
         "crates": "Kisten", "bench": "Bank", "person": "Person",
-        "fixtures": {31: "Seite L", 32: "Seite R", 41: "Wash L", 42: "Wash R", 51: "Laterne", 61: "Front L", 62: "Front R"},
+        "fixtures": {31: "Seite L", 32: "Seite R", 41: "Wash L", 42: "Wash R", 51: "Laterne", 61: "Front 1", 62: "Front 2", 63: "Front 3", 64: "Front 4"},
         "groups": {3: "Seite", 4: "Wash", 5: "Laterne", 6: "Front"}, "bridge": "Frontlichtbrücke",
         "cues": ["Einlass", "Prolog", "Abend", "Nacht", "Morgen", "Fest", "Finale", "Blackout"],
         "chapters": ["1 - Einlass", "", "2 - Abend", "", "3 - Morgen", "4 - Fest", "5 - Finale", ""],
@@ -52,7 +52,7 @@ NAMES = {
         "portal": "Proscenium", "curtain": "Curtain", "masking": "Legs and borders", "truss": "Trusses",
         "podest": "Platform", "columns": "Columns", "table": "Table", "chairs": "Chairs", "lantern": "Lantern",
         "crates": "Crates", "bench": "Bench", "person": "Person",
-        "fixtures": {31: "Side L", 32: "Side R", 41: "Wash L", 42: "Wash R", 51: "Lantern", 61: "Front L", 62: "Front R"},
+        "fixtures": {31: "Side L", 32: "Side R", 41: "Wash L", 42: "Wash R", 51: "Lantern", 61: "Front 1", 62: "Front 2", 63: "Front 3", 64: "Front 4"},
         "groups": {3: "Side", 4: "Wash", 5: "Lantern", 6: "Front"}, "bridge": "Front light bridge",
         "cues": ["Pre-show", "Prologue", "Evening", "Night", "Morning", "Party", "Finale", "Blackout"],
         "chapters": ["1 - Pre-show", "", "2 - Evening", "", "3 - Morning", "4 - Party", "5 - Finale", ""],
@@ -168,7 +168,7 @@ def theatre(n):
     bridge = group("bridge", "demo-bridge", (0.5, 0.5, 0.52))
     for dy in (-0.15, 0.15):
         for dz in (-0.15, 0.15):
-            bridge.box(-4.5, 4.5, FRONT_Y + dy - 0.02, FRONT_Y + dy + 0.02, FRONT_Z + 0.35 + dz - 0.02, FRONT_Z + 0.35 + dz + 0.02)
+            bridge.box(-5.0, 5.0, FRONT_Y + dy - 0.02, FRONT_Y + dy + 0.02, FRONT_Z + 0.35 + dz - 0.02, FRONT_Z + 0.35 + dz + 0.02)
 
     podest = group("podest", "demo-podest", (0.22, 0.2, 0.22))
     # Clear of the leg at y = 3.4 (a shared face flickers).
@@ -214,7 +214,9 @@ def theatre(n):
 LANTERN = (-3.3, -1.9)
 # Where the front light hangs: a bridge over the rows of seats.
 FRONT_Y, FRONT_Z = -10.5, 4.6
-FRONT = {61: -2.6, 62: 2.6}
+# Four on the bridge, each lighting its own quarter of the stage width; their
+# pools overlap, so the stage is lit evenly.
+FRONT = {61: (-4.2, -3.3), 62: (-1.4, -1.1), 63: (1.4, 1.1), 64: (4.2, 3.3)}
 
 
 # The bench faces stage right in its file: turned a quarter to face the audience,
@@ -327,9 +329,9 @@ def placements():
         pl[fid] = (p, aim(p, t))
     pl[51] = ([LANTERN[0], LANTERN[1], 3.03], [0.0, 0.0, 0.0])
     # Front light: crossing onto the stage from the bridge.
-    for fid, x in FRONT.items():
+    for fid, (x, target) in FRONT.items():
         p = [x, FRONT_Y, FRONT_Z]
-        pl[fid] = (p, aim(p, [-x * 0.4, -1.0, 1.2]))
+        pl[fid] = (p, aim(p, [target, -0.6, 1.2]))
     return pl
 
 
@@ -455,9 +457,9 @@ def write_olga(lang):
             set_param(out, "/enabled", False)
     names = n["fixtures"]
     pl = placements()
-    # Front light: two more of the side spots' type, patched after them.
+    # Front light: four more of the side spots' type, patched after them.
     side = next(fx for fx in show["fixture"]["items"] if params(fx)["/id"]["value"] == 31)
-    for fid, address in ((61, 440), (62, 450)):
+    for fid, address in ((61, 440), (62, 450), (63, 460), (64, 470)):
         fx = copy.deepcopy(side)
         set_param(fx, "/id", fid)
         set_param(fx["containers"]["patch"]["items"][0], "/address", address)
@@ -465,7 +467,7 @@ def write_olga(lang):
     group6 = copy.deepcopy(next(g for g in show["group"]["items"] if g["niceName"].startswith("3 - ")))
     group6["niceName"] = "6 - Front"
     set_param(group6["containers"]["selections"]["items"][0], "/id", 61)
-    set_param(group6["containers"]["selections"]["items"][0], "/lastID", 62)
+    set_param(group6["containers"]["selections"]["items"][0], "/lastID", 64)
     show["group"]["items"].append(group6)
     for fx in show["fixture"]["items"]:
         fid = params(fx)["/id"]["value"]
@@ -545,10 +547,10 @@ def write_project(lang):
                    "haze": {"enabled": True, "density": 0.16, "anisotropy": 0.6, "color": [1, 1, 1], "extent": [30, 12, 30]}},
         "objects": [{"id": 1, "name": f"{NAME}.igz", "model": f"{NAME}.igz", "visible": True}],
         "fixture_types": {
-            "euroliteTMH_W555": {"fixed_gobo": {"Builtin": "Stern"}},
-            "varytecLEDTheaterSpot120FC": {"beam_angle": 26.0},
-            "euroliteWF_40": {"fixed_gobo": {"Builtin": "Wasser"}, "beam_angle": 36.0},
-            "elationPaladinBrick": {"beam_angle": 75.0},
+            "movingHeadWash": {"fixed_gobo": {"Builtin": "Stern"}},
+            "theatreSpotRGBW": {"beam_angle": 26.0},
+            "waterEffect": {"fixed_gobo": {"Builtin": "Wasser"}, "beam_angle": 36.0},
+            "barRGBW": {"beam_angle": 75.0},
             "channel": {"beam_angle": 360.0, "lumens": 1800.0, "white_kelvin": 2700.0, "body_scale": 0.3},
         },
         "scenes": scenes(NAMES[lang]["scenes"]),

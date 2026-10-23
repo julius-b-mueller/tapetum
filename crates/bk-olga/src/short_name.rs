@@ -1,7 +1,7 @@
 //! Port of `StringUtil::toShortName` from juce_organicui.
 //!
 //! Target parameters in `.olga` files reference other containers by their
-//! short-name path (e.g. `/euroliteTMH_W555`), so we need the exact same
+//! short-name path (e.g. `/movingHeadWash`), so we need the exact same
 //! transformation to resolve them.
 
 const SPECIALS: &str = "+-()[]{}<>^'@#*$~";
@@ -66,12 +66,15 @@ mod tests {
 
     #[test]
     fn known_names_from_the_test_show() {
-        assert_eq!(to_short_name("Eurolite TMH-W555", false), "euroliteTMH_W555");
+        assert_eq!(to_short_name("Moving Head Wash", false), "movingHeadWash");
+        assert_eq!(to_short_name("Bar RGBW", false), "barRGBW");
+        // Hyphens, digits and capitals as in BK's own type names.
+        assert_eq!(to_short_name("Wash XH-555", false), "washXH_555");
         assert_eq!(to_short_name("DMX1", false), "dmx1");
         assert_eq!(to_short_name("Channel", false), "channel");
         assert_eq!(to_short_name("Channel Types", false), "channelTypes");
-        assert_eq!(to_short_name("Varytec LED Theater Spot 120 FC", false), "varytecLEDTheaterSpot120FC");
-        assert_eq!(to_short_name("Eurolite WF-40", false), "euroliteWF_40");
+        assert_eq!(to_short_name("Basic LED Theater Spot 120 FC", false), "basicLEDTheaterSpot120FC");
+        assert_eq!(to_short_name("Water FX-40", false), "waterFX_40");
         assert_eq!(to_short_name("PT Speed", false), "ptSpeed");
     }
 

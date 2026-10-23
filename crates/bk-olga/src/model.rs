@@ -35,7 +35,7 @@ pub struct Interface {
 pub enum InterfaceKind {
     ArtNet(ArtNetOutput),
     Sacn(SacnOutput),
-    /// USB/serial DMX devices (Enttec, Eurolite, DMXKing, ...).
+    /// USB/serial DMX devices.
     OtherDmx(String),
     /// OSC, MIDI, ... interfaces carry no DMX.
     NonDmx(String),
@@ -196,7 +196,7 @@ impl Show {
     }
 
     /// BK control address of a fixture type channel's parameter, e.g.
-    /// `/fixtureType/euroliteTMH_W555/channels/channel1_2_Pan/physicalRange`.
+    /// `/fixtureType/movingHeadWash/channels/channel1_2_Pan/physicalRange`.
     pub fn channel_address(ty: &FixtureType, ch: &Channel, param: &str) -> String {
         format!("/fixtureType/{}/channels/{}/{param}", ty.short_name, ch.short_name)
     }

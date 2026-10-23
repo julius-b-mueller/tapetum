@@ -14,7 +14,7 @@ fn reads_fixtures_and_patch() {
 
     let mh1 = show.fixtures.iter().find(|f| f.id == 11).unwrap();
     assert_eq!(mh1.name, "MH 1");
-    assert_eq!(show.fixture_type(mh1).unwrap().name, "Eurolite TMH-W555");
+    assert_eq!(show.fixture_type(mh1).unwrap().name, "Moving Head Wash");
     assert!(!mh1.has_placement);
     assert_eq!(mh1.patches.len(), 1);
     assert_eq!(mh1.patches[0].address, 150);
@@ -41,23 +41,23 @@ fn channel_offsets_and_classes() {
     let show = show();
     let by_name = |n: &str| show.fixture_types.iter().find(|t| t.name == n).unwrap();
 
-    let tmh = by_name("Eurolite TMH-W555");
-    assert_eq!(tmh.classify(), FixtureClass::MovingHead);
-    assert_eq!(tmh.cells(), (1..=7).collect::<Vec<_>>());
-    let pan = &tmh.channels[0];
+    let head = by_name("Moving Head Wash");
+    assert_eq!(head.classify(), FixtureClass::MovingHead);
+    assert_eq!(head.cells(), (1..=7).collect::<Vec<_>>());
+    let pan = &head.channels[0];
     assert_eq!((pan.attribute.clone(), pan.resolution, pan.offset, pan.fine_offset), (Attribute::Pan, Resolution::Bits16, 1, Some(2)));
     assert_eq!(pan.physical_range, Some([-270.0, 270.0]));
-    let zoom = tmh.channels.iter().find(|c| c.attribute == Attribute::Zoom).unwrap();
+    let zoom = head.channels.iter().find(|c| c.attribute == Attribute::Zoom).unwrap();
     assert_eq!((zoom.offset, zoom.physical_range), (6, Some([38.0, 1.0])));
-    assert_eq!(tmh.footprint(), 48);
+    assert_eq!(head.footprint(), 48);
 
-    let brick = by_name("Elation Paladin Brick");
-    assert_eq!(brick.classify(), FixtureClass::Bar);
-    assert_eq!(brick.cells().len(), 6);
-    assert_eq!(brick.footprint(), 48);
+    let bar = by_name("Bar RGBW");
+    assert_eq!(bar.classify(), FixtureClass::Bar);
+    assert_eq!(bar.cells().len(), 6);
+    assert_eq!(bar.footprint(), 48);
 
-    assert_eq!(by_name("Varytec LED Theater Spot 120 FC").classify(), FixtureClass::Wash);
-    assert_eq!(by_name("Eurolite WF-40").classify(), FixtureClass::Wash);
+    assert_eq!(by_name("Theatre Spot RGBW").classify(), FixtureClass::Wash);
+    assert_eq!(by_name("Water Effect").classify(), FixtureClass::Wash);
     assert_eq!(by_name("Channel").classify(), FixtureClass::Conventional);
 }
 
@@ -75,7 +75,7 @@ fn conductor_cues() {
 #[test]
 fn decode_moving_head() {
     let show = show();
-    let tmh = show.fixture_types.iter().find(|t| t.name == "Eurolite TMH-W555").unwrap();
+    let head = show.fixture_types.iter().find(|t| t.name == "Moving Head Wash").unwrap();
     let mut dmx = [0u8; 512];
     // 0-based index of fixture channel `k` (1-based) when patched at 150.
     let ch = |k: usize| 150 + k - 2;
@@ -87,7 +87,7 @@ fn decode_moving_head() {
     dmx[ch(9)] = 255; // cell 1 red
     dmx[ch(14)] = 255; // cell 2 green
 
-    let state = tmh.decode(150, &dmx);
+    let state = head.decode(150, &dmx);
     let pan = state.get(None, &Attribute::Pan).unwrap();
     assert_eq!(pan.physical([0.0, 0.0]), 270.0);
     let tilt = state.get(None, &Attribute::Tilt).unwrap().physical([0.0, 0.0]);
@@ -120,7 +120,7 @@ fn decode_conventional_dimmer() {
 #[test]
 fn strobe_idle_at_default_value() {
     let show = show();
-    let wf = show.fixture_types.iter().find(|t| t.name == "Eurolite WF-40").unwrap();
+    let wf = show.fixture_types.iter().find(|t| t.name == "Water Effect").unwrap();
     let mut dmx = [0u8; 512];
     let ch = |k: usize| 400 + k - 2;
     dmx[ch(1)] = 255; // red
@@ -134,10 +134,10 @@ fn strobe_idle_at_default_value() {
 #[test]
 fn channel_addresses() {
     let show = show();
-    let ty = show.fixture_types.iter().find(|t| t.name == "Eurolite TMH-W555").unwrap();
+    let ty = show.fixture_types.iter().find(|t| t.name == "Moving Head Wash").unwrap();
     let pan = ty.channels.iter().find(|c| c.attribute == Attribute::Pan).unwrap();
     assert_eq!(pan.name, "Channel 1 + 2 - Pan");
-    assert_eq!(bk_olga::Show::channel_address(ty, pan, "physicalRange"), "/fixtureType/euroliteTMH_W555/channels/channel1_2_Pan/physicalRange");
+    assert_eq!(bk_olga::Show::channel_address(ty, pan, "physicalRange"), "/fixtureType/movingHeadWash/channels/channel1_2_Pan/physicalRange");
 }
 
 #[test]
@@ -145,7 +145,7 @@ fn groups() {
     let show = show();
     let g: Vec<(i64, &str, Vec<i64>)> = show.groups.iter().map(|g| (g.id, g.name.as_str(), g.fixtures.clone())).collect();
     assert_eq!(g[0], (1, "MH", vec![11, 12, 13, 14]));
-    assert_eq!(g[1], (2, "Brick", vec![21, 22, 23, 24]));
+    assert_eq!(g[1], (2, "Bar", vec![21, 22, 23, 24]));
     assert_eq!(g[2].2, vec![31, 32]);
     assert_eq!(g.len(), 5);
 }

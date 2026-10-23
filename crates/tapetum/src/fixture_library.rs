@@ -369,7 +369,7 @@ mod tests {
     fn mochi_has_the_type_and_its_channel_families() {
         let show_path = Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../bk-olga/tests/show.olga"));
         let show = show();
-        let ty = show.fixture_types.iter().find(|t| t.name.contains("TMH")).unwrap();
+        let ty = show.fixture_types.iter().find(|t| t.name == "Moving Head Wash").unwrap();
         let m: serde_json::Value = serde_json::from_str(&mochi(show_path, &ty.name).unwrap()).unwrap();
         let types = m["fixtureType"].as_array().unwrap();
         assert_eq!(types.len(), 1);

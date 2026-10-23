@@ -28,21 +28,21 @@
   }
  ],
  "fixture_types": {
-  "euroliteTMH_W555": {
+  "movingHeadWash": {
    "fixed_gobo": {
     "Builtin": "Stern"
    }
   },
-  "varytecLEDTheaterSpot120FC": {
+  "theatreSpotRGBW": {
    "beam_angle": 26.0
   },
-  "euroliteWF_40": {
+  "waterEffect": {
    "fixed_gobo": {
     "Builtin": "Wasser"
    },
    "beam_angle": 36.0
   },
-  "elationPaladinBrick": {
+  "barRGBW": {
    "beam_angle": 75.0
   },
   "channel": {

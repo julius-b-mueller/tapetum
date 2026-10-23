@@ -129,7 +129,7 @@ pub fn compute_tuned(state: &FixtureState, cell: Option<u32>, class: FixtureClas
         _ => 1.0,
     };
     // At its default value a strobe channel is idle; that is 0 for most
-    // fixtures but e.g. 1.0 ("open") for the Eurolite WF-40.
+    // fixtures but e.g. 1.0 ("open") for the water effect light of the test show.
     let strobe_hz = state
         .get(cell, &Strobe)
         .filter(|s| (s.value - s.default).abs() > 0.02)
