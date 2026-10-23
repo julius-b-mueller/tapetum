@@ -102,10 +102,13 @@ pub fn panel(
     }
     library_offers(ctx, &mut offers, &mut project, &mut state);
     match library.poll() {
-        Some(LibraryDone::Exported(short, file, source, modified)) => {
+        Some(LibraryDone::Exported(short, file, source, modified, mochi_error)) => {
             let applied = crate::fixture_library::fingerprint(&project.fixture_types.get(&short).cloned().unwrap_or_default());
             project.library_links.insert(short, tapetum_project::LibraryLink { file: file.to_string_lossy().into_owned(), applied, source, seen: modified });
-            state.status = Some(trf!("In der Gerätebibliothek gespeichert: {}", "Saved in the fixture library: {}", file.display()));
+            state.status = Some(match mochi_error {
+                None => trf!("In der Gerätebibliothek gespeichert: {} (mit .mochi für BlinderKitten)", "Saved in the fixture library: {} (with a .mochi for BlinderKitten)", file.display()),
+                Some(e) => trf!("In der Gerätebibliothek gespeichert: {} – die .mochi nicht: {e}", "Saved in the fixture library: {} – not the .mochi: {e}", file.display(), e = e),
+            });
         }
         Some(LibraryDone::Picked(short, file)) => match crate::fixture_library::take_over(&mut project, &short, &file, &state.project_dir()) {
             Ok(()) => state.status = Some(trf!("Aus der Gerätebibliothek geladen: {}", "Loaded from the fixture library: {}", file.display())),
@@ -873,11 +876,14 @@ fn library_row(ui: &mut egui::Ui, state: &ShowState, project: &tapetum_project::
         ui.add_enabled_ui(!library.busy(), |ui| {
             if ui
                 .small_button(tr("Exportieren", "Export"))
-                .on_hover_text(tr("Speichert die Einstellungen dieses Typs in der Gerätebibliothek. Neue Projekte mit einem Gerätetyp gleichen Namens übernehmen sie automatisch.", "Saves this type's settings in the fixture library. New projects with a fixture type of the same name take them over automatically."))
+                .on_hover_text(tr(
+                    "Speichert die Einstellungen dieses Typs in der Gerätebibliothek. Neue Projekte mit einem Gerätetyp gleichen Namens übernehmen sie automatisch.\n\nDaneben liegt der Gerätetyp selbst als .mochi für BlinderKitten (dort File → Import…). Gibt es in der Show schon einen Typ dieses Namens, benennt BlinderKitten den importierten um – dann passt er nicht mehr zu den Einstellungen hier.",
+                    "Saves this type's settings in the fixture library. New projects with a fixture type of the same name take them over automatically.\n\nNext to it, the fixture type itself as a .mochi for BlinderKitten (File → Import… there). If the show already has a type of that name, BlinderKitten renames the imported one – then it no longer matches the settings here.",
+                ))
                 .clicked()
             {
                 let modified = project.fixture_types_changed.get(&ty.short_name).copied().unwrap_or_else(tapetum_project::now);
-                library.export(ty.short_name.clone(), ty.name.clone(), current.clone(), state.project_dir(), modified);
+                library.export(ty.short_name.clone(), ty.name.clone(), current.clone(), state.project_dir(), state.show_path.clone(), modified);
             }
             if ui.small_button(tr("Laden …", "Load …")).on_hover_text(tr("Einstellungen aus einer Gerätedatei übernehmen (ersetzt die jetzigen).", "Take over the settings from a fixture file (replaces the current ones).")).clicked() {
                 library.pick(ty.short_name.clone());

@@ -480,8 +480,9 @@ impl LibraryUpdates {
 
 /// What a fixture library dialog came back with.
 pub enum LibraryDone {
-    /// Saved: (type short name, file, fingerprint of the file's settings, its time stamp).
-    Exported(String, PathBuf, String, u64),
+    /// Saved: (type short name, file, fingerprint of the file's settings, its
+    /// time stamp, why the `.mochi` next to it couldn't be written).
+    Exported(String, PathBuf, String, u64, Option<String>),
     /// A file chosen for a type.
     Picked(String, PathBuf),
     Failed(String),
@@ -510,11 +511,12 @@ impl LibraryJobs {
     }
 
     /// Saves a type's settings to the library, asking before replacing a file there.
-    pub fn export(&mut self, short_name: String, type_name: String, settings: tapetum_project::FixtureOverride, project_dir: PathBuf, modified: u64) {
+    pub fn export(&mut self, short_name: String, type_name: String, settings: tapetum_project::FixtureOverride, project_dir: PathBuf, show_path: PathBuf, modified: u64) {
         self.start(move || {
             let Some(dir) = crate::fixture_library::dir() else { return Some(LibraryDone::Failed(tr("Kein Ordner für die Gerätebibliothek", "No folder for the fixture library").into())) };
             let file = crate::fixture_library::file_for(&dir, &type_name);
-            if file.exists() {
+            let mochi = crate::fixture_library::mochi_for(&file);
+            if file.exists() || mochi.exists() {
                 let answer = rfd::MessageDialog::new()
                     .set_level(rfd::MessageLevel::Warning)
                     .set_title(tr("Gerät ersetzen?", "Replace fixture?"))
@@ -526,7 +528,11 @@ impl LibraryJobs {
                 }
             }
             Some(match crate::fixture_library::export(&file, &type_name, &settings, &project_dir, modified) {
-                Ok(source) => LibraryDone::Exported(short_name, file, source, modified),
+                Ok(source) => {
+                    // The type itself for BlinderKitten next to it, so the two stay together.
+                    let mochi_error = crate::fixture_library::mochi(&show_path, &type_name).and_then(|m| std::fs::write(&mochi, m).map_err(|e| e.to_string())).err();
+                    LibraryDone::Exported(short_name, file, source, modified, mochi_error)
+                }
                 Err(e) => LibraryDone::Failed(e),
             })
         });

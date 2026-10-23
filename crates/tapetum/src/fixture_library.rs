@@ -1,7 +1,8 @@
 //! The fixture library: the settings made for a fixture type, saved once and
 //! taken over by every project with a BlinderKitten fixture type of the same
 //! name. One `<type name>.tapetum-fixture` per type in a folder of the user's
-//! choice; its own gobo pictures in `<type name> gobos/` next to it.
+//! choice; its own gobo pictures in `<type name> gobos/` next to it, and the
+//! type itself for BlinderKitten as `<type name>.mochi` (File → Import there).
 //!
 //! The project keeps its own copy of the settings either way, so it works
 //! without the library. Types not set up in the project take the library over
@@ -114,6 +115,46 @@ pub fn export(file: &Path, type_name: &str, settings: &FixtureOverride, project_
     let json = serde_json::to_string_pretty(&FixtureFile { format: FORMAT, fixture_type: type_name.to_string(), modified, settings }).map_err(|e| e.to_string())?;
     std::fs::write(file, json).map_err(|e| e.to_string())?;
     Ok(source)
+}
+
+/// The fixture type of a BlinderKitten show as a `.mochi` (what BK's File →
+/// Export Selection writes for it): the type and the channel families its
+/// channels use. BK merges families by name when importing.
+pub fn mochi(show_path: &Path, type_name: &str) -> Result<String, String> {
+    let bytes = crate::stage::read_limited(show_path, 256 << 20).map_err(|e| e.to_string())?;
+    let show: serde_json::Value = serde_json::from_slice(&bytes).map_err(|e| e.to_string())?;
+    let items = |key: &str| show.get(key).and_then(|m| m.get("items")).and_then(serde_json::Value::as_array).cloned().unwrap_or_default();
+    let ty = items("fixtureType")
+        .into_iter()
+        .find(|t| t.get("niceName").and_then(serde_json::Value::as_str) == Some(type_name))
+        .ok_or_else(|| trf!("Gerätetyp „{}“ nicht in der Show", "Fixture type “{}” not in the show", type_name))?;
+    // The families its channel types belong to: "/<family>/channelTypes/<type>".
+    let mut used = std::collections::BTreeSet::new();
+    let mut walk = vec![&ty];
+    while let Some(v) = walk.pop() {
+        match v {
+            serde_json::Value::Object(m) => {
+                if m.get("controlAddress").and_then(serde_json::Value::as_str) == Some("/channelType")
+                    && let Some(family) = m.get("value").and_then(serde_json::Value::as_str).and_then(|a| a.strip_prefix('/')).and_then(|a| a.split('/').next())
+                {
+                    used.insert(family.to_string());
+                }
+                walk.extend(m.values());
+            }
+            serde_json::Value::Array(a) => walk.extend(a.iter()),
+            _ => {}
+        }
+    }
+    let families: Vec<serde_json::Value> = items("channelFamilies")
+        .into_iter()
+        .filter(|f| f.get("niceName").and_then(serde_json::Value::as_str).is_some_and(|n| used.contains(&bk_olga::short_name::to_short_name(n, false))))
+        .collect();
+    serde_json::to_string(&serde_json::json!({ "fixtureType": [ty], "channelFamilies": families })).map_err(|e| e.to_string())
+}
+
+/// The `.mochi` that goes with a library file.
+pub fn mochi_for(file: &Path) -> PathBuf {
+    file.with_extension("mochi")
 }
 
 /// The settings in a library file as they are there (pictures relative to
@@ -323,4 +364,23 @@ mod tests {
         let (got, _, _) = read(&library.join("evil.tapetum-fixture"), &to).unwrap();
         assert_eq!(got.fixed_gobo, None);
     }
+
+    #[test]
+    fn mochi_has_the_type_and_its_channel_families() {
+        let show_path = Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../bk-olga/tests/show.olga"));
+        let show = show();
+        let ty = show.fixture_types.iter().find(|t| t.name.contains("TMH")).unwrap();
+        let m: serde_json::Value = serde_json::from_str(&mochi(show_path, &ty.name).unwrap()).unwrap();
+        let types = m["fixtureType"].as_array().unwrap();
+        assert_eq!(types.len(), 1);
+        assert_eq!(types[0]["niceName"], ty.name.as_str());
+        let families: Vec<&str> = m["channelFamilies"].as_array().unwrap().iter().map(|f| f["niceName"].as_str().unwrap()).collect();
+        for want in ["Dimmer", "Color", "Position", "Focus"] {
+            assert!(families.contains(&want), "{families:?}");
+        }
+        assert!(!families.contains(&"Gobo"), "only the families it uses: {families:?}");
+        assert_eq!(mochi_for(Path::new("/lib/X.tapetum-fixture")), Path::new("/lib/X.mochi"));
+        assert!(mochi(show_path, "no such type").is_err());
+    }
+
 }
