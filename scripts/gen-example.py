@@ -507,12 +507,14 @@ def write_olga(lang):
         show["fixture"]["items"].append(fx)
     group7 = copy.deepcopy(next(g for g in show["group"]["items"] if g["niceName"].startswith("1 - ")))
     group7["niceName"] = "7 - MH Spot"
+    set_param(group7, "/id", 7)
     set_param(group7, "/name", "MH Spot")
     set_param(group7["containers"]["selections"]["items"][0], "/id", 15)
     set_param(group7["containers"]["selections"]["items"][0], "/lastID", 16)
     show["group"]["items"].append(group7)
     group6 = copy.deepcopy(next(g for g in show["group"]["items"] if g["niceName"].startswith("3 - ")))
     group6["niceName"] = "6 - Front"
+    set_param(group6, "/id", 6)
     set_param(group6["containers"]["selections"]["items"][0], "/id", 61)
     set_param(group6["containers"]["selections"]["items"][0], "/lastID", 64)
     show["group"]["items"].append(group6)

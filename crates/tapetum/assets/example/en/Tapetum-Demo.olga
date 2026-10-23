@@ -14630,6 +14630,10 @@
           {
             "value": "MH Spot",
             "controlAddress": "/name"
+          },
+          {
+            "value": 7,
+            "controlAddress": "/id"
           }
         ],
         "niceName": "7 - MH Spot",
@@ -14673,7 +14677,7 @@
       {
         "parameters": [
           {
-            "value": 3,
+            "value": 6,
             "hexMode": false,
             "controlAddress": "/id"
           },

@@ -177,6 +177,10 @@ mod tests {
         let show = bk_olga::load(&show_path).unwrap();
         assert_eq!(show.fixtures.len(), 19, "the test show's 13, four front lights, two moving head spots");
         assert!(show.fixtures.iter().all(|f| f.has_placement), "every fixture hangs somewhere");
+        // Cues address groups by ID: every group needs its own.
+        let mut groups: Vec<(i64, Vec<i64>)> = show.groups.iter().map(|g| (g.id, g.fixtures.clone())).collect();
+        groups.sort();
+        assert_eq!(groups, [(1, vec![11, 12, 13, 14]), (2, vec![21, 22, 23, 24]), (3, vec![31, 32]), (4, vec![41, 42]), (5, vec![51]), (6, vec![61, 62, 63, 64]), (7, vec![15, 16])]);
         // Ready for Tapetum: every DMX interface has its mirror, no setup step needed.
         for (i, itf) in show.interfaces.iter().enumerate() {
             if !matches!(itf.kind, bk_olga::InterfaceKind::NonDmx(_)) && !bk_olga::mirror::is_mirror_name(&itf.name) {
