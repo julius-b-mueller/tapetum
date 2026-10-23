@@ -41,8 +41,8 @@ NAMES = {
         "portal": "Portal", "curtain": "Vorhang", "masking": "Gassen und Soffitten", "truss": "Traversen",
         "podest": "Podest", "columns": "Säulen", "table": "Tisch", "chairs": "Stühle", "lantern": "Laterne",
         "crates": "Kisten", "bench": "Bank", "person": "Person",
-        "fixtures": {31: "Seite L", 32: "Seite R", 41: "Wash L", 42: "Wash R", 51: "Laterne"},
-        "groups": {3: "Seite", 4: "Wash", 5: "Laterne"},
+        "fixtures": {31: "Seite L", 32: "Seite R", 41: "Wash L", 42: "Wash R", 51: "Laterne", 61: "Front L", 62: "Front R"},
+        "groups": {3: "Seite", 4: "Wash", 5: "Laterne", 6: "Front"}, "bridge": "Frontlichtbrücke",
         "cues": ["Einlass", "Prolog", "Abend", "Nacht", "Morgen", "Fest", "Finale", "Blackout"],
         "chapters": ["1 - Einlass", "", "2 - Abend", "", "3 - Morgen", "4 - Fest", "5 - Finale", ""],
         "scenes": ["Morgen", "Fest", "Finale"],
@@ -52,8 +52,8 @@ NAMES = {
         "portal": "Proscenium", "curtain": "Curtain", "masking": "Legs and borders", "truss": "Trusses",
         "podest": "Platform", "columns": "Columns", "table": "Table", "chairs": "Chairs", "lantern": "Lantern",
         "crates": "Crates", "bench": "Bench", "person": "Person",
-        "fixtures": {31: "Side L", 32: "Side R", 41: "Wash L", 42: "Wash R", 51: "Lantern"},
-        "groups": {3: "Side", 4: "Wash", 5: "Lantern"},
+        "fixtures": {31: "Side L", 32: "Side R", 41: "Wash L", 42: "Wash R", 51: "Lantern", 61: "Front L", 62: "Front R"},
+        "groups": {3: "Side", 4: "Wash", 5: "Lantern", 6: "Front"}, "bridge": "Front light bridge",
         "cues": ["Pre-show", "Prologue", "Evening", "Night", "Morning", "Party", "Finale", "Blackout"],
         "chapters": ["1 - Pre-show", "", "2 - Evening", "", "3 - Morning", "4 - Party", "5 - Finale", ""],
         "scenes": ["Morning", "Party", "Finale"],
@@ -164,10 +164,17 @@ def theatre(n):
             for dz in (-0.15, 0.15):
                 truss.box(-6.5, 6.5, y + dy - 0.02, y + dy + 0.02, 7.05 + dz - 0.02, 7.05 + dz + 0.02)
 
+    # The front light bridge over the auditorium.
+    bridge = group("bridge", "demo-bridge", (0.5, 0.5, 0.52))
+    for dy in (-0.15, 0.15):
+        for dz in (-0.15, 0.15):
+            bridge.box(-4.5, 4.5, FRONT_Y + dy - 0.02, FRONT_Y + dy + 0.02, FRONT_Z + 0.35 + dz - 0.02, FRONT_Z + 0.35 + dz + 0.02)
+
     podest = group("podest", "demo-podest", (0.22, 0.2, 0.22))
-    podest.box(-5.6, -2.4, 3.4, 5.8, 0, 0.8)
+    # Clear of the leg at y = 3.4 (a shared face flickers).
+    podest.box(-5.2, -2.4, 3.5, 5.8, 0, 0.8)
     for k in range(3):
-        podest.box(-4.6, -3.2, 3.4 - 0.32 * (3 - k), 3.4 - 0.32 * (2 - k), 0, 0.2 * (k + 1))
+        podest.box(-4.6, -3.2, 3.5 - 0.32 * (3 - k), 3.5 - 0.32 * (2 - k), 0, 0.2 * (k + 1))
     columns = group("columns", "demo-columns", (0.78, 0.74, 0.68))
     for cx, cy in ((3.4, 4.9), (5.0, 4.3)):
         columns.box(cx - 0.36, cx + 0.36, cy - 0.36, cy + 0.36, 0, 0.25)
@@ -205,6 +212,9 @@ def theatre(n):
 
 
 LANTERN = (-3.3, -1.9)
+# Where the front light hangs: a bridge over the rows of seats.
+FRONT_Y, FRONT_Z = -10.5, 4.6
+FRONT = {61: -2.6, 62: 2.6}
 
 
 # The bench faces stage right in its file: turned a quarter to face the audience,
@@ -316,6 +326,10 @@ def placements():
         p = [x, -1.6, 6.65]
         pl[fid] = (p, aim(p, t))
     pl[51] = ([LANTERN[0], LANTERN[1], 3.03], [0.0, 0.0, 0.0])
+    # Front light: crossing onto the stage from the bridge.
+    for fid, x in FRONT.items():
+        p = [x, FRONT_Y, FRONT_Z]
+        pl[fid] = (p, aim(p, [-x * 0.4, -1.0, 1.2]))
     return pl
 
 
@@ -364,11 +378,13 @@ CUES = [
         (2, "Group", rgbw(1.0, 0.32, 0.0)),
         (3, "Group", [(INT, 0.45)] + rgbw(1.0, 0.7, 0.4, 1.0)),
         (5, "Group", [(INT, 0.8)]),
+        (6, "Group", [(INT, 0.35)] + rgbw(1.0, 0.75, 0.5, 1.0)),
     ]),
     (2, 6.0, [
         (2, "Group", rgbw(0.0, 0.1, 1.0)),
         (3, "Group", [(INT, 0.3)] + rgbw(0.4, 0.5, 1.0, 0.0)),
         (5, "Group", [(INT, 1.0)]),
+        (6, "Group", [(INT, 0.15)] + rgbw(0.5, 0.6, 1.0, 0.6)),
     ]),
     (3, 4.0, [
         (1, "Group", [(INT, 1.0), (ZOOM, 0.78), (STROBE, 0.0), (PAN, 0.667)] + rgbw(0.12, 0.0, 1.0)),
@@ -376,8 +392,9 @@ CUES = [
         (13, "Fixture", [(TILT, 0.416)]), (14, "Fixture", [(TILT, 0.345)]),
         (2, "Group", rgbw(1.0, 0.0, 0.25)),
         (3, "Group", [(INT, 1.0)] + rgbw(1.0, 0.55, 0.16, 0.24)),
-        (4, "Group", [(INT, 1.0), (STROBE, 0.0)] + rgbw(0.0, 0.08, 1.0)),
+        (4, "Group", [(INT, 1.0)] + rgbw(0.0, 0.08, 1.0)),
         (5, "Group", [(INT, 1.0)]),
+        (6, "Group", [(INT, 0.45)] + rgbw(1.0, 0.7, 0.45, 1.0)),
     ]),
     (4, 5.0, [
         (11, "Fixture", [(INT, 0.0)]), (14, "Fixture", [(INT, 0.0)]),
@@ -386,6 +403,7 @@ CUES = [
         (2, "Group", rgbw(0.0, 0.03, 0.4)),
         (3, "Group", [(INT, 0.0)]),
         (4, "Group", [(INT, 0.3)]),
+        (6, "Group", [(INT, 0.0)]),
     ]),
     (5, 5.0, [
         (1, "Group", [(INT, 0.7), (ZOOM, 0.55), (PAN, 0.5), (TILT, 0.5)] + rgbw(1.0, 0.8, 0.5, 1.0)),
@@ -393,6 +411,7 @@ CUES = [
         (3, "Group", [(INT, 1.0)] + rgbw(1.0, 0.85, 0.6, 1.0)),
         (4, "Group", [(INT, 0.8)] + rgbw(1.0, 0.45, 0.0)),
         (5, "Group", [(INT, 0.0)]),
+        (6, "Group", [(INT, 0.8)] + rgbw(1.0, 0.85, 0.7, 1.0)),
     ]),
     (6, 3.0, [
         (1, "Group", [(INT, 1.0), (ZOOM, 0.6)]),
@@ -404,6 +423,7 @@ CUES = [
         (3, "Group", [(INT, 1.0)] + rgbw(1.0, 0.75, 0.45, 1.0)),
         (4, "Group", [(INT, 1.0)] + rgbw(1.0, 0.5, 0.0)),
         (5, "Group", [(INT, 1.0)]),
+        (6, "Group", [(INT, 0.6)] + rgbw(1.0, 0.7, 0.5, 1.0)),
     ]),
     (7, 4.0, [
         (1, "Group", [(INT, 1.0), (ZOOM, 0.3), (PAN, 0.5), (TILT, 0.5)] + rgbw(1.0, 0.9, 0.75, 1.0)),
@@ -411,10 +431,11 @@ CUES = [
         (3, "Group", [(INT, 1.0)] + rgbw(1.0, 0.85, 0.6, 1.0)),
         (4, "Group", [(INT, 1.0)] + rgbw(1.0, 0.6, 0.2, 1.0)),
         (5, "Group", [(INT, 1.0)]),
+        (6, "Group", [(INT, 1.0)] + rgbw(1.0, 0.85, 0.7, 1.0)),
     ]),
     (8, 3.0, [
         (1, "Group", [(INT, 0.0)]), (2, "Group", rgbw(0.0, 0.0, 0.0, 0.0)),
-        (3, "Group", [(INT, 0.0)]), (4, "Group", [(INT, 0.0)]), (5, "Group", [(INT, 0.0)]),
+        (3, "Group", [(INT, 0.0)]), (4, "Group", [(INT, 0.0)]), (5, "Group", [(INT, 0.0)]), (6, "Group", [(INT, 0.0)]),
     ]),
 ]
 
@@ -434,6 +455,18 @@ def write_olga(lang):
             set_param(out, "/enabled", False)
     names = n["fixtures"]
     pl = placements()
+    # Front light: two more of the side spots' type, patched after them.
+    side = next(fx for fx in show["fixture"]["items"] if params(fx)["/id"]["value"] == 31)
+    for fid, address in ((61, 440), (62, 450)):
+        fx = copy.deepcopy(side)
+        set_param(fx, "/id", fid)
+        set_param(fx["containers"]["patch"]["items"][0], "/address", address)
+        show["fixture"]["items"].append(fx)
+    group6 = copy.deepcopy(next(g for g in show["group"]["items"] if g["niceName"].startswith("3 - ")))
+    group6["niceName"] = "6 - Front"
+    set_param(group6["containers"]["selections"]["items"][0], "/id", 61)
+    set_param(group6["containers"]["selections"]["items"][0], "/lastID", 62)
+    show["group"]["items"].append(group6)
     for fx in show["fixture"]["items"]:
         fid = params(fx)["/id"]["value"]
         if fid in names:
@@ -493,12 +526,13 @@ def scenes(names):
         obj("demo-crates"): state(visible=False),
         obj("demo-table"): state(-4.6, 3.2), obj("demo-chairs"): state(-4.6, 3.2),
     }
+    # The lantern stays: its light is a fixture, and fixtures don't move with scenes.
     party = {  # the table centre stage, two people side by side in front of it, all else off to the side stages
         obj("demo-person-1"): state(0.25, 0.2), obj("demo-person-2"): state(-2.0, 0.1),
         obj("demo-person-3"): state(-7.5), obj("demo-person-4"): state(5.7),
         obj("demo-table"): state(-3.1, 2.0), obj("demo-chairs"): state(-3.1, 2.0),
         obj("demo-bench"): state(9.6), obj("demo-columns"): state(6.5),
-        obj("demo-podest"): state(-6.2), obj("demo-crates"): state(-6.3), obj("demo-lantern"): state(-7.2),
+        obj("demo-podest"): state(-6.2), obj("demo-crates"): state(-6.3),
     }
     # The finale: everything back where it stands in the files.
     return [{"id": i + 1, "name": name, "cue_id": cue, "transition": t, "objects": objects}
@@ -512,8 +546,8 @@ def write_project(lang):
         "objects": [{"id": 1, "name": f"{NAME}.igz", "model": f"{NAME}.igz", "visible": True}],
         "fixture_types": {
             "euroliteTMH_W555": {"fixed_gobo": {"Builtin": "Stern"}},
-            "varytecLEDTheaterSpot120FC": {"fixed_gobo": {"Builtin": "Wasser"}, "beam_angle": 26.0},
-            "euroliteWF_40": {"beam_angle": 36.0},
+            "varytecLEDTheaterSpot120FC": {"beam_angle": 26.0},
+            "euroliteWF_40": {"fixed_gobo": {"Builtin": "Wasser"}, "beam_angle": 36.0},
             "elationPaladinBrick": {"beam_angle": 75.0},
             "channel": {"beam_angle": 360.0, "lumens": 1800.0, "white_kelvin": 2700.0, "body_scale": 0.3},
         },

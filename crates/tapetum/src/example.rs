@@ -175,7 +175,7 @@ mod tests {
         }
         let show_path = file(&dir, "olga");
         let show = bk_olga::load(&show_path).unwrap();
-        assert_eq!(show.fixtures.len(), 13);
+        assert_eq!(show.fixtures.len(), 15, "the test show's 13 and two front lights");
         assert!(show.fixtures.iter().all(|f| f.has_placement), "every fixture hangs somewhere");
         // Ready for Tapetum: every DMX interface has its mirror, no setup step needed.
         for (i, itf) in show.interfaces.iter().enumerate() {

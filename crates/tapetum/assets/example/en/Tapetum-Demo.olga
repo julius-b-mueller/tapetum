@@ -13226,6 +13226,56 @@
           }
         },
         "type": "Group"
+      },
+      {
+        "parameters": [
+          {
+            "value": 3,
+            "hexMode": false,
+            "controlAddress": "/id"
+          },
+          {
+            "value": "Front",
+            "controlAddress": "/name"
+          }
+        ],
+        "niceName": "6 - Front",
+        "containers": {
+          "selections": {
+            "items": [
+              {
+                "parameters": [
+                  {
+                    "value": 61,
+                    "hexMode": false,
+                    "controlAddress": "/id"
+                  },
+                  {
+                    "value": true,
+                    "controlAddress": "/thru"
+                  },
+                  {
+                    "value": 62,
+                    "hexMode": false,
+                    "controlAddress": "/lastID"
+                  },
+                  {
+                    "value": "",
+                    "controlAddress": "/channelType"
+                  }
+                ],
+                "niceName": "Selection",
+                "type": "BaseItem"
+              }
+            ],
+            "viewOffset": [
+              0,
+              0
+            ],
+            "viewZoom": 1.0
+          }
+        },
+        "type": "Group"
       }
     ],
     "viewOffset": [
@@ -14276,6 +14326,170 @@
                   },
                   {
                     "value": 500,
+                    "hexMode": false,
+                    "controlAddress": "/address"
+                  }
+                ],
+                "niceName": "Patch",
+                "containers": {
+                  "corrections": {
+                    "viewOffset": [
+                      0,
+                      0
+                    ],
+                    "viewZoom": 1.0
+                  }
+                },
+                "type": "BaseItem"
+              }
+            ],
+            "viewOffset": [
+              0,
+              0
+            ],
+            "viewZoom": 1.0
+          },
+          "mappings": {
+            "viewOffset": [
+              0,
+              0
+            ],
+            "viewZoom": 1.0
+          }
+        },
+        "type": "Fixture"
+      },
+      {
+        "parameters": [
+          {
+            "value": 61,
+            "hexMode": false,
+            "controlAddress": "/id"
+          },
+          {
+            "value": "Front L",
+            "controlAddress": "/name"
+          },
+          {
+            "value": "/varytecLEDTheaterSpot120FC",
+            "controlAddress": "/fixtureType"
+          },
+          {
+            "value": [
+              -2.6,
+              -10.5,
+              4.6
+            ],
+            "controlAddress": "/position"
+          },
+          {
+            "value": [
+              72.0,
+              0.0,
+              -20.0
+            ],
+            "controlAddress": "/rotation"
+          }
+        ],
+        "niceName": "61 - Front L",
+        "editorIsCollapsed": true,
+        "containers": {
+          "patch": {
+            "items": [
+              {
+                "parameters": [
+                  {
+                    "value": true,
+                    "controlAddress": "/enabled"
+                  },
+                  {
+                    "value": "/dmx2",
+                    "controlAddress": "/interface"
+                  },
+                  {
+                    "value": 440,
+                    "hexMode": false,
+                    "controlAddress": "/address"
+                  }
+                ],
+                "niceName": "Patch",
+                "containers": {
+                  "corrections": {
+                    "viewOffset": [
+                      0,
+                      0
+                    ],
+                    "viewZoom": 1.0
+                  }
+                },
+                "type": "BaseItem"
+              }
+            ],
+            "viewOffset": [
+              0,
+              0
+            ],
+            "viewZoom": 1.0
+          },
+          "mappings": {
+            "viewOffset": [
+              0,
+              0
+            ],
+            "viewZoom": 1.0
+          }
+        },
+        "type": "Fixture"
+      },
+      {
+        "parameters": [
+          {
+            "value": 62,
+            "hexMode": false,
+            "controlAddress": "/id"
+          },
+          {
+            "value": "Front R",
+            "controlAddress": "/name"
+          },
+          {
+            "value": "/varytecLEDTheaterSpot120FC",
+            "controlAddress": "/fixtureType"
+          },
+          {
+            "value": [
+              2.6,
+              -10.5,
+              4.6
+            ],
+            "controlAddress": "/position"
+          },
+          {
+            "value": [
+              72.0,
+              0.0,
+              20.0
+            ],
+            "controlAddress": "/rotation"
+          }
+        ],
+        "niceName": "62 - Front R",
+        "editorIsCollapsed": true,
+        "containers": {
+          "patch": {
+            "items": [
+              {
+                "parameters": [
+                  {
+                    "value": true,
+                    "controlAddress": "/enabled"
+                  },
+                  {
+                    "value": "/dmx2",
+                    "controlAddress": "/interface"
+                  },
+                  {
+                    "value": 450,
                     "hexMode": false,
                     "controlAddress": "/address"
                   }
@@ -16413,6 +16627,489 @@
                           }
                         },
                         "type": "Command"
+                      },
+                      {
+                        "niceName": "Group 6",
+                        "containers": {
+                          "moveInBlack": {},
+                          "selections": {
+                            "items": [
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "Group",
+                                    "controlAddress": "/targetType"
+                                  },
+                                  {
+                                    "value": 6,
+                                    "hexMode": false,
+                                    "controlAddress": "/id"
+                                  },
+                                  {
+                                    "value": "",
+                                    "controlAddress": "/channelType"
+                                  }
+                                ],
+                                "niceName": "Selection",
+                                "type": "BaseItem"
+                              }
+                            ],
+                            "viewOffset": [
+                              0,
+                              0
+                            ],
+                            "viewZoom": 1.0
+                          },
+                          "values": {
+                            "items": [
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/dimmer/channelTypes/intensity",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 0.35,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value",
+                                "type": "BaseItem"
+                              },
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/color/channelTypes/red",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value 2",
+                                "type": "BaseItem"
+                              },
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/color/channelTypes/green",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 0.75,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value 3",
+                                "type": "BaseItem"
+                              },
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/color/channelTypes/blue",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 0.5,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value 4",
+                                "type": "BaseItem"
+                              },
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/color/channelTypes/white",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value 5",
+                                "type": "BaseItem"
+                              }
+                            ],
+                            "viewOffset": [
+                              0,
+                              0
+                            ],
+                            "viewZoom": 1.0
+                          },
+                          "timing": {
+                            "containers": {
+                              "commandTimingFiltered": {
+                                "hideInEditor": true,
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "fadeCurve": {
+                                "parameters": [
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/length"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/viewValueRange"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/range",
+                                    "enabled": true
+                                  }
+                                ],
+                                "editorIsCollapsed": true,
+                                "hideInEditor": true,
+                                "hideInRemoteControl": false,
+                                "containers": {
+                                  "key": {
+                                    "parameters": [
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {
+                                        "parameters": [
+                                          {
+                                            "value": [
+                                              0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor1"
+                                          },
+                                          {
+                                            "value": [
+                                              -0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor2"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "type": "Key"
+                                  },
+                                  "key1": {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {
+                                        "parameters": [
+                                          {
+                                            "value": [
+                                              0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor1"
+                                          },
+                                          {
+                                            "value": [
+                                              -0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor2"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "type": "Key"
+                                  },
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                ],
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "delayRepartition": {
+                                "parameters": [
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/length"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/viewValueRange"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/range",
+                                    "enabled": true
+                                  }
+                                ],
+                                "editorIsCollapsed": true,
+                                "hideInEditor": true,
+                                "hideInRemoteControl": false,
+                                "containers": {
+                                  "key": {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  "key1": {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                ],
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "fadeRepartition": {
+                                "parameters": [
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/length"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/viewValueRange"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/range",
+                                    "enabled": true
+                                  }
+                                ],
+                                "editorIsCollapsed": true,
+                                "hideInEditor": true,
+                                "hideInRemoteControl": false,
+                                "containers": {
+                                  "key": {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  "key1": {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                ],
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "delayMultiplicators": {
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "fadeMultiplicators": {
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              }
+                            }
+                          }
+                        },
+                        "type": "Command"
                       }
                     ],
                     "viewOffset": [
@@ -17469,6 +18166,489 @@
                                   }
                                 ],
                                 "niceName": "Value",
+                                "type": "BaseItem"
+                              }
+                            ],
+                            "viewOffset": [
+                              0,
+                              0
+                            ],
+                            "viewZoom": 1.0
+                          },
+                          "timing": {
+                            "containers": {
+                              "commandTimingFiltered": {
+                                "hideInEditor": true,
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "fadeCurve": {
+                                "parameters": [
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/length"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/viewValueRange"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/range",
+                                    "enabled": true
+                                  }
+                                ],
+                                "editorIsCollapsed": true,
+                                "hideInEditor": true,
+                                "hideInRemoteControl": false,
+                                "containers": {
+                                  "key": {
+                                    "parameters": [
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {
+                                        "parameters": [
+                                          {
+                                            "value": [
+                                              0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor1"
+                                          },
+                                          {
+                                            "value": [
+                                              -0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor2"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "type": "Key"
+                                  },
+                                  "key1": {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {
+                                        "parameters": [
+                                          {
+                                            "value": [
+                                              0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor1"
+                                          },
+                                          {
+                                            "value": [
+                                              -0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor2"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "type": "Key"
+                                  },
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                ],
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "delayRepartition": {
+                                "parameters": [
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/length"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/viewValueRange"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/range",
+                                    "enabled": true
+                                  }
+                                ],
+                                "editorIsCollapsed": true,
+                                "hideInEditor": true,
+                                "hideInRemoteControl": false,
+                                "containers": {
+                                  "key": {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  "key1": {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                ],
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "fadeRepartition": {
+                                "parameters": [
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/length"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/viewValueRange"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/range",
+                                    "enabled": true
+                                  }
+                                ],
+                                "editorIsCollapsed": true,
+                                "hideInEditor": true,
+                                "hideInRemoteControl": false,
+                                "containers": {
+                                  "key": {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  "key1": {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                ],
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "delayMultiplicators": {
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "fadeMultiplicators": {
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              }
+                            }
+                          }
+                        },
+                        "type": "Command"
+                      },
+                      {
+                        "niceName": "Group 6",
+                        "containers": {
+                          "moveInBlack": {},
+                          "selections": {
+                            "items": [
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "Group",
+                                    "controlAddress": "/targetType"
+                                  },
+                                  {
+                                    "value": 6,
+                                    "hexMode": false,
+                                    "controlAddress": "/id"
+                                  },
+                                  {
+                                    "value": "",
+                                    "controlAddress": "/channelType"
+                                  }
+                                ],
+                                "niceName": "Selection",
+                                "type": "BaseItem"
+                              }
+                            ],
+                            "viewOffset": [
+                              0,
+                              0
+                            ],
+                            "viewZoom": 1.0
+                          },
+                          "values": {
+                            "items": [
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/dimmer/channelTypes/intensity",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 0.15,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value",
+                                "type": "BaseItem"
+                              },
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/color/channelTypes/red",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 0.5,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value 2",
+                                "type": "BaseItem"
+                              },
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/color/channelTypes/green",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 0.6,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value 3",
+                                "type": "BaseItem"
+                              },
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/color/channelTypes/blue",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value 4",
+                                "type": "BaseItem"
+                              },
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/color/channelTypes/white",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 0.6,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value 5",
                                 "type": "BaseItem"
                               }
                             ],
@@ -21147,7 +22327,7 @@
                               {
                                 "parameters": [
                                   {
-                                    "value": "/beam/channelTypes/strobeFrequency",
+                                    "value": "/color/channelTypes/red",
                                     "controlAddress": "/channelType"
                                   },
                                   {
@@ -21161,20 +22341,6 @@
                               {
                                 "parameters": [
                                   {
-                                    "value": "/color/channelTypes/red",
-                                    "controlAddress": "/channelType"
-                                  },
-                                  {
-                                    "value": 0.0,
-                                    "controlAddress": "/value"
-                                  }
-                                ],
-                                "niceName": "Value 3",
-                                "type": "BaseItem"
-                              },
-                              {
-                                "parameters": [
-                                  {
                                     "value": "/color/channelTypes/green",
                                     "controlAddress": "/channelType"
                                   },
@@ -21183,7 +22349,7 @@
                                     "controlAddress": "/value"
                                   }
                                 ],
-                                "niceName": "Value 4",
+                                "niceName": "Value 3",
                                 "type": "BaseItem"
                               },
                               {
@@ -21197,7 +22363,7 @@
                                     "controlAddress": "/value"
                                   }
                                 ],
-                                "niceName": "Value 5",
+                                "niceName": "Value 4",
                                 "type": "BaseItem"
                               },
                               {
@@ -21211,7 +22377,7 @@
                                     "controlAddress": "/value"
                                   }
                                 ],
-                                "niceName": "Value 6",
+                                "niceName": "Value 5",
                                 "type": "BaseItem"
                               }
                             ],
@@ -21639,6 +22805,489 @@
                                   }
                                 ],
                                 "niceName": "Value",
+                                "type": "BaseItem"
+                              }
+                            ],
+                            "viewOffset": [
+                              0,
+                              0
+                            ],
+                            "viewZoom": 1.0
+                          },
+                          "timing": {
+                            "containers": {
+                              "commandTimingFiltered": {
+                                "hideInEditor": true,
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "fadeCurve": {
+                                "parameters": [
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/length"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/viewValueRange"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/range",
+                                    "enabled": true
+                                  }
+                                ],
+                                "editorIsCollapsed": true,
+                                "hideInEditor": true,
+                                "hideInRemoteControl": false,
+                                "containers": {
+                                  "key": {
+                                    "parameters": [
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {
+                                        "parameters": [
+                                          {
+                                            "value": [
+                                              0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor1"
+                                          },
+                                          {
+                                            "value": [
+                                              -0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor2"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "type": "Key"
+                                  },
+                                  "key1": {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {
+                                        "parameters": [
+                                          {
+                                            "value": [
+                                              0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor1"
+                                          },
+                                          {
+                                            "value": [
+                                              -0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor2"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "type": "Key"
+                                  },
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                ],
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "delayRepartition": {
+                                "parameters": [
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/length"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/viewValueRange"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/range",
+                                    "enabled": true
+                                  }
+                                ],
+                                "editorIsCollapsed": true,
+                                "hideInEditor": true,
+                                "hideInRemoteControl": false,
+                                "containers": {
+                                  "key": {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  "key1": {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                ],
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "fadeRepartition": {
+                                "parameters": [
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/length"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/viewValueRange"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/range",
+                                    "enabled": true
+                                  }
+                                ],
+                                "editorIsCollapsed": true,
+                                "hideInEditor": true,
+                                "hideInRemoteControl": false,
+                                "containers": {
+                                  "key": {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  "key1": {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                ],
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "delayMultiplicators": {
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "fadeMultiplicators": {
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              }
+                            }
+                          }
+                        },
+                        "type": "Command"
+                      },
+                      {
+                        "niceName": "Group 6",
+                        "containers": {
+                          "moveInBlack": {},
+                          "selections": {
+                            "items": [
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "Group",
+                                    "controlAddress": "/targetType"
+                                  },
+                                  {
+                                    "value": 6,
+                                    "hexMode": false,
+                                    "controlAddress": "/id"
+                                  },
+                                  {
+                                    "value": "",
+                                    "controlAddress": "/channelType"
+                                  }
+                                ],
+                                "niceName": "Selection",
+                                "type": "BaseItem"
+                              }
+                            ],
+                            "viewOffset": [
+                              0,
+                              0
+                            ],
+                            "viewZoom": 1.0
+                          },
+                          "values": {
+                            "items": [
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/dimmer/channelTypes/intensity",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 0.45,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value",
+                                "type": "BaseItem"
+                              },
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/color/channelTypes/red",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value 2",
+                                "type": "BaseItem"
+                              },
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/color/channelTypes/green",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 0.7,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value 3",
+                                "type": "BaseItem"
+                              },
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/color/channelTypes/blue",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 0.45,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value 4",
+                                "type": "BaseItem"
+                              },
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/color/channelTypes/white",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value 5",
                                 "type": "BaseItem"
                               }
                             ],
@@ -25303,6 +26952,433 @@
                           }
                         },
                         "type": "Command"
+                      },
+                      {
+                        "niceName": "Group 6",
+                        "containers": {
+                          "moveInBlack": {},
+                          "selections": {
+                            "items": [
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "Group",
+                                    "controlAddress": "/targetType"
+                                  },
+                                  {
+                                    "value": 6,
+                                    "hexMode": false,
+                                    "controlAddress": "/id"
+                                  },
+                                  {
+                                    "value": "",
+                                    "controlAddress": "/channelType"
+                                  }
+                                ],
+                                "niceName": "Selection",
+                                "type": "BaseItem"
+                              }
+                            ],
+                            "viewOffset": [
+                              0,
+                              0
+                            ],
+                            "viewZoom": 1.0
+                          },
+                          "values": {
+                            "items": [
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/dimmer/channelTypes/intensity",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 0.0,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value",
+                                "type": "BaseItem"
+                              }
+                            ],
+                            "viewOffset": [
+                              0,
+                              0
+                            ],
+                            "viewZoom": 1.0
+                          },
+                          "timing": {
+                            "containers": {
+                              "commandTimingFiltered": {
+                                "hideInEditor": true,
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "fadeCurve": {
+                                "parameters": [
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/length"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/viewValueRange"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/range",
+                                    "enabled": true
+                                  }
+                                ],
+                                "editorIsCollapsed": true,
+                                "hideInEditor": true,
+                                "hideInRemoteControl": false,
+                                "containers": {
+                                  "key": {
+                                    "parameters": [
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {
+                                        "parameters": [
+                                          {
+                                            "value": [
+                                              0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor1"
+                                          },
+                                          {
+                                            "value": [
+                                              -0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor2"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "type": "Key"
+                                  },
+                                  "key1": {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {
+                                        "parameters": [
+                                          {
+                                            "value": [
+                                              0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor1"
+                                          },
+                                          {
+                                            "value": [
+                                              -0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor2"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "type": "Key"
+                                  },
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                ],
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "delayRepartition": {
+                                "parameters": [
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/length"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/viewValueRange"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/range",
+                                    "enabled": true
+                                  }
+                                ],
+                                "editorIsCollapsed": true,
+                                "hideInEditor": true,
+                                "hideInRemoteControl": false,
+                                "containers": {
+                                  "key": {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  "key1": {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                ],
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "fadeRepartition": {
+                                "parameters": [
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/length"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/viewValueRange"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/range",
+                                    "enabled": true
+                                  }
+                                ],
+                                "editorIsCollapsed": true,
+                                "hideInEditor": true,
+                                "hideInRemoteControl": false,
+                                "containers": {
+                                  "key": {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  "key1": {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                ],
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "delayMultiplicators": {
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "fadeMultiplicators": {
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              }
+                            }
+                          }
+                        },
+                        "type": "Command"
                       }
                     ],
                     "viewOffset": [
@@ -27371,6 +29447,489 @@
                                   }
                                 ],
                                 "niceName": "Value",
+                                "type": "BaseItem"
+                              }
+                            ],
+                            "viewOffset": [
+                              0,
+                              0
+                            ],
+                            "viewZoom": 1.0
+                          },
+                          "timing": {
+                            "containers": {
+                              "commandTimingFiltered": {
+                                "hideInEditor": true,
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "fadeCurve": {
+                                "parameters": [
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/length"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/viewValueRange"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/range",
+                                    "enabled": true
+                                  }
+                                ],
+                                "editorIsCollapsed": true,
+                                "hideInEditor": true,
+                                "hideInRemoteControl": false,
+                                "containers": {
+                                  "key": {
+                                    "parameters": [
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {
+                                        "parameters": [
+                                          {
+                                            "value": [
+                                              0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor1"
+                                          },
+                                          {
+                                            "value": [
+                                              -0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor2"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "type": "Key"
+                                  },
+                                  "key1": {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {
+                                        "parameters": [
+                                          {
+                                            "value": [
+                                              0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor1"
+                                          },
+                                          {
+                                            "value": [
+                                              -0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor2"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "type": "Key"
+                                  },
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                ],
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "delayRepartition": {
+                                "parameters": [
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/length"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/viewValueRange"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/range",
+                                    "enabled": true
+                                  }
+                                ],
+                                "editorIsCollapsed": true,
+                                "hideInEditor": true,
+                                "hideInRemoteControl": false,
+                                "containers": {
+                                  "key": {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  "key1": {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                ],
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "fadeRepartition": {
+                                "parameters": [
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/length"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/viewValueRange"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/range",
+                                    "enabled": true
+                                  }
+                                ],
+                                "editorIsCollapsed": true,
+                                "hideInEditor": true,
+                                "hideInRemoteControl": false,
+                                "containers": {
+                                  "key": {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  "key1": {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                ],
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "delayMultiplicators": {
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "fadeMultiplicators": {
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              }
+                            }
+                          }
+                        },
+                        "type": "Command"
+                      },
+                      {
+                        "niceName": "Group 6",
+                        "containers": {
+                          "moveInBlack": {},
+                          "selections": {
+                            "items": [
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "Group",
+                                    "controlAddress": "/targetType"
+                                  },
+                                  {
+                                    "value": 6,
+                                    "hexMode": false,
+                                    "controlAddress": "/id"
+                                  },
+                                  {
+                                    "value": "",
+                                    "controlAddress": "/channelType"
+                                  }
+                                ],
+                                "niceName": "Selection",
+                                "type": "BaseItem"
+                              }
+                            ],
+                            "viewOffset": [
+                              0,
+                              0
+                            ],
+                            "viewZoom": 1.0
+                          },
+                          "values": {
+                            "items": [
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/dimmer/channelTypes/intensity",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 0.8,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value",
+                                "type": "BaseItem"
+                              },
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/color/channelTypes/red",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value 2",
+                                "type": "BaseItem"
+                              },
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/color/channelTypes/green",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 0.85,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value 3",
+                                "type": "BaseItem"
+                              },
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/color/channelTypes/blue",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 0.7,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value 4",
+                                "type": "BaseItem"
+                              },
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/color/channelTypes/white",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value 5",
                                 "type": "BaseItem"
                               }
                             ],
@@ -32103,6 +34662,489 @@
                           }
                         },
                         "type": "Command"
+                      },
+                      {
+                        "niceName": "Group 6",
+                        "containers": {
+                          "moveInBlack": {},
+                          "selections": {
+                            "items": [
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "Group",
+                                    "controlAddress": "/targetType"
+                                  },
+                                  {
+                                    "value": 6,
+                                    "hexMode": false,
+                                    "controlAddress": "/id"
+                                  },
+                                  {
+                                    "value": "",
+                                    "controlAddress": "/channelType"
+                                  }
+                                ],
+                                "niceName": "Selection",
+                                "type": "BaseItem"
+                              }
+                            ],
+                            "viewOffset": [
+                              0,
+                              0
+                            ],
+                            "viewZoom": 1.0
+                          },
+                          "values": {
+                            "items": [
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/dimmer/channelTypes/intensity",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 0.6,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value",
+                                "type": "BaseItem"
+                              },
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/color/channelTypes/red",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value 2",
+                                "type": "BaseItem"
+                              },
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/color/channelTypes/green",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 0.7,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value 3",
+                                "type": "BaseItem"
+                              },
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/color/channelTypes/blue",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 0.5,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value 4",
+                                "type": "BaseItem"
+                              },
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/color/channelTypes/white",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value 5",
+                                "type": "BaseItem"
+                              }
+                            ],
+                            "viewOffset": [
+                              0,
+                              0
+                            ],
+                            "viewZoom": 1.0
+                          },
+                          "timing": {
+                            "containers": {
+                              "commandTimingFiltered": {
+                                "hideInEditor": true,
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "fadeCurve": {
+                                "parameters": [
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/length"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/viewValueRange"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/range",
+                                    "enabled": true
+                                  }
+                                ],
+                                "editorIsCollapsed": true,
+                                "hideInEditor": true,
+                                "hideInRemoteControl": false,
+                                "containers": {
+                                  "key": {
+                                    "parameters": [
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {
+                                        "parameters": [
+                                          {
+                                            "value": [
+                                              0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor1"
+                                          },
+                                          {
+                                            "value": [
+                                              -0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor2"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "type": "Key"
+                                  },
+                                  "key1": {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {
+                                        "parameters": [
+                                          {
+                                            "value": [
+                                              0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor1"
+                                          },
+                                          {
+                                            "value": [
+                                              -0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor2"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "type": "Key"
+                                  },
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                ],
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "delayRepartition": {
+                                "parameters": [
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/length"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/viewValueRange"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/range",
+                                    "enabled": true
+                                  }
+                                ],
+                                "editorIsCollapsed": true,
+                                "hideInEditor": true,
+                                "hideInRemoteControl": false,
+                                "containers": {
+                                  "key": {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  "key1": {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                ],
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "fadeRepartition": {
+                                "parameters": [
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/length"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/viewValueRange"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/range",
+                                    "enabled": true
+                                  }
+                                ],
+                                "editorIsCollapsed": true,
+                                "hideInEditor": true,
+                                "hideInRemoteControl": false,
+                                "containers": {
+                                  "key": {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  "key1": {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                ],
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "delayMultiplicators": {
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "fadeMultiplicators": {
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              }
+                            }
+                          }
+                        },
+                        "type": "Command"
                       }
                     ],
                     "viewOffset": [
@@ -34551,6 +37593,489 @@
                           }
                         },
                         "type": "Command"
+                      },
+                      {
+                        "niceName": "Group 6",
+                        "containers": {
+                          "moveInBlack": {},
+                          "selections": {
+                            "items": [
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "Group",
+                                    "controlAddress": "/targetType"
+                                  },
+                                  {
+                                    "value": 6,
+                                    "hexMode": false,
+                                    "controlAddress": "/id"
+                                  },
+                                  {
+                                    "value": "",
+                                    "controlAddress": "/channelType"
+                                  }
+                                ],
+                                "niceName": "Selection",
+                                "type": "BaseItem"
+                              }
+                            ],
+                            "viewOffset": [
+                              0,
+                              0
+                            ],
+                            "viewZoom": 1.0
+                          },
+                          "values": {
+                            "items": [
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/dimmer/channelTypes/intensity",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value",
+                                "type": "BaseItem"
+                              },
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/color/channelTypes/red",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value 2",
+                                "type": "BaseItem"
+                              },
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/color/channelTypes/green",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 0.85,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value 3",
+                                "type": "BaseItem"
+                              },
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/color/channelTypes/blue",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 0.7,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value 4",
+                                "type": "BaseItem"
+                              },
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/color/channelTypes/white",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value 5",
+                                "type": "BaseItem"
+                              }
+                            ],
+                            "viewOffset": [
+                              0,
+                              0
+                            ],
+                            "viewZoom": 1.0
+                          },
+                          "timing": {
+                            "containers": {
+                              "commandTimingFiltered": {
+                                "hideInEditor": true,
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "fadeCurve": {
+                                "parameters": [
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/length"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/viewValueRange"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/range",
+                                    "enabled": true
+                                  }
+                                ],
+                                "editorIsCollapsed": true,
+                                "hideInEditor": true,
+                                "hideInRemoteControl": false,
+                                "containers": {
+                                  "key": {
+                                    "parameters": [
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {
+                                        "parameters": [
+                                          {
+                                            "value": [
+                                              0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor1"
+                                          },
+                                          {
+                                            "value": [
+                                              -0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor2"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "type": "Key"
+                                  },
+                                  "key1": {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {
+                                        "parameters": [
+                                          {
+                                            "value": [
+                                              0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor1"
+                                          },
+                                          {
+                                            "value": [
+                                              -0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor2"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "type": "Key"
+                                  },
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                ],
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "delayRepartition": {
+                                "parameters": [
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/length"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/viewValueRange"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/range",
+                                    "enabled": true
+                                  }
+                                ],
+                                "editorIsCollapsed": true,
+                                "hideInEditor": true,
+                                "hideInRemoteControl": false,
+                                "containers": {
+                                  "key": {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  "key1": {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                ],
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "fadeRepartition": {
+                                "parameters": [
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/length"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/viewValueRange"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/range",
+                                    "enabled": true
+                                  }
+                                ],
+                                "editorIsCollapsed": true,
+                                "hideInEditor": true,
+                                "hideInRemoteControl": false,
+                                "containers": {
+                                  "key": {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  "key1": {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                ],
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "delayMultiplicators": {
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "fadeMultiplicators": {
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              }
+                            }
+                          }
+                        },
+                        "type": "Command"
                       }
                     ],
                     "viewOffset": [
@@ -36373,6 +39898,433 @@
                                   },
                                   {
                                     "value": 5,
+                                    "hexMode": false,
+                                    "controlAddress": "/id"
+                                  },
+                                  {
+                                    "value": "",
+                                    "controlAddress": "/channelType"
+                                  }
+                                ],
+                                "niceName": "Selection",
+                                "type": "BaseItem"
+                              }
+                            ],
+                            "viewOffset": [
+                              0,
+                              0
+                            ],
+                            "viewZoom": 1.0
+                          },
+                          "values": {
+                            "items": [
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "/dimmer/channelTypes/intensity",
+                                    "controlAddress": "/channelType"
+                                  },
+                                  {
+                                    "value": 0.0,
+                                    "controlAddress": "/value"
+                                  }
+                                ],
+                                "niceName": "Value",
+                                "type": "BaseItem"
+                              }
+                            ],
+                            "viewOffset": [
+                              0,
+                              0
+                            ],
+                            "viewZoom": 1.0
+                          },
+                          "timing": {
+                            "containers": {
+                              "commandTimingFiltered": {
+                                "hideInEditor": true,
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "fadeCurve": {
+                                "parameters": [
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/length"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/viewValueRange"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/range",
+                                    "enabled": true
+                                  }
+                                ],
+                                "editorIsCollapsed": true,
+                                "hideInEditor": true,
+                                "hideInRemoteControl": false,
+                                "containers": {
+                                  "key": {
+                                    "parameters": [
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {
+                                        "parameters": [
+                                          {
+                                            "value": [
+                                              0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor1"
+                                          },
+                                          {
+                                            "value": [
+                                              -0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor2"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "type": "Key"
+                                  },
+                                  "key1": {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {
+                                        "parameters": [
+                                          {
+                                            "value": [
+                                              0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor1"
+                                          },
+                                          {
+                                            "value": [
+                                              -0.300000011920929,
+                                              0.0
+                                            ],
+                                            "controlAddress": "/anchor2"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "type": "Key"
+                                  },
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                ],
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "delayRepartition": {
+                                "parameters": [
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/length"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/viewValueRange"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/range",
+                                    "enabled": true
+                                  }
+                                ],
+                                "editorIsCollapsed": true,
+                                "hideInEditor": true,
+                                "hideInRemoteControl": false,
+                                "containers": {
+                                  "key": {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  "key1": {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                ],
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "fadeRepartition": {
+                                "parameters": [
+                                  {
+                                    "value": 1.0,
+                                    "controlAddress": "/length"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/viewValueRange"
+                                  },
+                                  {
+                                    "value": [
+                                      0.0,
+                                      1.0
+                                    ],
+                                    "controlAddress": "/range",
+                                    "enabled": true
+                                  }
+                                ],
+                                "editorIsCollapsed": true,
+                                "hideInEditor": true,
+                                "hideInRemoteControl": false,
+                                "containers": {
+                                  "key": {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  "key1": {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": "Linear",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  },
+                                  {
+                                    "parameters": [
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/position"
+                                      },
+                                      {
+                                        "value": 1.0,
+                                        "controlAddress": "/value"
+                                      },
+                                      {
+                                        "value": "Bezier",
+                                        "controlAddress": "/easingType"
+                                      }
+                                    ],
+                                    "niceName": "Key 1",
+                                    "containers": {
+                                      "easing": {}
+                                    },
+                                    "type": "Key"
+                                  }
+                                ],
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "delayMultiplicators": {
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              },
+                              "fadeMultiplicators": {
+                                "viewOffset": [
+                                  0,
+                                  0
+                                ],
+                                "viewZoom": 1.0
+                              }
+                            }
+                          }
+                        },
+                        "type": "Command"
+                      },
+                      {
+                        "niceName": "Group 6",
+                        "containers": {
+                          "moveInBlack": {},
+                          "selections": {
+                            "items": [
+                              {
+                                "parameters": [
+                                  {
+                                    "value": "Group",
+                                    "controlAddress": "/targetType"
+                                  },
+                                  {
+                                    "value": 6,
                                     "hexMode": false,
                                     "controlAddress": "/id"
                                   },

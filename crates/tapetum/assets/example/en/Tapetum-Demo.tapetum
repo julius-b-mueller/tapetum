@@ -34,12 +34,12 @@
    }
   },
   "varytecLEDTheaterSpot120FC": {
-   "fixed_gobo": {
-    "Builtin": "Wasser"
-   },
    "beam_angle": 26.0
   },
   "euroliteWF_40": {
+   "fixed_gobo": {
+    "Builtin": "Wasser"
+   },
    "beam_angle": 36.0
   },
   "elationPaladinBrick": {
@@ -226,19 +226,6 @@
     "1/uid:demo-crates": {
      "offset": [
       -6.3,
-      0.0,
-      0.0
-     ],
-     "rotation": [
-      0.0,
-      0.0,
-      0.0
-     ],
-     "visible": true
-    },
-    "1/uid:demo-lantern": {
-     "offset": [
-      -7.2,
       0.0,
       0.0
      ],

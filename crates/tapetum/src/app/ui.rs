@@ -796,22 +796,26 @@ fn lock_toggle(ui: &mut egui::Ui, locked: bool) -> egui::Response {
         egui::Color32::from_gray(110)
     };
     let painter = ui.painter();
-    let body = egui::Rect::from_min_max(egui::pos2(rect.left() + 1.5, rect.top() + 7.5), egui::pos2(rect.right() - 1.5, rect.bottom() - 1.0));
+    // On whole pixels, so the shackle sits exactly in the middle of the body.
+    let left = rect.left().round();
+    let body = egui::Rect::from_min_max(egui::pos2(left + 2.0, rect.top().round() + 8.0), egui::pos2(left + 12.0, rect.top().round() + 15.0));
     painter.rect_filled(body, egui::CornerRadius::same(2), color);
-    // The shackle: an arch over the body, lifted and swung open when unlocked.
-    let (cx, r) = (body.center().x, 3.6);
-    let (lift, swing) = if locked { (0.0, 0.0) } else { (2.0, 3.2) };
-    let base = body.top() - lift;
-    let arch: Vec<egui::Pos2> = (0..=12)
+    // The shackle: an arch over the body. Unlocked, it is lifted: its left leg
+    // ends above the body, the right one stays in it.
+    let (cx, r) = (body.center().x, 3.5);
+    let lift = if locked { 0.0 } else { 2.5 };
+    let top = body.top() - lift - 2.0;
+    let arch: Vec<egui::Pos2> = (0..=16)
         .map(|i| {
-            let a = std::f32::consts::PI * i as f32 / 12.0;
-            egui::pos2(cx + swing - r * a.cos(), base - 2.2 - r * a.sin())
+            let a = std::f32::consts::PI * i as f32 / 16.0;
+            egui::pos2(cx - r * a.cos(), top - r * a.sin())
         })
         .collect();
     let stroke = egui::Stroke::new(1.6, color);
     painter.add(egui::Shape::line(arch, stroke));
-    painter.line_segment([egui::pos2(cx + swing - r, base - 2.2), egui::pos2(cx + swing - r, base + if locked { 0.6 } else { -1.0 })], stroke);
-    painter.line_segment([egui::pos2(cx + swing + r, base - 2.2), egui::pos2(cx + swing + r, body.top() + 0.6)], stroke);
+    let left_end = if locked { body.top() + 0.5 } else { top + 1.5 };
+    painter.line_segment([egui::pos2(cx - r, top), egui::pos2(cx - r, left_end)], stroke);
+    painter.line_segment([egui::pos2(cx + r, top), egui::pos2(cx + r, body.top() + 0.5)], stroke);
     resp
 }
 
