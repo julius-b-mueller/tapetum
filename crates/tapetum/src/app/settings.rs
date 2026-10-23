@@ -1,23 +1,15 @@
-//! The settings window (☰ → Settings …): what isn't needed all the time.
+//! The settings window (⚙ Settings (top of the sidebar) …): what isn't needed all the time.
 
 use bevy_egui::egui;
 use tapetum_project::{Project, Quality};
 
 use crate::i18n::tr;
 
-fn open_id() -> egui::Id {
-    egui::Id::new("settings_open")
-}
-
 static OPEN_AT_START: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 
 /// Open the settings at start (for screenshots).
 pub fn open_at_start() {
     OPEN_AT_START.store(true, std::sync::atomic::Ordering::Relaxed);
-}
-
-pub fn open(ctx: &egui::Context) {
-    ctx.data_mut(|d| d.insert_temp(open_id(), true));
 }
 
 /// A folder chosen in the dialog, on its way from the dialog's thread.
@@ -55,20 +47,18 @@ fn library_folder(ui: &mut egui::Ui) {
     });
 }
 
-pub fn window(ctx: &egui::Context, project: &mut Project, spacemouse: Option<String>) {
-    let mut open = ctx.data(|d| d.get_temp::<bool>(open_id()).unwrap_or(false)) || OPEN_AT_START.swap(false, std::sync::atomic::Ordering::Relaxed);
-    if !open {
-        return;
-    }
-    egui::Window::new(tr("Einstellungen", "Settings"))
-        .open(&mut open)
-        .collapsible(false)
-        .resizable(true)
-        .default_width(380.0)
-        .pivot(egui::Align2::CENTER_CENTER)
-        .default_pos(ctx.content_rect().center())
-        .show(ctx, |ui| {
-            egui::ScrollArea::vertical().show(ui, |ui| {
+/// Settings and the rest of what was the menu: a section at the top of the
+/// sidebar, closed until needed.
+pub fn section(ui: &mut egui::Ui, project: &mut Project, spacemouse: Option<String>) {
+    let start = OPEN_AT_START.swap(false, std::sync::atomic::Ordering::Relaxed);
+    egui::CollapsingHeader::new(egui::RichText::new(tr("⚙ Einstellungen", "⚙ Settings")).strong())
+        .id_salt("settings")
+        .open(start.then_some(true))
+        .show(ui, |ui| {
+            {
+                super::about::actions(ui);
+                super::about::language(ui);
+                ui.separator();
                 ui.strong(tr("Darstellung", "Display"));
                 let r = &mut project.render;
                 egui::ComboBox::from_label(tr("Qualität", "Quality"))
@@ -111,9 +101,8 @@ pub fn window(ctx: &egui::Context, project: &mut Project, spacemouse: Option<Str
                 library_folder(ui);
                 ui.separator();
                 spacemouse_section(ui, &mut project.spacemouse, spacemouse);
-            });
+            }
         });
-    ctx.data_mut(|d| d.insert_temp(open_id(), open));
 }
 
 pub fn quality_label(q: Quality) -> &'static str {

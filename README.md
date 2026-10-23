@@ -35,7 +35,7 @@ Website and downloads: **https://tapetum.org/**
    - macOS: open the `.dmg` and drag Tapetum to *Applications*. The app is unsigned: on first launch macOS warns; scroll down in *System Settings → Privacy & Security* and click *Open Anyway*.
    - Windows: run the installer (no administrator rights needed) or unpack the portable `.zip`. If SmartScreen warns, click *More info → Run anyway*. Allow incoming UDP on port 6454 in the firewall when asked.
    - Linux: `.AppImage` (make it executable), `.deb` or `.rpm`.
-2. **Start Tapetum.** The first time, it opens an **example** – a small theatre with fixtures, cues and a set. Click *Save the example to …* in the *Getting started* window and choose a folder: Tapetum puts `Tapetum-Demo.olga` (the BlinderKitten show), `Tapetum-Demo.igz` (the IngeTrazo set) and its project there. *Show in file manager* takes you to them – open the `.olga` with BlinderKitten and the `.igz` with IngeTrazo and carry on with step 3. Your own show: *☰ → Open another show …*; Tapetum opens the last show by itself next time, *☰ → Open the example* goes back to the example.
+2. **Start Tapetum.** The first time, it opens an **example** – a small theatre with fixtures, cues and a set. Click *Save the example to …* in the *Getting started* window and choose a folder: Tapetum puts `Tapetum-Demo.olga` (the BlinderKitten show), `Tapetum-Demo.igz` (the IngeTrazo set) and its project there. *Show in file manager* takes you to them – open the `.olga` with BlinderKitten and the `.igz` with IngeTrazo and carry on with step 3. Your own show: *⚙ Settings → Open another show …*; Tapetum opens the last show by itself next time, *⚙ Settings → Open the example* goes back to the example.
 3. **Connect BlinderKitten** – the *Getting started* window in the middle of the screen walks you through it (it comes up by itself while something is missing; the sidebar shows the state under *BlinderKitten*):
    1. In BlinderKitten: *File → Preferences → OSC Remote Control* → tick *Enabled* (once, for all shows).
    2. Open the same show in BlinderKitten.
@@ -46,7 +46,7 @@ Website and downloads: **https://tapetum.org/**
 
 Without BlinderKitten running, Tapetum still shows the show from the file and keeps edited positions until BlinderKitten is back.
 
-**On screen:** the sidebar holds what is needed often – the BlinderKitten connection (open while something is wrong), stage objects, groups, fixtures. House light, exposure, haze (density, forward scattering), bloom and keeping the SpaceMouse slide up from the bottom edge when the mouse goes there; the scenes hang from the top edge like bookmarks. Everything else is under *☰ → Settings* (quality, 3D resolution, haze and house light colours, fixture library, SpaceMouse).
+**On screen:** the sidebar holds what is needed often – the BlinderKitten connection (open while something is wrong), stage objects, groups, fixtures. House light, exposure, haze (density, forward scattering), bloom and keeping the SpaceMouse slide up from the bottom edge when the mouse goes there; the scenes hang from the top edge like bookmarks. Everything else is under *⚙ Settings (top of the sidebar)* (quality, 3D resolution, haze and house light colours, fixture library, SpaceMouse).
 
 ## BlinderKitten integration
 
@@ -65,7 +65,7 @@ Without BlinderKitten running, Tapetum still shows the show from the file and ke
 
 ## Scenes
 
-The **base scene** is the files as they are. Further scenes move, turn or hide objects (set changes) and can be bound to a cue ID of BlinderKitten's main cuelist: while it runs, the scene with the highest cue ID not above the current cue is shown, with a smooth transition. Otherwise choose the scene by hand. The scenes hang from the top edge as bookmarks: the current one always shows, the others when the mouse goes there; a right click edits one. A scene clicked while the main cuelist runs shows (marked as not in step with BlinderKitten) until BlinderKitten goes to another cue; then Tapetum follows the cuelist again.
+The **base scene** is the files as they are. Further scenes move, turn or hide objects (set changes) and can be bound to a cue ID of BlinderKitten's main cuelist: while it runs, the scene with the highest cue ID not above the current cue is shown, with a smooth transition. Otherwise choose the scene by hand. The scenes hang from the top edge as bookmarks: the current one in the middle, always showing, the others beside it when the mouse goes there (the farther away, the less); a right click edits one, the arrow keys ← → change the scene. A scene clicked while the main cuelist runs shows (marked as not in step with BlinderKitten) until BlinderKitten goes to another cue; then Tapetum follows the cuelist again.
 
 ## Fixtures
 
@@ -76,7 +76,7 @@ Fixture types are recognized from their channels (moving head, spot/PAR, bar, wa
 - colour wheel and gobo wheel (built-in patterns incl. moving water, or your own pictures), fixed gobos for fixtures without a gobo channel
 - pan/tilt range, speed and acceleration – heads travel instead of jumping; the zoom travels at its own top speed too
 
-**Fixture library:** *Export* in a fixture's settings saves its type as `<type name>.tapetum-fixture` in the library folder (default `Documents/Tapetum/Fixtures`, changeable under *☰ → Settings*), its own gobo pictures alongside – and the fixture type itself as `<type name>.mochi` for BlinderKitten (*File → Import…* there), so the two stay together. If the show already has a type of that name, BlinderKitten renames the imported one, and it no longer matches. When a project opens, every fixture type not set up in it takes what the library has for a BlinderKitten type of the same name. Both the library files and the project note when a type's settings last changed: library files newer than the project's settings are offered in a window – take over all, some or none (declined versions aren't offered again). *Load …* takes any fixture file over for a type. The project keeps its own copy of the settings either way, so it needs no library to work.
+**Fixture library:** *Export* in a fixture's settings saves its type as `<type name>.tapetum-fixture` in the library folder (default `Documents/Tapetum/Fixtures`, changeable under *⚙ Settings (top of the sidebar)*), its own gobo pictures alongside – and the fixture type itself as `<type name>.mochi` for BlinderKitten (*File → Import…* there), so the two stay together. If the show already has a type of that name, BlinderKitten renames the imported one, and it no longer matches. When a project opens, every fixture type not set up in it takes what the library has for a BlinderKitten type of the same name. Both the library files and the project note when a type's settings last changed: library files newer than the project's settings are offered in a window – take over all, some or none (declined versions aren't offered again). *Load …* takes any fixture file over for a type. The project keeps its own copy of the settings either way, so it needs no library to work.
 
 ## Quality levels
 
@@ -87,7 +87,7 @@ Fixture types are recognized from their channels (moving head, spot/PAR, bar, wa
 | Bloom, house light | off, even light | on, ceiling lights | on, ceiling lights |
 | 3D resolution (automatic) | ¾ of the screen | screen (half on Retina) | full Retina, up to 4K |
 
-Choose it under *☰ → Settings*. If it runs below 25 fps for a while, Tapetum offers to switch one level down.
+Choose it under *⚙ Settings (top of the sidebar)*. If it runs below 25 fps for a while, Tapetum offers to switch one level down.
 
 ## Navigation, SpaceMouse and shortcuts
 
@@ -134,7 +134,7 @@ Show, project and model files can come from anywhere. Tapetum only reads them: i
 
 ## License and credits
 
-Tapetum is free software under the [MIT License](LICENSE). The open source licenses of all libraries are listed in the app (*☰ → About Tapetum*) and in [`crates/tapetum/assets/third-party-licenses.txt`](crates/tapetum/assets/third-party-licenses.txt).
+Tapetum is free software under the [MIT License](LICENSE). The open source licenses of all libraries are listed in the app (*⚙ Settings → About Tapetum*) and in [`crates/tapetum/assets/third-party-licenses.txt`](crates/tapetum/assets/third-party-licenses.txt).
 
 - Code: written with Claude (Anthropic), directed by Julius B. Müller.
 - Logo: generated with ChatGPT.

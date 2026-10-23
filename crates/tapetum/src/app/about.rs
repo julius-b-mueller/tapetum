@@ -26,9 +26,29 @@ fn about_id() -> egui::Id {
     egui::Id::new("about_open")
 }
 
-/// The "☰" menu: language and the about window.
-pub fn menu(ui: &mut egui::Ui) {
-    ui.menu_button("☰", |ui| {
+/// What used to be the menu: open a show, the example, getting started, about.
+pub fn actions(ui: &mut egui::Ui) {
+    ui.horizontal_wrapped(|ui| {
+        if ui.button(tr("Andere Show öffnen …", "Open another show …")).clicked() {
+            open_other_show();
+        }
+        if ui.button(tr("Beispiel öffnen", "Open the example")).clicked()
+            && let Some(show) = crate::example::open_internal()
+        {
+            restart_with(&show);
+        }
+        if ui.button(tr("Erste Schritte …", "Getting started …")).clicked() {
+            super::onboarding::open(ui.ctx());
+        }
+        if ui.button(tr("Über Tapetum …", "About Tapetum …")).clicked() {
+            ui.ctx().data_mut(|d| d.insert_temp(about_id(), true));
+        }
+    });
+}
+
+/// The language of the interface.
+pub fn language(ui: &mut egui::Ui) {
+    ui.horizontal(|ui| {
         ui.label(tr("Sprache", "Language"));
         for l in Language::ALL {
             if ui.radio(Language::current() == l, l.name()).clicked() {
@@ -36,35 +56,9 @@ pub fn menu(ui: &mut egui::Ui) {
                 let mut s = UserSettings::load();
                 s.language = Some(l);
                 s.save();
-                ui.close();
             }
         }
-        ui.separator();
-        if ui.button(tr("Andere Show öffnen …", "Open another show …")).clicked() {
-            open_other_show();
-            ui.close();
-        }
-        if ui.button(tr("Beispiel öffnen", "Open the example")).clicked() {
-            if let Some(show) = crate::example::open_internal() {
-                restart_with(&show);
-            }
-            ui.close();
-        }
-        if ui.button(tr("Erste Schritte …", "Getting started …")).clicked() {
-            super::onboarding::open(ui.ctx());
-            ui.close();
-        }
-        if ui.button(tr("Einstellungen …", "Settings …")).clicked() {
-            super::settings::open(ui.ctx());
-            ui.close();
-        }
-        if ui.button(tr("Über Tapetum …", "About Tapetum …")).clicked() {
-            ui.ctx().data_mut(|d| d.insert_temp(about_id(), true));
-            ui.close();
-        }
-    })
-    .response
-    .on_hover_text(tr("Menü", "Menu"));
+    });
 }
 
 /// Picks a show and starts Tapetum anew with it (everything is saved as it changes).

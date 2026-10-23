@@ -89,7 +89,6 @@ pub fn panel(
     let mut pick: Option<Pick> = None;
     let mut brush = state.led_brush;
     let mut manual_scene = state.manual_scene;
-    super::settings::window(ctx, &mut project, spacemouse.device());
     // Esc clears the selection (not while typing, where it ends the edit).
     if !ctx.egui_wants_keyboard_input() && ctx.input(|i| i.key_pressed(egui::Key::Escape)) {
         pick = Some(Pick::Clear);
@@ -183,7 +182,6 @@ pub fn panel(
                 ui.heading("Tapetum");
                 ui.weak(format!("{:.0} fps", *fps));
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                    super::about::menu(ui);
                     if ui.small_button("«").on_hover_text(tr("Seitenleiste ausblenden (Tab)\nVollbild: F11", "Hide the sidebar (Tab)\nFull screen: F11")).clicked() {
                         hide = true;
                     }
@@ -198,6 +196,7 @@ pub fn panel(
             });
             egui::ScrollArea::vertical().show(ui, |ui| {
                 ui.label(state.show_path.file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_default());
+                super::settings::section(ui, &mut project, spacemouse.device());
                 if let Some(s) = &state.status {
                     ui.colored_label(egui::Color32::LIGHT_YELLOW, s);
                 }
@@ -395,6 +394,17 @@ pub fn panel(
         });
         rects.push(right.response.rect);
     }
+    // Where the 3D view is free of side panels, for centring the overlays next frame.
+    let screen = ctx.content_rect();
+    let mut free = screen;
+    for r in rects.iter().filter(|r| r.height() > screen.height() * 0.8) {
+        if r.center().x < screen.center().x {
+            free.min.x = free.min.x.max(r.right());
+        } else {
+            free.max.x = free.max.x.min(r.left());
+        }
+    }
+    super::overlays::set_free_view(ctx, free);
     if ui_rects.0 != rects {
         ui_rects.0 = rects;
     }

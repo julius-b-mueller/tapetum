@@ -60,7 +60,13 @@ pub struct HouseLight(usize);
 
 const HOUSE_LIGHTS: usize = 6;
 /// Illuminance on the floor at full house light (lux).
-const HOUSE_LUX: f32 = 600.0;
+const HOUSE_LUX: f32 = 400.0;
+
+/// The house light fader's level as light: square law like a dimmer curve,
+/// so the lower half (where it is used with stage light) is fine-grained.
+fn house_level(fader: f32) -> f32 {
+    fader.clamp(0.0, 1.0).powi(2)
+}
 
 /// The house light's colour: the project's, else warm white (3000 K).
 pub fn house_color(r: &tapetum_project::RenderSettings) -> Color {
@@ -107,7 +113,7 @@ pub fn place_house_lights(
     let (lo, hi) = super::orbit::scene_bounds(&fixtures, &occluders, placeholder.iter().any(|v| v.get()));
     let (spots, height) = house_layout(lo, hi);
     // On Low the ambient light stands in (`apply_render_settings`).
-    let level = if state.project.render.quality == Quality::Low { 0.0 } else { state.project.render.ambient };
+    let level = if state.project.render.quality == Quality::Low { 0.0 } else { house_level(state.project.render.ambient) };
     for (light, mut spot, mut tf, mut vis) in &mut house {
         let p = spots[light.0];
         tf.set_if_neq(Transform::from_translation(p).looking_at(p - Vec3::Y, Vec3::NEG_Z));
@@ -298,6 +304,6 @@ pub fn apply_render_settings(
     // little ambient stands in for what walls and floor bounce back. On Low the
     // ceiling lights would cost every pixel six more lights: plain ambient of
     // the same brightness instead (illuminance ≈ π × brightness).
-    ambient.brightness = r.ambient * if r.quality == Quality::Low { 30.0 + HOUSE_LUX / std::f32::consts::PI } else { 30.0 };
+    ambient.brightness = house_level(r.ambient) * if r.quality == Quality::Low { 30.0 + HOUSE_LUX / std::f32::consts::PI } else { 30.0 };
     ambient.color = house_color(r);
 }

@@ -380,7 +380,7 @@ pub fn window(ctx: &egui::Context, state: &ShowState, link: &BkLink, bk: Option<
                     if ui.button(tr("Los geht's", "Let's go")).clicked() {
                         close = true;
                     }
-                } else if ui.button(tr("Später", "Later")).on_hover_text(tr("Wieder öffnen: in der Seitenleiste unter BlinderKitten oder im Menü ☰.", "Open again: in the sidebar under BlinderKitten or in the ☰ menu.")).clicked() {
+                } else if ui.button(tr("Später", "Later")).on_hover_text(tr("Wieder öffnen: in der Seitenleiste unter BlinderKitten oder unter ⚙ Einstellungen.", "Open again: in the sidebar under BlinderKitten or under ⚙ Settings.")).clicked() {
                     close = true;
                 }
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
