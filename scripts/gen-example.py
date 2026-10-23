@@ -379,9 +379,14 @@ TABLE_CENTRE = (0.0, 0.6, 0.8)    # where the table stands in the party scene
 # Cues of the main cuelist: (id, fade, [(group or fixture id, kind, values)]); names in NAMES.
 # BlinderKitten tracks: what a cue does not set keeps its value from the cue before.
 CUES = [
+    # The cuelist moves position and focus in black (as the test show has it):
+    # BlinderKitten presets the next cue's position in the cue where a head's
+    # dimmer goes to 0. So pre-show only turns the heads off (no swinging to the
+    # middle while fading out), and the cue after it sets them to 0 again, so
+    # they get their evening position in the dark.
     (1, 3.0, [
-        (1, "Group", [(INT, 0.0), (PAN, 0.5), (TILT, 0.5)]),
-        (7, "Group", [(INT, 0.0), (PAN, 0.5), (TILT, 0.5)]),
+        (1, "Group", [(INT, 0.0)]),
+        (7, "Group", [(INT, 0.0)]),
         (4, "Group", [(INT, 0.0)]),
         (2, "Group", rgbw(1.0, 0.32, 0.0)),
         (3, "Group", [(INT, 0.45)] + rgbw(1.0, 0.7, 0.4, 1.0)),
@@ -389,6 +394,7 @@ CUES = [
         (6, "Group", [(INT, 0.35)] + rgbw(1.0, 0.75, 0.5, 1.0)),
     ]),
     (2, 6.0, [
+        (1, "Group", [(INT, 0.0)]), (7, "Group", [(INT, 0.0)]),
         (2, "Group", rgbw(0.0, 0.1, 1.0)),
         (3, "Group", [(INT, 0.3)] + rgbw(0.4, 0.5, 1.0, 0.0)),
         (5, "Group", [(INT, 1.0)]),
@@ -574,6 +580,9 @@ def write_olga(lang):
         cue["containers"]["commands"]["items"] = items
         cues.append(cue)
     cuelist["containers"]["cues"]["items"] = cues
+    # The cues rely on move in black for position (see CUES).
+    mib = cuelist["containers"]["moveInBlack"]["parameters"]
+    assert any(p["value"] == "/position" and p.get("enabled", True) for p in mib), "the cuelist moves position in black"
     (OUT / lang / f"{NAME}.olga").write_text(json.dumps(show, indent=1, ensure_ascii=False))
 
 
