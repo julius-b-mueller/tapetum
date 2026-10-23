@@ -66,7 +66,7 @@ Without BlinderKitten running, Tapetum still shows the show from the file and ke
 
 ## Scenes
 
-The **base scene** is the files as they are. Further scenes move, turn or hide objects (set changes) and can be bound to a cue ID of BlinderKitten's main cuelist: while it runs, the scene with the highest cue ID not above the current cue is shown, with a smooth transition. Otherwise choose the scene by hand. The scenes hang from the top edge as bookmarks: the current one in the middle, always showing, the others beside it when the mouse goes there (the farther away, the less); a right click edits one, the arrow keys ← → change the scene. A scene clicked while the main cuelist runs shows (marked as not in step with BlinderKitten) until BlinderKitten goes to another cue; then Tapetum follows the cuelist again.
+The **base scene** is the files as they are. Further scenes move, turn or hide objects (set changes) and can be bound to a cue ID of BlinderKitten's main cuelist: while it runs, the scene with the highest cue ID not above the current cue is shown, with a smooth transition. Otherwise choose the scene by hand. The scenes hang from the top edge as bookmarks: the current one in the middle, always showing, three on either side when the mouse goes there (the farther away, the less); **+** beside the current one adds a scene before or after it, a right click edits a scene (name, cue, transition), the arrow keys ← → change the scene. The scenes line up by their cues, as in BlinderKitten. A scene clicked while the main cuelist runs shows (marked as not in step with BlinderKitten) until BlinderKitten goes to another cue; then Tapetum follows the cuelist again.
 
 ## Fixtures
 

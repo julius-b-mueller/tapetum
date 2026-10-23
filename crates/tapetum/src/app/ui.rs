@@ -148,6 +148,8 @@ pub fn panel(
     match scene_pick {
         // While the main cuelist runs, a scene chosen by hand holds until its next cue.
         Some(super::overlays::ScenePick::Show(scene)) => match scene_rt.following_cue {
+            // The scene the cuelist shows anyway is in step; any other holds until the next cue.
+            Some(cue) if project.scene_for_cue(cue) == scene => scene_rt.detached = None,
             Some(cue) => scene_rt.detached = Some((scene, cue)),
             None => {
                 manual_scene = scene;
@@ -167,16 +169,9 @@ pub fn panel(
     if HIDE_SIDEBAR_AT_START.swap(false, std::sync::atomic::Ordering::Relaxed) {
         *sidebar_hidden = true;
     }
-    if *sidebar_hidden {
-        // Just a small handle to bring the sidebar back.
-        let handle = egui::Area::new("sidebar_handle".into()).fixed_pos(egui::pos2(8.0, 8.0)).show(ctx, |ui| {
-            if ui.button("»").on_hover_text(tr("Seitenleiste einblenden (Tab)", "Show the sidebar (Tab)")).clicked() {
-                *sidebar_hidden = false;
-            }
-        });
-        rects.push(handle.response.rect);
-    } else {
-        let left = egui::Panel::left("panel").resizable(true).default_size(310.0).show(&mut root, |ui| {
+    // The sidebar slides in and out (Tab, or its « button).
+    let mut expanded = !*sidebar_hidden;
+    let left = egui::Panel::left("panel").resizable(true).default_size(310.0).show_collapsible(&mut root, &mut expanded, |ui| {
             // The header stays put; everything below scrolls.
             ui.horizontal(|ui| {
                 ui.heading("Tapetum");
@@ -287,11 +282,19 @@ pub fn panel(
             });
         });
 
-        rects.push(left.response.rect);
+    match left {
+        Some(left) => rects.push(left.response.rect),
+        None => {
+            // Fully in: a small handle to bring it back.
+            let handle = egui::Area::new("sidebar_handle".into()).fixed_pos(egui::pos2(8.0, 8.0)).show(ctx, |ui| {
+                if ui.button("»").on_hover_text(tr("Seitenleiste einblenden (Tab)", "Show the sidebar (Tab)")).clicked() {
+                    expanded = true;
+                }
+            });
+            rects.push(handle.response.rect);
+        }
     }
-    if hide {
-        *sidebar_hidden = true;
-    }
+    *sidebar_hidden = !expanded || hide;
 
     // Right click on a fixture in several groups: which one, next to the mouse.
     if let Some(menu) = gizmo_state.menu.clone()
@@ -316,22 +319,27 @@ pub fn panel(
 
     // A selected stage object gets its editor on the right.
     let mut close = false;
-    if let Some(key) = state.selected_object.clone()
-        && split_key(&key).is_some_and(|(f, _)| project.objects.iter().any(|o| o.id == f))
-    {
-        let right = egui::Panel::right("object").resizable(true).default_size(340.0).show(&mut root, |ui| {
-            egui::ScrollArea::vertical().show(ui, |ui| {
-                if object_editor(ui, &state, &mut project, &key, &stage_objects, &scene_rt) {
-                    close = true;
-                }
-            });
+    let object = state.selected_object.clone().filter(|key| split_key(key).is_some_and(|(f, _)| project.objects.iter().any(|o| o.id == f)));
+    let mut open = object.is_some();
+    let right = egui::Panel::right("object").resizable(true).default_size(340.0).show_collapsible(&mut root, &mut open, |ui| {
+        egui::ScrollArea::vertical().show(ui, |ui| {
+            if let Some(key) = &object
+                && object_editor(ui, &state, &mut project, key, &stage_objects, &scene_rt)
+            {
+                close = true;
+            }
         });
+    });
+    if let Some(right) = right {
         rects.push(right.response.rect);
     }
+    // Dragged shut.
+    close |= object.is_some() && !open;
 
     // Settings of the selected fixture's type, in their own panel on the right.
-    if !state.selection.is_empty() {
-        let right = egui::Panel::right("fixture").resizable(true).default_size(340.0).show(&mut root, |ui| {
+    let mut open = !state.selection.is_empty();
+    let had_selection = open;
+    let right = egui::Panel::right("fixture").resizable(true).default_size(340.0).show_collapsible(&mut root, &mut open, |ui| {
             egui::ScrollArea::vertical().show(ui, |ui| {
                 if state.selection.len() > 1 {
                     ui.horizontal(|ui| {
@@ -391,20 +399,11 @@ pub fn panel(
                     }
                 }
             });
-        });
+    });
+    if let Some(right) = right {
         rects.push(right.response.rect);
     }
-    // Where the 3D view is free of side panels, for centring the overlays next frame.
-    let screen = ctx.content_rect();
-    let mut free = screen;
-    for r in rects.iter().filter(|r| r.height() > screen.height() * 0.8) {
-        if r.center().x < screen.center().x {
-            free.min.x = free.min.x.max(r.right());
-        } else {
-            free.max.x = free.max.x.min(r.left());
-        }
-    }
-    super::overlays::set_free_view(ctx, free);
+    close |= had_selection && !open;
     if ui_rects.0 != rects {
         ui_rects.0 = rects;
     }
@@ -554,9 +553,7 @@ fn objects_section(ui: &mut egui::Ui, state: &ShowState, project: &mut tapetum_p
                         over.visible = (!visible).then_some(false);
                     }
                     let locked = over.locked.unwrap_or(false);
-                    let lock = egui::Button::new(egui::RichText::new(if locked { "🔒" } else { "🔓" }).color(if locked { egui::Color32::from_rgb(255, 194, 77) } else { egui::Color32::DARK_GRAY })).frame(false);
-                    if ui
-                        .add(lock)
+                    if lock_toggle(ui, locked)
                         .on_hover_text(if locked {
                             tr("Gesperrt: im 3D-Fenster nicht auswählbar. Klick entsperrt.", "Locked: can't be picked in the 3D view. Click to unlock.")
                         } else {
@@ -785,6 +782,37 @@ fn object_editor(ui: &mut egui::Ui, state: &ShowState, project: &mut tapetum_pro
         }
     }
     close
+}
+
+/// A padlock, drawn (the font's emoji looked like a note): closed and amber
+/// when locked, open and grey when not.
+fn lock_toggle(ui: &mut egui::Ui, locked: bool) -> egui::Response {
+    let (rect, resp) = ui.allocate_exact_size(egui::vec2(14.0, 16.0), egui::Sense::click());
+    let color = if locked {
+        egui::Color32::from_rgb(255, 194, 77)
+    } else if resp.hovered() {
+        egui::Color32::LIGHT_GRAY
+    } else {
+        egui::Color32::from_gray(110)
+    };
+    let painter = ui.painter();
+    let body = egui::Rect::from_min_max(egui::pos2(rect.left() + 1.5, rect.top() + 7.5), egui::pos2(rect.right() - 1.5, rect.bottom() - 1.0));
+    painter.rect_filled(body, egui::CornerRadius::same(2), color);
+    // The shackle: an arch over the body, lifted and swung open when unlocked.
+    let (cx, r) = (body.center().x, 3.6);
+    let (lift, swing) = if locked { (0.0, 0.0) } else { (2.0, 3.2) };
+    let base = body.top() - lift;
+    let arch: Vec<egui::Pos2> = (0..=12)
+        .map(|i| {
+            let a = std::f32::consts::PI * i as f32 / 12.0;
+            egui::pos2(cx + swing - r * a.cos(), base - 2.2 - r * a.sin())
+        })
+        .collect();
+    let stroke = egui::Stroke::new(1.6, color);
+    painter.add(egui::Shape::line(arch, stroke));
+    painter.line_segment([egui::pos2(cx + swing - r, base - 2.2), egui::pos2(cx + swing - r, base + if locked { 0.6 } else { -1.0 })], stroke);
+    painter.line_segment([egui::pos2(cx + swing + r, base - 2.2), egui::pos2(cx + swing + r, body.top() + 0.6)], stroke);
+    resp
 }
 
 /// "3 days ago", or the date for older times (Unix seconds; 0 = unknown).
