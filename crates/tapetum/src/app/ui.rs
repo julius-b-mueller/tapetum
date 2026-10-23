@@ -796,26 +796,23 @@ fn lock_toggle(ui: &mut egui::Ui, locked: bool) -> egui::Response {
         egui::Color32::from_gray(110)
     };
     let painter = ui.painter();
-    // On whole pixels, so the shackle sits exactly in the middle of the body.
-    let left = rect.left().round();
-    let body = egui::Rect::from_min_max(egui::pos2(left + 2.0, rect.top().round() + 8.0), egui::pos2(left + 12.0, rect.top().round() + 15.0));
+    // On whole pixels: a 10 × 7 body, the shackle one even path above its middle.
+    let (x, y) = (rect.left().round(), rect.top().round());
+    let body = egui::Rect::from_min_max(egui::pos2(x + 2.0, y + 8.0), egui::pos2(x + 12.0, y + 15.0));
     painter.rect_filled(body, egui::CornerRadius::same(2), color);
-    // The shackle: an arch over the body. Unlocked, it is lifted: its left leg
-    // ends above the body, the right one stays in it.
-    let (cx, r) = (body.center().x, 3.5);
+    let (cx, r) = (x + 7.0, 2.75);
+    // Unlocked, the shackle is lifted: its left leg ends above the body, the right one stays in.
     let lift = if locked { 0.0 } else { 2.5 };
-    let top = body.top() - lift - 2.0;
-    let arch: Vec<egui::Pos2> = (0..=16)
-        .map(|i| {
-            let a = std::f32::consts::PI * i as f32 / 16.0;
-            egui::pos2(cx - r * a.cos(), top - r * a.sin())
-        })
-        .collect();
-    let stroke = egui::Stroke::new(1.6, color);
-    painter.add(egui::Shape::line(arch, stroke));
-    let left_end = if locked { body.top() + 0.5 } else { top + 1.5 };
-    painter.line_segment([egui::pos2(cx - r, top), egui::pos2(cx - r, left_end)], stroke);
-    painter.line_segment([egui::pos2(cx + r, top), egui::pos2(cx + r, body.top() + 0.5)], stroke);
+    let shoulder = y + 6.0 - lift;
+    let left_end = if locked { body.top() + 1.0 } else { shoulder + 1.0 };
+    let mut path = vec![egui::pos2(cx - r, left_end), egui::pos2(cx - r, shoulder)];
+    path.extend((1..16).map(|i| {
+        let a = std::f32::consts::PI * i as f32 / 16.0;
+        egui::pos2(cx - r * a.cos(), shoulder - r * a.sin())
+    }));
+    path.push(egui::pos2(cx + r, shoulder));
+    path.push(egui::pos2(cx + r, body.top() + 1.0));
+    painter.add(egui::Shape::line(path, egui::Stroke::new(1.5, color)));
     resp
 }
 

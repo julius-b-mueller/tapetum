@@ -15402,7 +15402,18 @@
                 "editorIsCollapsed": true,
                 "containers": {
                   "actions": {},
-                  "timing": {},
+                  "timing": {
+                    "parameters": [
+                      {
+                        "value": 3.0,
+                        "controlAddress": "/htpInFade"
+                      },
+                      {
+                        "value": 3.0,
+                        "controlAddress": "/ltpInFade"
+                      }
+                    ]
+                  },
                   "moveInBlack": {},
                   "timecode": {
                     "viewOffset": [

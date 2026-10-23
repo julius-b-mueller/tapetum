@@ -24,7 +24,36 @@
    "id": 1,
    "name": "Tapetum-Demo.igz",
    "model": "Tapetum-Demo.igz",
-   "visible": true
+   "visible": true,
+   "parts": {
+    "uid:demo-house": {
+     "locked": true
+    },
+    "uid:demo-seats": {
+     "locked": true
+    },
+    "uid:demo-stage": {
+     "locked": true
+    },
+    "uid:demo-cyc": {
+     "locked": true
+    },
+    "uid:demo-portal": {
+     "locked": true
+    },
+    "uid:demo-curtain": {
+     "locked": true
+    },
+    "uid:demo-masking": {
+     "locked": true
+    },
+    "uid:demo-truss": {
+     "locked": true
+    },
+    "uid:demo-bridge": {
+     "locked": true
+    }
+   }
   }
  ],
  "fixture_types": {

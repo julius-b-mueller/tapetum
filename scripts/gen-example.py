@@ -376,7 +376,7 @@ TABLE_CENTRE = (0.0, 0.6, 0.8)    # where the table stands in the party scene
 # Cues of the main cuelist: (id, fade, [(group or fixture id, kind, values)]); names in NAMES.
 # BlinderKitten tracks: what a cue does not set keeps its value from the cue before.
 CUES = [
-    (1, 0.0, [
+    (1, 3.0, [
         (2, "Group", rgbw(1.0, 0.32, 0.0)),
         (3, "Group", [(INT, 0.45)] + rgbw(1.0, 0.7, 0.4, 1.0)),
         (5, "Group", [(INT, 0.8)]),
@@ -521,6 +521,10 @@ def write_olga(lang):
 
 # ── Tapetum project ───────────────────────────────────────────────────────────
 
+# Groups of the theatre, not of the set.
+THEATRE = ("demo-house", "demo-seats", "demo-stage", "demo-cyc", "demo-portal", "demo-curtain", "demo-masking", "demo-truss", "demo-bridge")
+
+
 def scenes(names):
     obj = lambda uid: f"1/uid:{uid}"
     state = lambda dx=0.0, dy=0.0, visible=True: {"offset": [dx, dy, 0.0], "rotation": [0.0, 0.0, 0.0], "visible": visible}
@@ -545,7 +549,9 @@ def write_project(lang):
     project = {
         "render": {"ambient": 0.25, "exposure_ev": 5.6, "bloom": True,
                    "haze": {"enabled": True, "density": 0.16, "anisotropy": 0.6, "color": [1, 1, 1], "extent": [30, 12, 30]}},
-        "objects": [{"id": 1, "name": f"{NAME}.igz", "model": f"{NAME}.igz", "visible": True}],
+        # The theatre itself is locked (it doesn't move from scene to scene); the set isn't.
+        "objects": [{"id": 1, "name": f"{NAME}.igz", "model": f"{NAME}.igz", "visible": True,
+                     "parts": {f"uid:{uid}": {"locked": True} for uid in THEATRE}}],
         "fixture_types": {
             "movingHeadWash": {"fixed_gobo": {"Builtin": "Stern"}},
             "theatreSpotRGBW": {"beam_angle": 26.0},
