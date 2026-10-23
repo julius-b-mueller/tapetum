@@ -157,8 +157,13 @@ pub fn scene_bar(ctx: &egui::Context, state: &ShowState, project: &mut Project, 
                 if shown <= 0.01 {
                     return None;
                 }
-                let height = TAB_H + if active { DROP } else { 0.0 };
-                let rect = egui::Rect::from_min_size(slot.min - egui::vec2(0.0, (1.0 - shown) * height), egui::vec2(slot.width(), height));
+                // Coming in, a tab grows down from the top edge inside its own place
+                // (drawing it above the bar would make egui shift the bar's contents).
+                let height = (TAB_H + if active { DROP } else { 0.0 }) * shown;
+                if height < 3.0 {
+                    return None;
+                }
+                let rect = egui::Rect::from_min_size(slot.min, egui::vec2(slot.width(), height));
                 let fill = if active { if detached { ACCENT } else { egui::Color32::from_rgb(61, 139, 255) } } else { ui.visuals().window_fill };
                 let text_color = if active { egui::Color32::BLACK } else { ui.visuals().text_color() };
                 let mut text = egui::RichText::new(&label).color(text_color);
@@ -209,8 +214,8 @@ pub fn scene_bar(ctx: &egui::Context, state: &ShowState, project: &mut Project, 
                 });
             }
             let (slot, _) = ui.allocate_exact_size(egui::vec2(36.0, TAB_H + DROP), egui::Sense::hover());
-            if t > 0.01 {
-                let rect = egui::Rect::from_min_size(slot.min - egui::vec2(0.0, (1.0 - t) * TAB_H), egui::vec2(slot.width(), TAB_H));
+            if t * TAB_H >= 3.0 {
+                let rect = egui::Rect::from_min_size(slot.min, egui::vec2(slot.width(), t * TAB_H));
                 let button = egui::Button::new("+").corner_radius(egui::CornerRadius { nw: 0, ne: 0, sw: 8, se: 8 });
                 if ui.put(rect, button).on_hover_text(tr("Neue Szene; zeigt zunächst die Grundszene. Rechtsklick auf eine Szene: Name, Cue, Übergang.", "New scene; starts out as the base scene. Right click a scene: name, cue, transition.")).clicked() {
                     add = true;
