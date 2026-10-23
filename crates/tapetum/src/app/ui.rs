@@ -21,6 +21,29 @@ pub fn hide_sidebar_at_start() {
     HIDE_SIDEBAR_AT_START.store(true, std::sync::atomic::Ordering::Relaxed);
 }
 
+/// Tab pressed this frame, for the sidebar.
+#[derive(Resource, Default)]
+pub struct TabKey(pub bool);
+
+/// Takes Tab away from egui (which would cycle the focus through the widgets
+/// and then count as busy with the keyboard) and hands it to the sidebar;
+/// not while typing into a text field.
+pub fn take_tab(mut contexts: Query<(&mut bevy_egui::EguiContext, &mut bevy_egui::EguiInput), With<bevy_egui::PrimaryEguiContext>>, mut tab: ResMut<TabKey>) {
+    tab.0 = false;
+    for (mut ctx, mut input) in &mut contexts {
+        if ctx.get_mut().text_edit_focused() {
+            continue;
+        }
+        input.events.retain(|e| match e {
+            egui::Event::Key { key: egui::Key::Tab, pressed, repeat, modifiers, .. } if !modifiers.any() => {
+                tab.0 |= *pressed && !*repeat;
+                false
+            }
+            _ => true,
+        });
+    }
+}
+
 pub fn panel(
     mut contexts: EguiContexts,
     mut state: ResMut<ShowState>,
@@ -36,7 +59,7 @@ pub fn panel(
     mut ui_rects: ResMut<UiRects>,
     time: Res<Time>,
     mut fps: Local<f32>,
-    (mut sidebar_hidden, mut slow_since): (Local<bool>, Local<Option<f32>>),
+    (mut sidebar_hidden, mut slow_since, tab): (Local<bool>, Local<Option<f32>>, Res<TabKey>),
     mut windows: Query<&mut Window, With<PrimaryWindow>>,
 ) -> Result {
     link.poll();
@@ -60,7 +83,10 @@ pub fn panel(
     );
     // Tab hides the sidebar, F11 toggles fullscreen, Cmd/Ctrl+Z undoes; not
     // while typing into a field (it has its own undo there).
-    if !ctx.egui_wants_keyboard_input() {
+    if tab.0 {
+        *sidebar_hidden = !*sidebar_hidden;
+    }
+    if !ctx.text_edit_focused() {
         let (redo, undo_key) = ctx.input(|i| {
             let z = i.modifiers.command && i.key_pressed(egui::Key::Z);
             (z && i.modifiers.shift || i.modifiers.ctrl && i.key_pressed(egui::Key::Y), z && !i.modifiers.shift)
@@ -69,9 +95,6 @@ pub fn panel(
             undo.request = Some(Step::Redo);
         } else if undo_key {
             undo.request = Some(Step::Undo);
-        }
-        if ctx.input(|i| i.key_pressed(egui::Key::Tab)) {
-            *sidebar_hidden = !*sidebar_hidden;
         }
         if ctx.input(|i| i.key_pressed(egui::Key::F11))
             && let Ok(mut window) = windows.single_mut()
@@ -90,7 +113,7 @@ pub fn panel(
     let mut brush = state.led_brush;
     let mut manual_scene = state.manual_scene;
     // Esc clears the selection (not while typing, where it ends the edit).
-    if !ctx.egui_wants_keyboard_input() && ctx.input(|i| i.key_pressed(egui::Key::Escape)) {
+    if !ctx.text_edit_focused() && ctx.input(|i| i.key_pressed(egui::Key::Escape)) {
         pick = Some(Pick::Clear);
     }
     if let Some(file) = object_import.poll() {
@@ -1078,3 +1101,28 @@ impl UiRects {
     }
 }
 
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn press(key: egui::Key, modifiers: egui::Modifiers) -> egui::Event {
+        egui::Event::Key { key, physical_key: None, pressed: true, repeat: false, modifiers }
+    }
+
+    #[test]
+    fn tab_goes_to_the_sidebar_not_to_egui() {
+        let mut world = World::new();
+        world.init_resource::<TabKey>();
+        let input = bevy_egui::EguiInput(egui::RawInput { events: vec![press(egui::Key::Tab, egui::Modifiers::NONE), press(egui::Key::A, egui::Modifiers::NONE), press(egui::Key::Tab, egui::Modifiers::SHIFT)], ..Default::default() });
+        let entity = world.spawn((bevy_egui::EguiContext::default(), input, bevy_egui::PrimaryEguiContext)).id();
+        world.run_system_cached(take_tab).unwrap();
+        assert!(world.resource::<TabKey>().0);
+        // Shift+Tab and the other keys stay with egui.
+        let events = &world.get::<bevy_egui::EguiInput>(entity).unwrap().events;
+        assert_eq!(events.len(), 2);
+        assert!(!events.iter().any(|e| matches!(e, egui::Event::Key { key: egui::Key::Tab, modifiers, .. } if !modifiers.any())));
+        world.run_system_cached(take_tab).unwrap();
+        assert!(!world.resource::<TabKey>().0, "only in the frame it was pressed");
+    }
+}

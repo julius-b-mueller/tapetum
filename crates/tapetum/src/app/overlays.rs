@@ -182,7 +182,7 @@ pub fn scene_bar(ctx: &egui::Context, state: &ShowState, project: &mut Project, 
     // ← and → (not while typing) bring the scenes out for a moment, as if the
     // mouse were there, so the change is seen sliding.
     let now = ctx.input(|i| i.time);
-    let (step_left, step_right) = if ctx.egui_wants_keyboard_input() { (false, false) } else { ctx.input(|i| (i.key_pressed(egui::Key::ArrowLeft), i.key_pressed(egui::Key::ArrowRight))) };
+    let (step_left, step_right) = if ctx.text_edit_focused() { (false, false) } else { ctx.input(|i| (i.key_pressed(egui::Key::ArrowLeft), i.key_pressed(egui::Key::ArrowRight))) };
     if step_left || step_right {
         ctx.data_mut(|d| d.insert_temp(id.with("peek"), now + 1.2));
     }

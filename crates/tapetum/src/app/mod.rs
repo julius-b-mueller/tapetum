@@ -177,6 +177,8 @@ pub fn run(opts: Options) -> Result<()> {
         )
             .chain(),
     )
+    .init_resource::<ui::TabKey>()
+    .add_systems(PreUpdate, ui::take_tab.after(bevy_egui::EguiPreUpdateSet::ProcessInput).before(bevy_egui::EguiPreUpdateSet::BeginPass))
     .add_systems(EguiPrimaryContextPass, ui::panel);
     if let Some(w) = watch {
         app.insert_resource(w);
