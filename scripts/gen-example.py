@@ -521,6 +521,14 @@ def write_olga(lang):
 
 # ── Tapetum project ───────────────────────────────────────────────────────────
 
+# The moving head's front: rings of 6, 12 and 24 LEDs; the inner ring is cell 1,
+# the middle one cells 2 and 3 (a half each), the outer one cells 4 to 7 (a quarter each).
+MOVING_HEAD_LEDS = {
+    "shape": {"Circular": {"rings": [6, 12, 24]}},
+    "pitch": 0.03,
+    "led_cells": [1] * 6 + [2] * 6 + [3] * 6 + [4] * 6 + [5] * 6 + [6] * 6 + [7] * 6,
+}
+
 # Groups of the theatre, not of the set.
 THEATRE = ("demo-house", "demo-seats", "demo-stage", "demo-cyc", "demo-portal", "demo-curtain", "demo-masking", "demo-truss", "demo-bridge")
 
@@ -553,10 +561,12 @@ def write_project(lang):
         "objects": [{"id": 1, "name": f"{NAME}.igz", "model": f"{NAME}.igz", "visible": True,
                      "parts": {f"uid:{uid}": {"locked": True} for uid in THEATRE}}],
         "fixture_types": {
-            "movingHeadWash": {"fixed_gobo": {"Builtin": "Stern"}},
+            # Washes with cells: no gobo, a soft edge. The moving head shows off
+            # three LED rings, six LEDs to each of its seven cells.
+            "movingHeadWash": {"beam": "Wash", "leds": MOVING_HEAD_LEDS},
             "theatreSpotRGBW": {"beam_angle": 26.0},
             "waterEffect": {"fixed_gobo": {"Builtin": "Wasser"}, "beam_angle": 36.0},
-            "barRGBW": {"beam_angle": 75.0},
+            "barRGBW": {"beam": "Wash", "beam_angle": 75.0},
             "channel": {"beam_angle": 360.0, "lumens": 1800.0, "white_kelvin": 2700.0, "body_scale": 0.3},
         },
         "scenes": scenes(NAMES[lang]["scenes"]),

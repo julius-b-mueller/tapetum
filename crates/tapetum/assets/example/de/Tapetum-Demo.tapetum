@@ -58,8 +58,62 @@
  ],
  "fixture_types": {
   "movingHeadWash": {
-   "fixed_gobo": {
-    "Builtin": "Stern"
+   "beam": "Wash",
+   "leds": {
+    "shape": {
+     "Circular": {
+      "rings": [
+       6,
+       12,
+       24
+      ]
+     }
+    },
+    "pitch": 0.03,
+    "led_cells": [
+     1,
+     1,
+     1,
+     1,
+     1,
+     1,
+     2,
+     2,
+     2,
+     2,
+     2,
+     2,
+     3,
+     3,
+     3,
+     3,
+     3,
+     3,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     7,
+     7,
+     7,
+     7,
+     7,
+     7
+    ]
    }
   },
   "theatreSpotRGBW": {
@@ -72,6 +126,7 @@
    "beam_angle": 36.0
   },
   "barRGBW": {
+   "beam": "Wash",
    "beam_angle": 75.0
   },
   "channel": {
