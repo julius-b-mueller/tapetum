@@ -553,6 +553,19 @@ fn objects_section(ui: &mut egui::Ui, state: &ShowState, project: &mut tapetum_p
                     if ui.checkbox(&mut visible, "").on_hover_text(tr("Objekt anzeigen", "Show object")).changed() {
                         over.visible = (!visible).then_some(false);
                     }
+                    let locked = over.locked.unwrap_or(false);
+                    let lock = egui::Button::new(egui::RichText::new(if locked { "🔒" } else { "🔓" }).color(if locked { egui::Color32::from_rgb(255, 194, 77) } else { egui::Color32::DARK_GRAY })).frame(false);
+                    if ui
+                        .add(lock)
+                        .on_hover_text(if locked {
+                            tr("Gesperrt: im 3D-Fenster nicht auswählbar. Klick entsperrt.", "Locked: can't be picked in the 3D view. Click to unlock.")
+                        } else {
+                            tr("Sperren: im 3D-Fenster nicht mehr auswählbar (etwa den Zuschauerraum).", "Lock: no longer picked in the 3D view (the auditorium, say).")
+                        })
+                        .clicked()
+                    {
+                        over.locked = (!locked).then_some(true);
+                    }
                     let selected = state.selected_objects.contains(&key);
                     if ui.selectable_label(selected, &mo.name).clicked() {
                         let (shift, cmd) = ui.input(|i| (i.modifiers.shift, i.modifiers.command));

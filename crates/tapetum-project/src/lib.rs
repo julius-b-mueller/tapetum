@@ -351,6 +351,8 @@ pub struct PartOverride {
     pub reflectance: Option<f32>,
     pub surface: Option<Surface>,
     pub visible: Option<bool>,
+    /// Locked: not picked in the 3D view (an auditorium that stays put).
+    pub locked: Option<bool>,
 }
 
 impl Default for StageObject {

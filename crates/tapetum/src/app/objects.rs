@@ -41,6 +41,13 @@ pub struct Placeholder;
 #[derive(Component)]
 pub struct Floor;
 
+/// A stage object locked in the sidebar: the 3D view doesn't pick it.
+pub fn is_locked(state: &ShowState, key: &str) -> bool {
+    split_key(key).is_some_and(|(file, part)| {
+        state.project.objects.iter().find(|o| o.id == file).and_then(|f| f.parts.get(part)).and_then(|p| p.locked).unwrap_or(false)
+    })
+}
+
 pub fn object_key(file: u64, part: &str) -> String {
     format!("{file}/{part}")
 }

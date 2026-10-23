@@ -74,6 +74,9 @@ impl GizmoState {
 
 const COLORS: [Color; 3] = [Color::srgb(0.95, 0.25, 0.25), Color::srgb(0.3, 0.9, 0.3), Color::srgb(0.3, 0.5, 1.0)];
 const HOVER: Color = Color::srgb(1.0, 0.85, 0.2);
+/// The middle of a moving head's pan range, and its ends.
+const PAN_CENTRE: Color = Color::srgb(0.25, 0.85, 1.0);
+const PAN_END: Color = Color::srgba(0.25, 0.85, 1.0, 0.35);
 
 /// BK (Z up) to Bevy world (Y up), the rotation of `BkSpace`.
 pub fn bk_to_world(p: [f32; 3]) -> Vec3 {
@@ -146,13 +149,20 @@ pub struct FixturePicker<'w, 's> {
 }
 
 impl FixturePicker<'_, '_> {
-    fn pick(&mut self, ray: Ray3d) -> Option<Target> {
+    /// The fixture or object under the ray; locked objects are looked through.
+    fn pick(&mut self, ray: Ray3d, locked: impl Fn(&str) -> bool) -> Option<Target> {
         let ignored = &self.ignored;
         let filter = |e: Entity| !ignored.contains(e);
-        let settings = MeshRayCastSettings::default().with_filter(&filter);
-        let (hit, _) = *self.ray_cast.cast_ray(ray, &settings).first()?;
-        // Walk up from the hit part to the fixture or object it belongs to.
-        let mut e = hit;
+        let settings = MeshRayCastSettings::default().with_filter(&filter).never_early_exit();
+        let hits: Vec<Entity> = self.ray_cast.cast_ray(ray, &settings).iter().map(|(e, _)| *e).collect();
+        hits.into_iter().find_map(|hit| match self.owner(hit)? {
+            Target::Object(key) if locked(&key) => None,
+            t => Some(t),
+        })
+    }
+
+    /// Walks up from a hit part to the fixture or object it belongs to.
+    fn owner(&self, mut e: Entity) -> Option<Target> {
         loop {
             if let Ok(root) = self.roots.get(e) {
                 return Some(Target::Fixture(root.index));
@@ -245,9 +255,10 @@ pub fn gizmo(
     let center = positions.iter().copied().sum::<Vec3>() / positions.len() as f32;
     let size = gt.translation().distance(center) * 0.12;
     // Fixtures get a marker; stage objects show their outline instead.
-    for (p, (t, _)) in positions.iter().zip(&targets) {
-        if matches!(t, Target::Fixture(_)) {
+    for (p, (t, placement)) in positions.iter().zip(&targets) {
+        if let Target::Fixture(i) = t {
             gizmos.sphere(Isometry3d::from_translation(*p), size * 0.08, HOVER);
+            pan_centre(&mut gizmos, &state, *i, placement, *p, size);
         }
     }
     if gs.drag.is_none() {
@@ -270,6 +281,22 @@ pub fn gizmo(
     draw(&mut gizmos, center, size, gs.drag.as_ref().map(|d| d.handle).or(gs.hovered));
     if gs.drag.is_none() {
         handle_click(&mut state, &mut gs, &buttons, cursor, over_ui, add, &view, &mut picker);
+    }
+}
+
+/// A moving head's middle direction: where it points level at the middle of
+/// its pan range (ideally the stage); faint lines to the ends of the range.
+fn pan_centre(gizmos: &mut Gizmos, state: &ShowState, i: usize, placement: &Placement, o: Vec3, size: f32) {
+    let Some(spec) = state.specs.get(i).and_then(|s| s.as_ref()).filter(|s| s.class == bk_olga::FixtureClass::MovingHead) else { return };
+    let w = bk_olga::placement::world_from_local(placement.rotation);
+    // Level (tilt −90°: BK's forward) at a pan angle, in the world.
+    let dir = |pan: f32| bk_to_world(bk_olga::placement::mul(&w, bk_olga::placement::beam_local(pan, -90.0))).normalize_or_zero();
+    let [lo, hi] = spec.pan_range;
+    let len = size * 1.1;
+    gizmos.arrow(o, o + dir((lo + hi) / 2.0) * len, PAN_CENTRE);
+    if (hi - lo).abs() < 359.0 {
+        gizmos.line(o, o + dir(lo) * len * 0.6, PAN_END);
+        gizmos.line(o, o + dir(hi) * len * 0.6, PAN_END);
     }
 }
 
@@ -411,7 +438,8 @@ fn handle_click(
     if clicked(left) && gs.hovered.is_some() {
         return;
     }
-    let hit = view.ray(c).and_then(|ray| picker.pick(ray));
+    let st: &ShowState = state;
+    let hit = view.ray(c).and_then(|ray| picker.pick(ray, |key| super::objects::is_locked(st, key)));
     if let Some(Target::Object(key)) = &hit {
         if add {
             state.toggle_object(key.clone());

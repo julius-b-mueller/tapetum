@@ -59,6 +59,7 @@ Without BlinderKitten running, Tapetum still shows the show from the file and ke
 
 - **IngeTrazo (`.igz`) read directly** – no export needed, no connection to IngeTrazo. Every top-level group and component becomes an object of its own; materials and textures are taken over and can be overridden per object (colour, reflectance, opaque or translucent with transmission and diffusion – gauze, glass, opera foil).
 - Tapetum **never changes the `.igz`**; when you save in IngeTrazo, the set reloads by itself.
+- **Lock** an object (the padlock in the sidebar) and the 3D view no longer picks it – clicks go through to what is behind, so the auditorium stays put from scene to scene.
 - IngeTrazo's **front view is the audience view** (both look along +Y, Z up), and its face-me people and trees turn towards the camera.
 - Without IngeTrazo: glTF/GLB, OBJ (with MTL) and STL, with unit and up axis.
 - Beams end at objects and cast shadows; gobos land on every surface, gauze and opera foil included (shadow play from behind on *High*).
@@ -75,6 +76,7 @@ Fixture types are recognized from their channels (moving head, spot/PAR, bar, wa
 - LED layouts (rectangular or rings) with LED-to-cell assignment; cells as separate lights or one mixed beam
 - colour wheel and gobo wheel (built-in patterns incl. moving water, or your own pictures), fixed gobos for fixtures without a gobo channel
 - pan/tilt range, speed and acceleration – heads travel instead of jumping; the zoom travels at its own top speed too
+- a selected moving head shows its middle direction (level, at the middle of its pan range – ideally towards the stage), with the ends of the range if it is less than a full turn
 
 **Fixture library:** *Export* in a fixture's settings saves its type as `<type name>.tapetum-fixture` in the library folder (default `Documents/Tapetum/Fixtures`, changeable under *⚙ Settings (top of the sidebar)*), its own gobo pictures alongside – and the fixture type itself as `<type name>.mochi` for BlinderKitten (*File → Import…* there), so the two stay together. If the show already has a type of that name, BlinderKitten renames the imported one, and it no longer matches. When a project opens, every fixture type not set up in it takes what the library has for a BlinderKitten type of the same name. Both the library files and the project note when a type's settings last changed: library files newer than the project's settings are offered in a window – take over all, some or none (declined versions aren't offered again). *Load …* takes any fixture file over for a type. The project keeps its own copy of the settings either way, so it needs no library to work.
 
