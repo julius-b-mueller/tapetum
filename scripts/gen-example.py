@@ -380,6 +380,9 @@ TABLE_CENTRE = (0.0, 0.6, 0.8)    # where the table stands in the party scene
 # BlinderKitten tracks: what a cue does not set keeps its value from the cue before.
 CUES = [
     (1, 3.0, [
+        (1, "Group", [(INT, 0.0), (PAN, 0.5), (TILT, 0.5)]),
+        (7, "Group", [(INT, 0.0), (PAN, 0.5), (TILT, 0.5)]),
+        (4, "Group", [(INT, 0.0)]),
         (2, "Group", rgbw(1.0, 0.32, 0.0)),
         (3, "Group", [(INT, 0.45)] + rgbw(1.0, 0.7, 0.4, 1.0)),
         (5, "Group", [(INT, 0.8)]),
@@ -392,7 +395,10 @@ CUES = [
         (6, "Group", [(INT, 0.15)] + rgbw(0.5, 0.6, 1.0, 0.6)),
     ]),
     (3, 4.0, [
-        (1, "Group", [(INT, 1.0), (ZOOM, 0.78), (STROBE, 0.0), (PAN, 0.667)] + rgbw(0.12, 0.0, 1.0)),
+        (1, "Group", [(INT, 1.0), (ZOOM, 0.78), (STROBE, 0.0), (PAN, 0.667)]),
+        (1, "Group", rgbw(0.7, 0.55, 1.0, 0.4), (1, 1)),
+        (1, "Group", rgbw(0.45, 0.0, 1.0), (2, 3)),
+        (1, "Group", rgbw(0.1, 0.0, 1.0), (4, 7)),
         (11, "Fixture", [(TILT, 0.659)]), (12, "Fixture", [(TILT, 0.588)]),
         (13, "Fixture", [(TILT, 0.416)]), (14, "Fixture", [(TILT, 0.345)]),
         (2, "Group", rgbw(1.0, 0.0, 0.25)),
@@ -425,10 +431,12 @@ CUES = [
     ]),
     (6, 3.0, [
         (1, "Group", [(INT, 1.0), (ZOOM, 0.6)]),
-        (11, "Fixture", head(11, TABLE_CENTRE) + rgbw(1.0, 0.0, 0.0)),
-        (12, "Fixture", head(12, TABLE_CENTRE) + rgbw(1.0, 0.8, 0.0)),
-        (13, "Fixture", head(13, TABLE_CENTRE) + rgbw(1.0, 0.0, 1.0)),
-        (14, "Fixture", head(14, TABLE_CENTRE) + rgbw(0.0, 0.9, 1.0)),
+        (11, "Fixture", head(11, TABLE_CENTRE)), (12, "Fixture", head(12, TABLE_CENTRE)),
+        (13, "Fixture", head(13, TABLE_CENTRE)), (14, "Fixture", head(14, TABLE_CENTRE)),
+        (1, "Group", rgbw(1.0, 1.0, 1.0, 1.0), (1, 1)),
+        (1, "Group", rgbw(1.0, 0.0, 0.8), (2, 2)), (1, "Group", rgbw(1.0, 0.8, 0.0), (3, 3)),
+        (1, "Group", rgbw(1.0, 0.0, 0.0), (4, 4)), (1, "Group", rgbw(0.0, 1.0, 0.2), (5, 5)),
+        (1, "Group", rgbw(0.0, 0.4, 1.0), (6, 6)), (1, "Group", rgbw(1.0, 0.5, 0.0), (7, 7)),
         (2, "Group", rgbw(1.0, 0.0, 0.6)),
         (3, "Group", [(INT, 1.0)] + rgbw(1.0, 0.75, 0.45, 1.0)),
         (4, "Group", [(INT, 1.0)] + rgbw(1.0, 0.5, 0.0)),
@@ -439,7 +447,9 @@ CUES = [
         (16, "Fixture", head(16, (2.2, -0.6, 0.0)) + rgbw(0.0, 0.9, 1.0)),
     ]),
     (7, 4.0, [
-        (1, "Group", [(INT, 1.0), (ZOOM, 0.3), (PAN, 0.5), (TILT, 0.5)] + rgbw(1.0, 0.9, 0.75, 1.0)),
+        (1, "Group", [(INT, 1.0), (ZOOM, 0.3), (PAN, 0.5), (TILT, 0.5)]),
+        (1, "Group", rgbw(1.0, 0.9, 0.75, 1.0), (1, 3)),
+        (1, "Group", rgbw(1.0, 0.55, 0.1, 0.5), (4, 7)),
         (2, "Group", rgbw(1.0, 0.55, 0.1, 0.5)),
         (3, "Group", [(INT, 1.0)] + rgbw(1.0, 0.85, 0.6, 1.0)),
         (4, "Group", [(INT, 1.0)] + rgbw(1.0, 0.6, 0.2, 1.0)),
@@ -536,11 +546,20 @@ def write_olga(lang):
         cue["niceName"] = name
         cue["containers"]["timing"] = {"parameters": [{"value": fade, "controlAddress": "/htpInFade"}, {"value": fade, "controlAddress": "/ltpInFade"}]} if fade else {}
         items = []
-        for target, kind, values in commands:
+        for target, kind, values, *cells in commands:
             cmd = copy.deepcopy(cmd_t)
             cmd["niceName"] = f"{kind} {target}"
             sel = copy.deepcopy(sel_t)
             sel["parameters"] = [{"value": kind, "controlAddress": "/targetType"}, {"value": target, "hexMode": False, "controlAddress": "/id"}, {"value": "", "controlAddress": "/channelType"}]
+            if cells:
+                # BlinderKitten's "SubFixtures" in a selection.
+                first, last = cells[0]
+                sel["parameters"] += [
+                    {"value": True, "controlAddress": "/subFixtures"},
+                    {"value": first, "hexMode": False, "controlAddress": "/subFixturesFrom"},
+                    {"value": last != first, "controlAddress": "/subFixturesThru"},
+                    {"value": last, "hexMode": False, "controlAddress": "/subFixturesTo"},
+                ]
             cmd["containers"]["selections"]["items"] = [sel]
             vals = []
             for i, (ctype, v) in enumerate(values):
@@ -558,12 +577,12 @@ def write_olga(lang):
 
 # ── Tapetum project ───────────────────────────────────────────────────────────
 
-# The moving head's front: rings of 6, 12 and 24 LEDs; the inner ring is cell 1,
-# the middle one cells 2 and 3 (a half each), the outer one cells 4 to 7 (a quarter each).
+# The moving head's front: one LED in the middle (cell 1), a ring of 6 around it
+# (cells 2 and 3, three LEDs each) and one of 12 (cells 4 to 7, three each).
 MOVING_HEAD_LEDS = {
-    "shape": {"Circular": {"rings": [6, 12, 24]}},
-    "pitch": 0.03,
-    "led_cells": [1] * 6 + [2] * 6 + [3] * 6 + [4] * 6 + [5] * 6 + [6] * 6 + [7] * 6,
+    "shape": {"Circular": {"rings": [1, 6, 12]}},
+    "pitch": 0.06,
+    "led_cells": [1] + [2] * 3 + [3] * 3 + [4] * 3 + [5] * 3 + [6] * 3 + [7] * 3,
 }
 
 # Groups of the theatre, not of the set.
@@ -592,7 +611,7 @@ def scenes(names):
 
 def write_project(lang):
     project = {
-        "render": {"ambient": 0.25, "exposure_ev": 5.6, "bloom": True,
+        "render": {"ambient": 0.17, "exposure_ev": 5.6, "bloom": True,
                    "haze": {"enabled": True, "density": 0.16, "anisotropy": 0.6, "color": [1, 1, 1], "extent": [30, 12, 30]}},
         # The theatre itself is locked (it doesn't move from scene to scene); the set isn't.
         "objects": [{"id": 1, "name": f"{NAME}.igz", "model": f"{NAME}.igz", "visible": True,
