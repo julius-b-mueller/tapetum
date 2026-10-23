@@ -53,23 +53,27 @@ pub fn faders(ctx: &egui::Context, project: &mut Project, spacemouse: bool) -> e
     let t = openness(ctx, id);
     let screen = ctx.content_rect();
     let height: f32 = ctx.data(|d| d.get_temp(id.with("height")).unwrap_or(200.0));
+    // The faders' width from last frame: the tab centres over them.
+    let width: f32 = ctx.data(|d| d.get_temp(id.with("width")).unwrap_or(0.0));
     const TAB: f32 = 26.0;
     let hidden = (height - TAB) * (1.0 - t);
     let area = egui::Area::new(id).order(egui::Order::Foreground).constrain(false).anchor(egui::Align2::CENTER_BOTTOM, egui::vec2(0.0, hidden)).show(ctx, |ui| {
+        ui.set_min_width(width);
         ui.vertical_centered(|ui| {
-            // The tab that always shows: where the faders live.
-            egui::Frame::popup(ui.style()).corner_radius(egui::CornerRadius { nw: 8, ne: 8, sw: 0, se: 0 }).inner_margin(egui::Margin::symmetric(14, 3)).show(ui, |ui| {
-                // A sun and a little arrow up (drawn: the font has no arrow glyph).
-                let r = ui.horizontal(|ui| {
-                    ui.label(egui::RichText::new("☀").color(ACCENT));
-                    let (rect, _) = ui.allocate_exact_size(egui::vec2(10.0, 10.0), egui::Sense::hover());
-                    let c = rect.center();
-                    let tip = if t > 0.5 { 3.5 } else { -3.5 };
-                    ui.painter().add(egui::Shape::convex_polygon(vec![c + egui::vec2(0.0, tip), c + egui::vec2(-4.5, -tip), c + egui::vec2(4.5, -tip)], ACCENT, egui::Stroke::NONE));
-                });
-                r.response.on_hover_text(tr("Licht und Haze", "Light and haze"));
-            });
-            egui::Frame::popup(ui.style()).corner_radius(egui::CornerRadius { nw: 10, ne: 10, sw: 0, se: 0 }).inner_margin(egui::Margin::symmetric(16, 10)).show(ui, |ui| {
+            // The tab that always shows: where the faders live. Drawn by hand
+            // at a fixed size, so the centred layout really centres it.
+            let (tab, resp) = ui.allocate_exact_size(egui::vec2(64.0, TAB), egui::Sense::hover());
+            let visuals = ui.visuals();
+            ui.painter().rect(tab, egui::CornerRadius { nw: 8, ne: 8, sw: 0, se: 0 }, visuals.window_fill, visuals.window_stroke, egui::StrokeKind::Inside);
+            let sun = tab.center() - egui::vec2(9.0, 0.0);
+            ui.painter().text(sun, egui::Align2::CENTER_CENTER, "☀", egui::FontId::proportional(14.0), ACCENT);
+            let c = tab.center() + egui::vec2(11.0, 0.0);
+            // A little arrow (the font has none): up while closed, down while open.
+            let tip = if t > 0.5 { 3.5 } else { -3.5 };
+            ui.painter().add(egui::Shape::convex_polygon(vec![c + egui::vec2(0.0, tip), c + egui::vec2(-4.5, -tip), c + egui::vec2(4.5, -tip)], ACCENT, egui::Stroke::NONE));
+            resp.on_hover_text(tr("Licht und Haze", "Light and haze"));
+            ui.add_space(-ui.spacing().item_spacing.y);
+            let panel = egui::Frame::popup(ui.style()).corner_radius(egui::CornerRadius { nw: 10, ne: 10, sw: 0, se: 0 }).inner_margin(egui::Margin::symmetric(16, 10)).show(ui, |ui| {
                 let r = &mut project.render;
                 ui.horizontal(|ui| {
                     fader(ui, &mut r.ambient, 0.0..=1.0, tr("Saallicht", "House light"), true);
@@ -97,6 +101,7 @@ pub fn faders(ctx: &egui::Context, project: &mut Project, spacemouse: bool) -> e
                     }
                 });
             });
+            ctx.data_mut(|d| d.insert_temp(id.with("width"), panel.response.rect.width()));
         });
     });
     let rect = area.response.rect;
