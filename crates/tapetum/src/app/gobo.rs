@@ -209,7 +209,7 @@ fn value_noise(p: Vec2) -> f32 {
 }
 
 /// Picture -> mask: brightness passes light, cut to the round aperture.
-fn load_mask(path: &Path) -> Result<Vec<u8>, String> {
+pub(crate) fn load_mask(path: &Path) -> Result<Vec<u8>, String> {
     let bytes = crate::stage::read_limited(path, crate::stage::MAX_SIDE_BYTES).map_err(|e| format!("{}: {e}", path.display()))?;
     let img = image::load_from_memory(&bytes).map_err(|e| format!("{}: {e}", path.display()))?;
     let img = img.resize_to_fill(SIZE, SIZE, image::imageops::FilterType::Triangle).to_luma8();

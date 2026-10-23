@@ -103,14 +103,19 @@ pub fn export(file: &Path, type_name: &str, settings: &FixtureOverride, project_
     let pictures_dir = format!("{stem} gobos");
     let mut settings = settings.clone();
     for p in pictures(&mut settings) {
+        // Only the project's own pictures: a project file from someone else
+        // must not get any other file copied into the library (which is meant to be shared).
         let src = project_dir.join(&*p);
         let Some(name) = src.file_name().map(|n| n.to_string_lossy().into_owned()) else { continue };
-        if src.is_file() {
-            std::fs::create_dir_all(dir.join(&pictures_dir)).map_err(|e| e.to_string())?;
-            std::fs::copy(&src, dir.join(&pictures_dir).join(&name)).map_err(|e| e.to_string())?;
-            *p = format!("{pictures_dir}/{name}");
+        if !stays_inside(p) || crate::app::gobo::load_mask(&src).is_err() {
+            *p = String::new();
+            continue;
         }
+        std::fs::create_dir_all(dir.join(&pictures_dir)).map_err(|e| e.to_string())?;
+        std::fs::copy(&src, dir.join(&pictures_dir).join(&name)).map_err(|e| e.to_string())?;
+        *p = format!("{pictures_dir}/{name}");
     }
+    drop_missing(&mut settings);
     let source = fingerprint(&settings);
     let json = serde_json::to_string_pretty(&FixtureFile { format: FORMAT, fixture_type: type_name.to_string(), modified, settings }).map_err(|e| e.to_string())?;
     std::fs::write(file, json).map_err(|e| e.to_string())?;
@@ -188,7 +193,12 @@ pub fn read(file: &Path, project_dir: &Path) -> Result<(FixtureOverride, String,
             Err(_) => *p = String::new(),
         }
     }
-    // Pictures that couldn't come along leave their slot open.
+    drop_missing(&mut settings);
+    Ok((settings, source, modified))
+}
+
+/// Pictures that couldn't come along (emptied) leave their slot open.
+fn drop_missing(settings: &mut FixtureOverride) {
     if matches!(&settings.fixed_gobo, Some(Gobo::Image(p)) if p.is_empty()) {
         settings.fixed_gobo = None;
     }
@@ -197,7 +207,6 @@ pub fn read(file: &Path, project_dir: &Path) -> Result<(FixtureOverride, String,
             s.gobo = Gobo::Open;
         }
     }
-    Ok((settings, source, modified))
 }
 
 /// Takes a library file over for one fixture type of the project.
@@ -363,6 +372,25 @@ mod tests {
         std::fs::write(library.join("evil.tapetum-fixture"), serde_json::to_vec(&evil).unwrap()).unwrap();
         let (got, _, _) = read(&library.join("evil.tapetum-fixture"), &to).unwrap();
         assert_eq!(got.fixed_gobo, None);
+    }
+
+    #[test]
+    fn export_takes_only_the_projects_own_pictures() {
+        let (library, root) = (temp("exp-lib"), temp("exp-root"));
+        let project = root.join("show");
+        std::fs::create_dir_all(project.join("tapetum-gobos")).unwrap();
+        // A file outside the project, and one inside that isn't a picture.
+        std::fs::write(root.join("secret.png"), b"private").unwrap();
+        image::GrayImage::from_pixel(8, 8, image::Luma([200])).save(root.join("outside.png")).unwrap();
+        std::fs::write(project.join("tapetum-gobos/notes.png"), b"not a picture").unwrap();
+        for path in ["../secret.png", "../outside.png", "tapetum-gobos/notes.png"] {
+            let o = FixtureOverride { fixed_gobo: Some(Gobo::Image(path.into())), ..Default::default() };
+            let file = file_for(&library, "Spot");
+            export(&file, "Spot", &o, &project, 1).unwrap();
+            let (got, _) = read_raw(&file).unwrap();
+            assert_eq!(got.fixed_gobo, None, "{path}");
+        }
+        assert!(!library.join("Spot gobos").exists(), "nothing copied");
     }
 
     #[test]
