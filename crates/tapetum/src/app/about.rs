@@ -50,6 +50,10 @@ pub fn menu(ui: &mut egui::Ui) {
             }
             ui.close();
         }
+        if ui.button(tr("Erste Schritte …", "Getting started …")).clicked() {
+            super::onboarding::open(ui.ctx());
+            ui.close();
+        }
         if ui.button(tr("Einstellungen …", "Settings …")).clicked() {
             super::settings::open(ui.ctx());
             ui.close();

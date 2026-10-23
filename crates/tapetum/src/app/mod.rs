@@ -11,6 +11,7 @@ pub mod gobo;
 pub mod layout;
 mod motion;
 pub mod objects;
+mod onboarding;
 mod orbit;
 mod overlays;
 mod scene;
