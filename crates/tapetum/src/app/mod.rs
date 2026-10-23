@@ -2,7 +2,7 @@
 
 mod about;
 pub use about::open_at_start as open_about_at_start;
-pub use ui::hide_sidebar_at_start;
+pub use ui::{hide_sidebar_at_start, hide_ui};
 pub use overlays::keep_open as keep_overlays_open;
 pub use settings::open_at_start as open_settings_at_start;
 mod beam;
@@ -12,7 +12,7 @@ pub mod gobo;
 pub mod layout;
 mod motion;
 pub mod objects;
-mod onboarding;
+pub mod onboarding;
 mod orbit;
 mod overlays;
 mod scene;
@@ -68,7 +68,7 @@ pub struct Options {
     pub select_object: Option<String>,
     pub scene: Option<u64>,
     pub bench: bool,
-    pub orbit: Option<[f32; 4]>,
+    pub orbit: Option<[f32; 6]>,
     /// Frame everything at start: `Some(true)` from above.
     pub fit: Option<bool>,
 }
@@ -183,10 +183,12 @@ pub fn run(opts: Options) -> Result<()> {
     if let Some(w) = watch {
         app.insert_resource(w);
     }
-    if let Some([yaw, pitch, distance, height]) = opts.orbit {
+    if let Some([yaw, pitch, distance, height, x, y]) = opts.orbit {
         app.add_systems(PostStartup, move |mut q: Query<&mut orbit::OrbitCamera>| {
             for mut c in &mut q {
-                (c.yaw, c.pitch, c.distance, c.target.y) = (yaw.to_radians(), pitch.to_radians(), distance, height);
+                (c.yaw, c.pitch, c.distance) = (yaw.to_radians(), pitch.to_radians(), distance);
+                // BK is Z-up: its y is Bevy's -z.
+                c.target = Vec3::new(x, height, -y);
             }
         });
     }

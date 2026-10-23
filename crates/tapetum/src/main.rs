@@ -57,9 +57,10 @@ struct ViewArgs {
     /// Show this scene at start (for screenshots).
     #[arg(long, hide = true)]
     scene: Option<u64>,
-    /// Camera for screenshots: yaw,pitch,distance,target height (degrees, meters).
+    /// Camera for screenshots: yaw,pitch,distance,target height[,target x,target y]
+    /// (degrees, meters; x and y in BlinderKitten's coordinates, default the middle).
     #[arg(long, hide = true, value_parser = parse_orbit)]
-    orbit: Option<[f32; 4]>,
+    orbit: Option<[f32; 6]>,
     /// Language for this run (for screenshots): "de" or "en".
     #[arg(long, hide = true, value_parser = ["de", "en"])]
     lang: Option<String>,
@@ -69,6 +70,9 @@ struct ViewArgs {
     /// Start with the sidebar hidden (for screenshots).
     #[arg(long, hide = true)]
     no_sidebar: bool,
+    /// Only the 3D view, without sidebar and overlays (for screenshots).
+    #[arg(long, hide = true)]
+    no_ui: bool,
     /// Open the settings at start (for screenshots).
     #[arg(long, hide = true)]
     settings: bool,
@@ -80,9 +84,12 @@ struct ViewArgs {
     fit: Option<String>,
 }
 
-fn parse_orbit(s: &str) -> Result<[f32; 4], String> {
-    let v: Vec<f32> = s.split(',').map(|x| x.trim().parse::<f32>().map_err(|e| e.to_string())).collect::<Result<_, _>>()?;
-    v.try_into().map_err(|_| "yaw,pitch,distance,height".to_string())
+fn parse_orbit(s: &str) -> Result<[f32; 6], String> {
+    let mut v: Vec<f32> = s.split(',').map(|x| x.trim().parse::<f32>().map_err(|e| e.to_string())).collect::<Result<_, _>>()?;
+    if v.len() == 4 {
+        v.extend([0.0, 0.0]);
+    }
+    v.try_into().map_err(|_| "yaw,pitch,distance,height[,x,y]".to_string())
 }
 
 fn parse_screenshot(s: &str) -> Result<(PathBuf, u32), String> {
@@ -149,6 +156,12 @@ fn main() -> Result<()> {
             }
             if v.no_sidebar {
                 app::hide_sidebar_at_start();
+            }
+            if v.no_ui {
+                app::hide_ui();
+            }
+            if v.screenshot.is_some() {
+                app::onboarding::no_auto_open();
             }
             if v.settings {
                 app::open_settings_at_start();

@@ -323,6 +323,13 @@ pub fn open(ctx: &egui::Context) {
 
 /// The getting-started window in the middle of the screen. It comes up by
 /// itself while the connection isn't complete and goes once everything works.
+static NO_AUTO_OPEN: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+
+/// The window doesn't open by itself (for screenshots).
+pub fn no_auto_open() {
+    NO_AUTO_OPEN.store(true, std::sync::atomic::Ordering::Relaxed);
+}
+
 pub fn window(ctx: &egui::Context, state: &ShowState, link: &BkLink, bk: Option<&HostInfo>, listen_port: u16, receiving: bool) -> Option<SetupAction> {
     let (open_id, auto_id, seen_id) = ids();
     let done = all_done(state, bk, listen_port, receiving);
@@ -336,7 +343,7 @@ pub fn window(ctx: &egui::Context, state: &ShowState, link: &BkLink, bk: Option<
     });
     if seen >= 0.0 && ctx.input(|i| i.time) - seen > 1.5 {
         ctx.data_mut(|d| d.insert_temp(seen_id, -1.0));
-        if !done || example {
+        if (!done || example) && !NO_AUTO_OPEN.load(std::sync::atomic::Ordering::Relaxed) {
             ctx.data_mut(|d| {
                 d.insert_temp(open_id, true);
                 d.insert_temp(auto_id, true);

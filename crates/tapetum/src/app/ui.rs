@@ -21,6 +21,14 @@ pub fn hide_sidebar_at_start() {
     HIDE_SIDEBAR_AT_START.store(true, std::sync::atomic::Ordering::Relaxed);
 }
 
+static NO_UI: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+
+/// Only the 3D view: no sidebar, no overlays (for screenshots).
+pub fn hide_ui() {
+    NO_UI.store(true, std::sync::atomic::Ordering::Relaxed);
+    hide_sidebar_at_start();
+}
+
 /// Tab pressed this frame, for the sidebar.
 #[derive(Resource, Default)]
 pub struct TabKey(pub bool);
@@ -165,8 +173,13 @@ pub fn panel(
     // Over the 3D view: light and haze below, the scenes above.
     let mut rects = Vec::new();
     let spacemouse_on = spacemouse.device().is_some() && project.spacemouse.enabled;
-    rects.push(super::overlays::faders(ctx, &mut project, spacemouse_on));
-    let (scene_pick, bar) = super::overlays::scene_bar(ctx, &state, &mut project, &scene_rt);
+    let bare = NO_UI.load(std::sync::atomic::Ordering::Relaxed);
+    let (scene_pick, bar) = if bare {
+        (None, egui::Rect::NOTHING)
+    } else {
+        rects.push(super::overlays::faders(ctx, &mut project, spacemouse_on));
+        super::overlays::scene_bar(ctx, &state, &mut project, &scene_rt)
+    };
     rects.push(bar);
     match scene_pick {
         // While the main cuelist runs, a scene chosen by hand holds until its next cue.
@@ -307,6 +320,7 @@ pub fn panel(
 
     match left {
         Some(left) => rects.push(left.response.rect),
+        None if bare => {}
         None => {
             // Fully in: a small handle to bring it back.
             let handle = egui::Area::new("sidebar_handle".into()).fixed_pos(egui::pos2(8.0, 8.0)).show(ctx, |ui| {
