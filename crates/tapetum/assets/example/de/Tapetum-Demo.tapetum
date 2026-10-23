@@ -116,6 +116,12 @@
     ]
    }
   },
+  "movingHeadSpot": {
+   "beam": "Spot",
+   "fixed_gobo": {
+    "Builtin": "Stern"
+   }
+  },
   "theatreSpotRGBW": {
    "beam_angle": 26.0
   },

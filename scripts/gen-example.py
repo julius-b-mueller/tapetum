@@ -41,8 +41,8 @@ NAMES = {
         "portal": "Portal", "curtain": "Vorhang", "masking": "Gassen und Soffitten", "truss": "Traversen",
         "podest": "Podest", "columns": "Säulen", "table": "Tisch", "chairs": "Stühle", "lantern": "Laterne",
         "crates": "Kisten", "bench": "Bank", "person": "Person",
-        "fixtures": {31: "Seite L", 32: "Seite R", 41: "Wash L", 42: "Wash R", 51: "Laterne", 61: "Front 1", 62: "Front 2", 63: "Front 3", 64: "Front 4"},
-        "groups": {3: "Seite", 4: "Wash", 5: "Laterne", 6: "Front"}, "bridge": "Frontlichtbrücke",
+        "fixtures": {31: "Seite L", 32: "Seite R", 41: "Wash L", 42: "Wash R", 51: "Laterne", 61: "Front 1", 62: "Front 2", 63: "Front 3", 64: "Front 4", 15: "MH Spot L", 16: "MH Spot R"},
+        "groups": {3: "Seite", 4: "Wash", 5: "Laterne", 6: "Front", 7: "MH Spot"}, "bridge": "Frontlichtbrücke",
         "cues": ["Einlass", "Prolog", "Abend", "Nacht", "Morgen", "Fest", "Finale", "Blackout"],
         "chapters": ["1 - Einlass", "", "2 - Abend", "", "3 - Morgen", "4 - Fest", "5 - Finale", ""],
         "scenes": ["Morgen", "Fest", "Finale"],
@@ -52,8 +52,8 @@ NAMES = {
         "portal": "Proscenium", "curtain": "Curtain", "masking": "Legs and borders", "truss": "Trusses",
         "podest": "Platform", "columns": "Columns", "table": "Table", "chairs": "Chairs", "lantern": "Lantern",
         "crates": "Crates", "bench": "Bench", "person": "Person",
-        "fixtures": {31: "Side L", 32: "Side R", 41: "Wash L", 42: "Wash R", 51: "Lantern", 61: "Front 1", 62: "Front 2", 63: "Front 3", 64: "Front 4"},
-        "groups": {3: "Side", 4: "Wash", 5: "Lantern", 6: "Front"}, "bridge": "Front light bridge",
+        "fixtures": {31: "Side L", 32: "Side R", 41: "Wash L", 42: "Wash R", 51: "Lantern", 61: "Front 1", 62: "Front 2", 63: "Front 3", 64: "Front 4", 15: "MH Spot L", 16: "MH Spot R"},
+        "groups": {3: "Side", 4: "Wash", 5: "Lantern", 6: "Front", 7: "MH Spot"}, "bridge": "Front light bridge",
         "cues": ["Pre-show", "Prologue", "Evening", "Night", "Morning", "Party", "Finale", "Blackout"],
         "chapters": ["1 - Pre-show", "", "2 - Evening", "", "3 - Morning", "4 - Party", "5 - Finale", ""],
         "scenes": ["Morning", "Party", "Finale"],
@@ -328,6 +328,9 @@ def placements():
         p = [x, -1.6, 6.65]
         pl[fid] = (p, aim(p, t))
     pl[51] = ([LANTERN[0], LANTERN[1], 3.03], [0.0, 0.0, 0.0])
+    # Two moving head spots with a gobo on the front truss.
+    pl[15] = ([-2.4, -1.6, 6.65], [0.0, 0.0, 0.0])
+    pl[16] = ([2.4, -1.6, 6.65], [0.0, 0.0, 0.0])
     # Front light: crossing onto the stage from the bridge.
     for fid, (x, target) in FRONT.items():
         p = [x, FRONT_Y, FRONT_Z]
@@ -397,6 +400,8 @@ CUES = [
         (4, "Group", [(INT, 1.0)] + rgbw(0.0, 0.08, 1.0)),
         (5, "Group", [(INT, 1.0)]),
         (6, "Group", [(INT, 0.45)] + rgbw(1.0, 0.7, 0.45, 1.0)),
+        (7, "Group", [(INT, 1.0), (ZOOM, 0.72)] + rgbw(1.0, 0.6, 0.2, 0.4)),
+        (15, "Fixture", head(15, (1.4, -2.0, 0.0))), (16, "Fixture", head(16, (-1.4, -2.0, 0.0))),
     ]),
     (4, 5.0, [
         (11, "Fixture", [(INT, 0.0)]), (14, "Fixture", [(INT, 0.0)]),
@@ -406,6 +411,8 @@ CUES = [
         (3, "Group", [(INT, 0.0)]),
         (4, "Group", [(INT, 0.3)]),
         (6, "Group", [(INT, 0.0)]),
+        (7, "Group", [(INT, 0.9)] + rgbw(0.1, 0.3, 1.0, 0.2)),
+        (15, "Fixture", head(15, (-1.8, 6.9, 3.2))), (16, "Fixture", head(16, (1.8, 6.9, 3.2))),
     ]),
     (5, 5.0, [
         (1, "Group", [(INT, 0.7), (ZOOM, 0.55), (PAN, 0.5), (TILT, 0.5)] + rgbw(1.0, 0.8, 0.5, 1.0)),
@@ -414,6 +421,7 @@ CUES = [
         (4, "Group", [(INT, 0.8)] + rgbw(1.0, 0.45, 0.0)),
         (5, "Group", [(INT, 0.0)]),
         (6, "Group", [(INT, 0.8)] + rgbw(1.0, 0.85, 0.7, 1.0)),
+        (7, "Group", [(INT, 0.0)]),
     ]),
     (6, 3.0, [
         (1, "Group", [(INT, 1.0), (ZOOM, 0.6)]),
@@ -426,6 +434,9 @@ CUES = [
         (4, "Group", [(INT, 1.0)] + rgbw(1.0, 0.5, 0.0)),
         (5, "Group", [(INT, 1.0)]),
         (6, "Group", [(INT, 0.6)] + rgbw(1.0, 0.7, 0.5, 1.0)),
+        (7, "Group", [(INT, 1.0), (ZOOM, 0.75)]),
+        (15, "Fixture", head(15, (-2.2, -0.6, 0.0)) + rgbw(1.0, 0.85, 0.0)),
+        (16, "Fixture", head(16, (2.2, -0.6, 0.0)) + rgbw(0.0, 0.9, 1.0)),
     ]),
     (7, 4.0, [
         (1, "Group", [(INT, 1.0), (ZOOM, 0.3), (PAN, 0.5), (TILT, 0.5)] + rgbw(1.0, 0.9, 0.75, 1.0)),
@@ -434,10 +445,12 @@ CUES = [
         (4, "Group", [(INT, 1.0)] + rgbw(1.0, 0.6, 0.2, 1.0)),
         (5, "Group", [(INT, 1.0)]),
         (6, "Group", [(INT, 1.0)] + rgbw(1.0, 0.85, 0.7, 1.0)),
+        (7, "Group", [(INT, 1.0), (ZOOM, 0.6)] + rgbw(1.0, 0.95, 0.85, 1.0)),
+        (15, "Fixture", head(15, (-0.6, 0.6, 0.0))), (16, "Fixture", head(16, (0.6, 0.6, 0.0))),
     ]),
     (8, 3.0, [
         (1, "Group", [(INT, 0.0)]), (2, "Group", rgbw(0.0, 0.0, 0.0, 0.0)),
-        (3, "Group", [(INT, 0.0)]), (4, "Group", [(INT, 0.0)]), (5, "Group", [(INT, 0.0)]), (6, "Group", [(INT, 0.0)]),
+        (3, "Group", [(INT, 0.0)]), (4, "Group", [(INT, 0.0)]), (5, "Group", [(INT, 0.0)]), (6, "Group", [(INT, 0.0)]), (7, "Group", [(INT, 0.0)]),
     ]),
 ]
 
@@ -464,6 +477,30 @@ def write_olga(lang):
         set_param(fx, "/id", fid)
         set_param(fx["containers"]["patch"]["items"][0], "/address", address)
         show["fixture"]["items"].append(fx)
+    # Moving head spots: the wash's type without its cells (one colour, a gobo
+    # set in the project), and two of them on DMX1 where it is free.
+    wash = next(t for t in show["fixtureType"]["items"] if t["niceName"] == "Moving Head Wash")
+    spot = copy.deepcopy(wash)
+    spot["niceName"] = "Moving Head Spot"
+    chans = [c for c in spot["containers"]["channels"]["items"] if params(c)["/dmxChannel"]["value"] <= 12]
+    for c in chans:
+        c["parameters"] = [p for p in c["parameters"] if p["controlAddress"] != "/subFixtureID"]
+    spot["containers"]["channels"]["items"] = chans
+    show["fixtureType"]["items"].append(spot)
+    head_fx = next(fx for fx in show["fixture"]["items"] if params(fx)["/id"]["value"] == 11)
+    for fid, address in ((15, 1), (16, 20)):
+        fx = copy.deepcopy(head_fx)
+        set_param(fx, "/id", fid)
+        set_param(fx, "/fixtureType", "/movingHeadSpot")
+        set_param(fx["containers"]["patch"]["items"][0], "/interface", "/dmx1")
+        set_param(fx["containers"]["patch"]["items"][0], "/address", address)
+        show["fixture"]["items"].append(fx)
+    group7 = copy.deepcopy(next(g for g in show["group"]["items"] if g["niceName"].startswith("1 - ")))
+    group7["niceName"] = "7 - MH Spot"
+    set_param(group7, "/name", "MH Spot")
+    set_param(group7["containers"]["selections"]["items"][0], "/id", 15)
+    set_param(group7["containers"]["selections"]["items"][0], "/lastID", 16)
+    show["group"]["items"].append(group7)
     group6 = copy.deepcopy(next(g for g in show["group"]["items"] if g["niceName"].startswith("3 - ")))
     group6["niceName"] = "6 - Front"
     set_param(group6["containers"]["selections"]["items"][0], "/id", 61)
@@ -564,6 +601,8 @@ def write_project(lang):
             # Washes with cells: no gobo, a soft edge. The moving head shows off
             # three LED rings, six LEDs to each of its seven cells.
             "movingHeadWash": {"beam": "Wash", "leds": MOVING_HEAD_LEDS},
+            # The spots: a hard edge and a star gobo, in the light and in the haze.
+            "movingHeadSpot": {"beam": "Spot", "fixed_gobo": {"Builtin": "Stern"}},
             "theatreSpotRGBW": {"beam_angle": 26.0},
             "waterEffect": {"fixed_gobo": {"Builtin": "Wasser"}, "beam_angle": 36.0},
             "barRGBW": {"beam": "Wash", "beam_angle": 75.0},
