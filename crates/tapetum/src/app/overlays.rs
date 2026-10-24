@@ -3,7 +3,7 @@
 //! like bookmarks. Both come out while the mouse is over them.
 
 use bevy_egui::egui;
-use tapetum_project::{Project, Quality};
+use tapetum_project::{Project, Quality, StandardView};
 
 use super::objects::SceneRuntime;
 use super::state::ShowState;
@@ -47,8 +47,20 @@ fn fader(ui: &mut egui::Ui, value: &mut f32, range: std::ops::RangeInclusive<f32
     });
 }
 
-/// Light and haze at the bottom edge. Returns the area it covers.
-pub fn faders(ctx: &egui::Context, project: &mut Project, spacemouse: bool) -> egui::Rect {
+/// Name of a standard view on its button.
+pub fn view_label(v: StandardView) -> &'static str {
+    match v {
+        StandardView::Audience => tr("Publikum", "Audience"),
+        StandardView::Top => tr("Oben", "Top"),
+        StandardView::Front => tr("Vorne", "Front"),
+        StandardView::Left => tr("Links", "Left"),
+        StandardView::Right => tr("Rechts", "Right"),
+    }
+}
+
+/// Light and haze at the bottom edge, and the standard views (a click sets
+/// `view`). Returns the area it covers.
+pub fn faders(ctx: &egui::Context, project: &mut Project, spacemouse: bool, view: &mut Option<StandardView>) -> egui::Rect {
     let id = egui::Id::new("faders");
     let t = openness(ctx, id, false);
     let screen = ctx.content_rect();
@@ -91,15 +103,36 @@ pub fn faders(ctx: &egui::Context, project: &mut Project, spacemouse: bool) -> e
                     });
                     fader(ui, &mut r.haze.density, 0.0..=0.5, tr("Dichte", "Density"), r.haze.enabled);
                     fader(ui, &mut r.haze.anisotropy, -0.9..=0.95, tr("Streuung vorwärts", "Forward scattering"), r.haze.enabled);
-                    if spacemouse {
-                        ui.separator();
-                        ui.vertical(|ui| {
-                            ui.set_width(110.0);
-                            ui.add_space(4.0);
+                    ui.separator();
+                    ui.vertical(|ui| {
+                        ui.set_width(150.0);
+                        ui.add_space(4.0);
+                        if spacemouse {
                             ui.toggle_value(&mut project.spacemouse.keep_in_background, tr("SpaceMouse im Hintergrund", "SpaceMouse in background"))
                                 .on_hover_text(tr("Die SpaceMouse steuert Tapetum weiter, während du BlinderKitten bedienst. Andere Programme bekommen sie dann nicht.", "The SpaceMouse keeps controlling Tapetum while you operate BlinderKitten. Other programs then don't get it."));
+                            ui.add_space(6.0);
+                        }
+                        ui.label(egui::RichText::new(tr("Ansicht", "View")).small());
+                        let mut button = |ui: &mut egui::Ui, v: StandardView, key: usize| {
+                            let current = project.view.standard == Some(v);
+                            if ui.add(egui::Button::new(view_label(v)).selected(current)).on_hover_text(trf!("Kamera dorthin schwenken (Taste {})", "Swing the camera there (key {})", key)).clicked() {
+                                *view = Some(v);
+                            }
+                        };
+                        ui.horizontal(|ui| {
+                            button(ui, StandardView::Audience, 1);
+                            button(ui, StandardView::Top, 2);
                         });
-                    }
+                        ui.horizontal(|ui| {
+                            button(ui, StandardView::Front, 3);
+                            button(ui, StandardView::Left, 4);
+                            button(ui, StandardView::Right, 5);
+                        });
+                        ui.checkbox(&mut project.view.orthographic, tr("Orthografisch", "Orthographic")).on_hover_text(tr(
+                            "Ohne Perspektive: maßstäblich, für Pläne. Die Ansichten oben richten Exporte gerade aus.",
+                            "Without perspective: to scale, for plans. The views above line exports up straight.",
+                        ));
+                    });
                 });
             });
             ctx.data_mut(|d| d.insert_temp(id.with("width"), panel.response.rect.width()));

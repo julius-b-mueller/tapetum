@@ -79,9 +79,23 @@ struct ViewArgs {
     /// Keep the faders and the scene bar out (for screenshots).
     #[arg(long, hide = true)]
     overlays_open: bool,
-    /// Frame everything at start (for screenshots): "audience" or "top".
-    #[arg(long, hide = true, value_parser = ["audience", "top"])]
+    /// Frame everything at start (for screenshots) from a standard view.
+    #[arg(long, hide = true, value_parser = ["audience", "top", "front", "left", "right"])]
     fit: Option<String>,
+    /// Orthographic projection at start (for screenshots).
+    #[arg(long, hide = true)]
+    ortho: bool,
+}
+
+fn standard_view(name: &str) -> tapetum_project::StandardView {
+    use tapetum_project::StandardView::*;
+    match name {
+        "top" => Top,
+        "front" => Front,
+        "left" => Left,
+        "right" => Right,
+        _ => Audience,
+    }
 }
 
 fn parse_orbit(s: &str) -> Result<[f32; 6], String> {
@@ -209,7 +223,7 @@ fn main() -> Result<()> {
                 settings.last_show = Some(remembered);
                 settings.save();
             }
-            app::run(app::Options { show, bind: v.bind, port: v.port, screenshot: v.screenshot, select: v.select, select_object: v.select_object, scene: v.scene, orbit: v.orbit, fit: v.fit.map(|f| f == "top"), bench: v.bench })
+            app::run(app::Options { show, bind: v.bind, port: v.port, screenshot: v.screenshot, select: v.select, select_object: v.select_object, scene: v.scene, orbit: v.orbit, fit: v.fit.as_deref().map(standard_view), ortho: v.ortho, bench: v.bench })
         }
     }
 }

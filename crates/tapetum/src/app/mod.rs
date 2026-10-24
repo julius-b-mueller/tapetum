@@ -70,7 +70,8 @@ pub struct Options {
     pub bench: bool,
     pub orbit: Option<[f32; 6]>,
     /// Frame everything at start: `Some(true)` from above.
-    pub fit: Option<bool>,
+    pub fit: Option<tapetum_project::StandardView>,
+    pub ortho: bool,
 }
 
 /// How long a taken Art-Net port may take to become free at start: the Tapetum
@@ -81,6 +82,9 @@ pub fn run(opts: Options) -> Result<()> {
     let show = bk_olga::load(&opts.show)?;
     let project_path = Project::path_for_show(&opts.show);
     let mut project = Project::load_or_default(&project_path)?;
+    if opts.ortho {
+        project.view.orthographic = true;
+    }
     // Fixture types not set up in this project take what the fixture library has for them.
     let project_dir = project_path.parent().map(std::path::PathBuf::from).unwrap_or_default();
     let taken = crate::fixture_library::dir().map(|lib| crate::fixture_library::apply(&show, &mut project, &project_dir, &lib)).unwrap_or_default();
@@ -139,13 +143,18 @@ pub fn run(opts: Options) -> Result<()> {
     .init_resource::<ui::UiRects>()
     .init_resource::<RangeSync>()
     .init_resource::<undo::UndoHistory>()
-    .insert_resource(orbit::FitRequest { top: opts.fit, delay: 120 })
+    .insert_resource(orbit::FitRequest {
+        view: opts.fit,
+        delay: 120,
+        glide: false,
+    })
     // Test runs (screenshots, benchmarks) shouldn't follow a hand on the cap.
     .insert_resource(if opts.screenshot.is_some() || opts.bench { spacemouse::SpaceMouse::default() } else { spacemouse::SpaceMouse::start() })
     .init_resource::<PlacementSync>()
     .init_resource::<objects::StageObjects>()
     .init_resource::<objects::SceneRuntime>()
     .init_resource::<objects::Occluders>()
+    .init_resource::<objects::FrameBoxes>()
     .init_resource::<gizmo::GizmoState>()
     .init_resource::<GoboImport>()
     .init_resource::<LibraryJobs>()

@@ -106,7 +106,7 @@ pub fn panel(
     mut ui_rects: ResMut<UiRects>,
     time: Res<Time>,
     mut fps: Local<f32>,
-    (mut sidebar_hidden, mut slow_since, tab): (Local<bool>, Local<Option<f32>>, Res<TabKey>),
+    (mut sidebar_hidden, mut slow_since, tab, mut fit): (Local<bool>, Local<Option<f32>>, Res<TabKey>, ResMut<super::orbit::FitRequest>),
     mut windows: Query<&mut Window, With<PrimaryWindow>>,
 ) -> Result {
     link.poll();
@@ -214,13 +214,28 @@ pub fn panel(
     let mut rects = Vec::new();
     let spacemouse_on = spacemouse.device().is_some() && project.spacemouse.enabled;
     let bare = NO_UI.load(std::sync::atomic::Ordering::Relaxed);
+    // A standard view: from the panel at the bottom or keys 1–5.
+    let mut view = None;
+    if !ctx.text_edit_focused() {
+        let keys = [egui::Key::Num1, egui::Key::Num2, egui::Key::Num3, egui::Key::Num4, egui::Key::Num5];
+        view = ctx.input(|i| keys.iter().position(|k| i.key_pressed(*k) && !i.modifiers.any())).map(|n| tapetum_project::StandardView::ALL[n]);
+    }
+    let was_orthographic = project.view.orthographic;
     let (scene_pick, bar) = if bare {
         (None, egui::Rect::NOTHING)
     } else {
-        rects.push(super::overlays::faders(ctx, &mut project, spacemouse_on));
+        rects.push(super::overlays::faders(ctx, &mut project, spacemouse_on, &mut view));
         super::overlays::scene_bar(ctx, &state, &mut project, &scene_rt)
     };
     rects.push(bar);
+    // Switching the projection frames the chosen view anew.
+    if project.view.orthographic != was_orthographic && view.is_none() {
+        view = project.view.standard;
+    }
+    if let Some(v) = view {
+        project.view.standard = Some(v);
+        *fit = super::orbit::FitRequest { view: Some(v), delay: 0, glide: true };
+    }
     match scene_pick {
         // While the main cuelist runs, a scene chosen by hand holds until its next cue.
         Some(super::overlays::ScenePick::Show(scene)) => match scene_rt.following_cue {

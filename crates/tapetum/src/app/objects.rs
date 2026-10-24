@@ -482,6 +482,11 @@ pub fn sync_surface_masks(
 #[derive(Resource, Default)]
 pub struct Occluders(pub Vec<(Vec3, f32)>);
 
+/// Boxes (Bevy world, min and max) around the visible stage objects, and
+/// whether the object is locked: what the camera frames for a standard view.
+#[derive(Resource, Default)]
+pub struct FrameBoxes(pub Vec<(Vec3, Vec3, bool)>);
+
 /// Which scene shows, and the move into it.
 #[derive(Resource, Default)]
 pub struct SceneRuntime {
@@ -557,9 +562,10 @@ pub fn apply_scene(
     time: Res<Time>,
     camera: Query<&GlobalTransform, With<Camera3d>>,
     mut roots: Query<(&StageObjectRoot, &mut Transform, &mut Visibility)>,
-    mut occluders: ResMut<Occluders>,
+    (mut occluders, mut frames): (ResMut<Occluders>, ResMut<FrameBoxes>),
 ) {
     let mut spheres = Vec::new();
+    let mut boxes = Vec::new();
     // The camera in BK space (Z up), for the face-me figures.
     let cam = camera.single().ok().map(|c| {
         let p = c.translation();
@@ -609,11 +615,21 @@ pub fn apply_scene(
             let center = pos + rot * (base.transform_point((lo + hi) / 2.0) - pivot);
             let radius = (hi - lo).length() / 2.0 * base.scale.max_element();
             // BK (Z up) to Bevy world (Y up).
-            spheres.push((Vec3::new(center.x, center.z, -center.y), radius));
+            let bevy = |p: Vec3| Vec3::new(p.x, p.z, -p.y);
+            spheres.push((bevy(center), radius));
+            let (mut bmin, mut bmax) = (Vec3::splat(f32::MAX), Vec3::splat(f32::MIN));
+            for i in 0..8 {
+                let corner = Vec3::new(if i & 1 == 0 { lo.x } else { hi.x }, if i & 2 == 0 { lo.y } else { hi.y }, if i & 4 == 0 { lo.z } else { hi.z });
+                let w = bevy(pos + rot * (base.transform_point(corner) - pivot));
+                (bmin, bmax) = (bmin.min(w), bmax.max(w));
+            }
+            let locked = split_key(&root.key).and_then(|(_, part)| f.parts.get(part)).and_then(|p| p.locked).unwrap_or(false);
+            boxes.push((bmin, bmax, locked));
         }
     }
     rt.shown = shown;
     occluders.0 = spheres;
+    frames.0 = boxes;
 }
 
 const SELECTED: Color = Color::srgb(1.0, 0.75, 0.15);

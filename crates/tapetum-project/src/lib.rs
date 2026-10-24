@@ -43,6 +43,35 @@ pub struct Project {
     pub scenes: Vec<Scene>,
     pub cameras: Vec<CameraBookmark>,
     pub spacemouse: SpaceMouseSettings,
+    pub view: ViewSettings,
+}
+
+/// The standard views the camera swings to (for plans that line up).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub enum StandardView {
+    /// From the audience, slightly from above.
+    #[default]
+    Audience,
+    /// Straight down, the audience at the bottom.
+    Top,
+    /// Straight from the front.
+    Front,
+    /// From the left and the right (as seen from the audience).
+    Left,
+    Right,
+}
+
+impl StandardView {
+    pub const ALL: [StandardView; 5] = [StandardView::Audience, StandardView::Top, StandardView::Front, StandardView::Left, StandardView::Right];
+}
+
+#[derive(Clone, Copy, Debug, Default, PartialEq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct ViewSettings {
+    /// The standard view chosen last (until the camera is moved by hand).
+    pub standard: Option<StandardView>,
+    /// Orthographic projection: true to scale, for plans.
+    pub orthographic: bool,
 }
 
 /// 3Dconnexion SpaceMouse driving the camera.
