@@ -29,7 +29,7 @@
     "name": "Tapetum",
     "applicationCategory": "MultimediaApplication",
     "operatingSystem": "macOS, Windows, Linux",
-    "softwareVersion": "1.2.0",
+    "softwareVersion": "1.3.0",
     "license": "https://opensource.org/license/mit",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
     "url": "https://tapetum.org/",
@@ -45,6 +45,7 @@
     <a class="nav-logo" href="index.html"><img src="assets/favicon.png" alt="">Tapetum</a>
     <div class="nav-links">
       <a href="#live" data-de="So funktioniert's" data-en="How it works">So funktioniert's</a>
+      <a href="#plaene" data-de="Pläne" data-en="Plans">Pläne</a>
       <a href="#nutzen" data-de="Vorteile" data-en="Benefits">Vorteile</a>
       <a href="start.html" data-de="Erste Schritte" data-en="Getting started">Erste Schritte</a>
       <a href="about.html" data-de="Über" data-en="About">Über</a>
@@ -67,7 +68,7 @@
         <a class="btn-primary" href="#download" data-de="Kostenlos herunterladen" data-en="Download for free">Kostenlos herunterladen</a>
         <a class="btn-secondary" href="start.html" data-de="Erste Schritte →" data-en="Getting started →">Erste Schritte →</a>
       </div>
-      <p class="hero-meta" data-de="Version 1.2.0 · macOS, Windows, Linux · frei und quelloffen" data-en="Version 1.2.0 · macOS, Windows, Linux · free and open source">Version 1.2.0 · macOS, Windows, Linux · frei und quelloffen</p>
+      <p class="hero-meta" data-de="Version 1.3.0 · macOS, Windows, Linux · frei und quelloffen" data-en="Version 1.3.0 · macOS, Windows, Linux · free and open source">Version 1.3.0 · macOS, Windows, Linux · frei und quelloffen</p>
     </div>
   </header>
 
@@ -136,11 +137,13 @@
           <p class="de">Tapetum kennt deine Lampen, Gruppen und Cues aus der Show-Datei – du musst nichts doppelt anlegen. Was du in BlinderKitten programmierst, siehst du sofort auf der Bühne. Und wenn du in Tapetum eine Lampe an ihren Platz ziehst, landet die Position direkt in BlinderKitten.</p>
           <p class="en">Tapetum knows your fixtures, groups and cues from the show file – nothing to set up twice. What you program in BlinderKitten, you see on stage at once. And when you drag a fixture into place in Tapetum, its position goes straight to BlinderKitten.</p>
           <ul class="checks de">
+            <li>Layouts (2D-Pläne) für BlinderKitten aus den Lampenpositionen – mit einem Klick, und Tapetum sagt, wann sie veraltet sind</li>
             <li>Kein Fixture-Import nötig: Lampen werden an ihren Kanälen erkannt</li>
             <li>Auswahl wie im Pult: Klick auf eine Lampe, Rechtsklick auf ihre Gruppe</li>
             <li>Umbauten folgen automatisch den Cues der Main-Cuelist</li>
           </ul>
           <ul class="checks en">
+            <li>Layouts (2D plans) for BlinderKitten from the fixture positions – one click, and Tapetum tells when they are out of date</li>
             <li>No fixture import needed: fixtures are recognized by their channels</li>
             <li>Selection like on the desk: click a fixture, right-click for its group</li>
             <li>Set changes follow the cues of the main cuelist automatically</li>
@@ -172,6 +175,58 @@
       </div>
     </section>
 
+    <section id="plaene">
+      <div class="center">
+        <div class="kicker amber" data-de="Pläne" data-en="Plans">Pläne</div>
+        <h2 data-de="Vom Bildschirm aufs Papier" data-en="From the screen to paper">Vom Bildschirm aufs Papier</h2>
+        <p class="sub de">Was du in Tapetum siehst, nimmst du mit ins Licht­büro, in die Werkstatt und auf die Probebühne: als Scheinwerferplan und als Umbaupläne für jede Szene – als Vektorgrafik, maßstäblich und mit wenig Tinte zu drucken.</p>
+        <p class="sub en">What you see in Tapetum goes with you to the lighting office, the workshop and the rehearsal stage: as a fixture plan and as set-change drawings for every scene – vector graphics, to scale and printable with little ink.</p>
+      </div>
+      <div class="row">
+        <div>
+          <div class="shot"><img src="assets/plan.jpg" alt="Scheinwerferplan des Beispiels von oben im Maßstab 1:100: jede Lampe als Symbol mit Name, Typ, Universum, Adresse und Kanalzahl, Moving Heads mit Pfeil, das Bühnenbild blass darunter" loading="lazy"></div>
+        </div>
+        <div>
+          <div class="kicker" data-de="Scheinwerferplan" data-en="Fixture plan">Scheinwerferplan</div>
+          <h3 style="font-size:1.5rem" data-de="Jede Lampe, wo sie hängt – beschriftet" data-en="Every fixture where it hangs – labelled">Jede Lampe, wo sie hängt – beschriftet</h3>
+          <p class="de">Ein Klick, und der Plan liegt als PDF oder SVG vor: jede Lampe als Symbol nach ihrer Art, daneben Nummer und Name, Gerätetyp, Universum und Adresse und die Zahl ihrer DMX-Kanäle. Moving Heads zeigen mit einem Pfeil, wohin sie in der Mitte ihres Pan-Bereichs schauen – so hängt sie jeder richtig herum auf.</p>
+          <p class="en">One click and the plan is there as PDF or SVG: every fixture as a symbol by its kind, beside it number and name, fixture type, universe and address and the number of its DMX channels. Moving heads show with an arrow where they look in the middle of their pan range – so everyone hangs them the right way round.</p>
+          <ul class="checks de">
+            <li>Beschriftungen ohne Überlappungen, wo nötig mit Führungslinie</li>
+            <li>Orthografisch im Standardmaßstab (1:20 bis 1:500) mit Maßstabsbalken</li>
+            <li>Das Bühnenbild blass darunter – du siehst, worüber jede Lampe hängt</li>
+          </ul>
+          <ul class="checks en">
+            <li>Labels without overlaps, with a leader line where needed</li>
+            <li>Orthographic at a standard scale (1:20 to 1:500) with a scale bar</li>
+            <li>The set faint underneath – you see what each fixture hangs over</li>
+          </ul>
+        </div>
+      </div>
+      <div class="row flip">
+        <div>
+          <div class="shot"><img src="assets/changes.jpg" alt="Umbauplan der Szene Fest von vorne im Maßstab 1:50: Vorhang, Laterne, Tisch und Stühle als Linienzeichnung, zwei Personen als farbige Figuren" loading="lazy"></div>
+        </div>
+        <div>
+          <div class="kicker amber" data-de="Umbaupläne" data-en="Set changes">Umbaupläne</div>
+          <h3 style="font-size:1.5rem" data-de="Für jede Szene ein Blatt" data-en="A sheet for every scene">Für jede Szene ein Blatt</h3>
+          <p class="de">Eine Seite pro Szene, in der Reihenfolge der Cues, alle im selben Ausschnitt – so sieht die Bühnentechnik auf einen Blick, was sich von Umbau zu Umbau ändert. Das Bühnenbild als Linienzeichnung, verdeckte Kanten gestrichelt oder weggelassen. Die Figuren behalten ihr Bild, oft sind es die Kostümentwürfe: Man sieht, welche Rolle wo steht.</p>
+          <p class="en">A page per scene, in the order of the cues, all in the same frame – so the stage crew sees at a glance what changes from one set change to the next. The set as a line drawing, hidden edges dashed or left out. Figures keep their picture, often the costume designs: you see which part stands where.</p>
+          <ul class="checks de">
+            <li>Szene, Cue und Kapitel im Schriftfeld</li>
+            <li>Das Druckersymbol bestimmt, was auf den Plan kommt – etwa ohne Zuschauerreihen</li>
+            <li>Dazu ein Screenshot der Ansicht als PNG, in höchster Qualität</li>
+          </ul>
+          <ul class="checks en">
+            <li>Scene, cue and chapter in the title block</li>
+            <li>The printer symbol decides what goes on the plan – without the auditorium seats, say</li>
+            <li>Plus a screenshot of the view as PNG, at the highest quality</li>
+          </ul>
+          <p><a href="start.html#plaene" data-de="So entstehen die Pläne →" data-en="How the plans are made →">So entstehen die Pläne →</a></p>
+        </div>
+      </div>
+    </section>
+
     <section id="nutzen">
       <div class="center">
         <div class="kicker" data-de="Wofür" data-en="What for">Wofür</div>
@@ -184,14 +239,14 @@
         <div class="card"><div class="icon">👁️</div><h3 data-de="Sehen, was das Publikum sieht" data-en="See what the audience sees">Sehen, was das Publikum sieht</h3><p class="de">Lichtstrahlen im Haze, Gobos auf dem Boden, Schatten am Bühnenbild, Licht durch Gaze – aus der Zuschauersicht erkennst du früh, ob eine Stimmung trägt.</p><p class="en">Beams in haze, gobos on the floor, shadows on the set, light through gauze – from the audience's view you see early whether a look works.</p></div>
         <div class="card"><div class="icon">🔁</div><h3 data-de="Umbauten gleich mitdenken" data-en="Think set changes through">Umbauten gleich mitdenken</h3><p class="de">Szenen verschieben oder verstecken Bühnenteile passend zur laufenden Cue. So prüfst du jede Stimmung im richtigen Bild.</p><p class="en">Scenes move or hide parts of the set to match the running cue. So you check every look on the right set.</p></div>
         <div class="card"><div class="icon">💬</div><h3 data-de="Zeigen statt erklären" data-en="Show instead of explaining">Zeigen statt erklären</h3><p class="de">Regie, Bühnenbild und Ensemble sehen vorab, wie eine Szene wirken wird – lange bevor das erste Mal das Saallicht ausgeht.</p><p class="en">Direction, set design and cast see beforehand how a scene will look – long before the house lights first go down.</p></div>
-        <div class="card"><div class="icon">💻</div><h3 data-de="Läuft auch auf dem Laptop" data-en="Runs on a laptop too">Läuft auch auf dem Laptop</h3><p class="de">Von integrierter Grafik bis zur starken Grafikkarte: Drei Qualitätsstufen, und läuft es zu langsam, schlägt Tapetum selbst eine passende vor.</p><p class="en">From integrated graphics to a strong graphics card: three quality levels, and if it runs too slowly, Tapetum suggests a better one by itself.</p></div>
+        <div class="card"><div class="icon">💻</div><h3 data-de="Läuft auch auf dem Laptop" data-en="Runs on a laptop too">Läuft auch auf dem Laptop</h3><p class="de">Von integrierter Grafik bis zur starken Grafikkarte: vier Qualitätsstufen – bis hin zu „Entwurf“, der den Akku schont. Läuft es zu langsam, schlägt Tapetum selbst eine passende vor.</p><p class="en">From integrated graphics to a strong graphics card: four quality levels – down to “Draft”, which spares the battery. If it runs too slowly, Tapetum suggests a better one by itself.</p></div>
         <div class="card"><div class="icon">🔒</div><h3 data-de="Frei, lokal, ohne Konto" data-en="Free, local, no account">Frei, lokal, ohne Konto</h3><p class="de">Kostenlos und quelloffen. Keine Cloud, kein Tracking – deine Shows und Bühnenbilder bleiben auf deinem Rechner.</p><p class="en">Free and open source. No cloud, no tracking – your shows and sets stay on your computer.</p></div>
       </div>
       <div class="chips de">
-        <span>Moving Heads mit Trägheit</span><span>LED-Zellen &amp; -Ringe</span><span>Gerätebibliothek</span><span>Farb- und Goboräder</span><span>eigene Gobo-Bilder</span><span>bewegtes Wasser</span><span>Zoom mit Fahrzeit</span><span>Strobe</span><span>Lampen bis 360°</span><span>Gaze &amp; Schattenspiel</span><span>SpaceMouse</span><span>Rückgängig</span><span>Deutsch &amp; Englisch</span>
+        <span>Moving Heads mit Trägheit</span><span>LED-Zellen &amp; -Ringe</span><span>Gerätebibliothek</span><span>Scheinwerferplan</span><span>Umbaupläne</span><span>Standardansichten</span><span>Entwurf fürs Notebook</span><span>Farb- und Goboräder</span><span>eigene Gobo-Bilder</span><span>bewegtes Wasser</span><span>Zoom mit Fahrzeit</span><span>Strobe</span><span>Lampen bis 360°</span><span>Gaze &amp; Schattenspiel</span><span>SpaceMouse</span><span>Rückgängig</span><span>Deutsch &amp; Englisch</span>
       </div>
       <div class="chips en">
-        <span>Moving heads with inertia</span><span>LED cells &amp; rings</span><span>Fixture library</span><span>Colour and gobo wheels</span><span>your own gobo pictures</span><span>moving water</span><span>Zoom with travel time</span><span>Strobe</span><span>fixtures up to 360°</span><span>Gauze &amp; shadow play</span><span>SpaceMouse</span><span>Undo</span><span>German &amp; English</span>
+        <span>Moving heads with inertia</span><span>LED cells &amp; rings</span><span>Fixture library</span><span>Fixture plan</span><span>Set changes</span><span>Standard views</span><span>Draft for laptops</span><span>Colour and gobo wheels</span><span>your own gobo pictures</span><span>moving water</span><span>Zoom with travel time</span><span>Strobe</span><span>fixtures up to 360°</span><span>Gauze &amp; shadow play</span><span>SpaceMouse</span><span>Undo</span><span>German &amp; English</span>
       </div>
     </section>
 
@@ -233,8 +288,8 @@
     <section id="download">
       <div class="kicker">Download</div>
       <h2 data-de="Tapetum herunterladen" data-en="Download Tapetum">Tapetum herunterladen</h2>
-      <p class="sub de">Version 1.2.0 · frei unter der MIT-Lizenz · getestet mit BlinderKitten 1.0.1b98 und IngeTrazo 0.5.7</p>
-      <p class="sub en">Version 1.2.0 · free under the MIT License · tested with BlinderKitten 1.0.1b98 and IngeTrazo 0.5.7</p>
+      <p class="sub de">Version 1.3.0 · frei unter der MIT-Lizenz · getestet mit BlinderKitten 1.0.1b98 und IngeTrazo 0.5.7</p>
+      <p class="sub en">Version 1.3.0 · free under the MIT License · tested with BlinderKitten 1.0.1b98 and IngeTrazo 0.5.7</p>
       <div class="dl">
         <div class="card" data-platform="mac">
           <h3> macOS</h3>

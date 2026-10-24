@@ -56,7 +56,7 @@ Without BlinderKitten running, Tapetum still shows the show from the file and ke
 - **Art-Net on localhost:** one-click mirror interfaces with pass-through, so the real hardware keeps getting its data.
 - **Live remote:** Tapetum talks to BlinderKitten's OSC Remote Control (port 42000): groups appear live, the current cue of the main conductor cuelist is followed, fixture positions and the pan/tilt/zoom *Physical range* are written back.
 - **Selection:** a click selects a fixture, a right click its BlinderKitten group (a menu asks if it's in several), Shift/Cmd adds.
-- **2D plans:** BlinderKitten lays its 2D plans out from coordinates only when importing an MVR and never updates them. *Lay out from positions* (sidebar, under *BlinderKitten*) writes “Tapetum Front”, “Tapetum Top” and “Tapetum Side” with a point per fixture at the positions Tapetum shows; run it again after moving fixtures. Your own plans stay untouched.
+- **2D plans (layouts) in BlinderKitten:** BlinderKitten's layouts show the fixtures on a plan – for selecting and watching them on the desk. BlinderKitten lays them out from fixture coordinates only when importing an MVR, and never updates them; otherwise every fixture is placed by hand. Tapetum does it from the positions it shows: *Lay out from positions* (sidebar, under *BlinderKitten*) writes three layouts with a point per fixture – “Tapetum Front” (x/z, from the audience), “Tapetum Top” (x/y, from above) and “Tapetum Side” (y/z) –, sized to fit them. Beside the button Tapetum tells whether they still match (✔ up to date / ⚠ fixtures moved since); *Update* replaces them under their IDs, *Remove* takes them out. Layouts of your own stay untouched; the “Tapetum” prefix tells them apart. `tapetum plans <show>` does the same from the command line.
 - **Changing the show safely:** whatever needs BlinderKitten to save and reload the show (interfaces, 2D plans) asks first, waits until BlinderKitten has saved completely and finished loading, gives up without touching anything if the show in BlinderKitten changed meanwhile, and checks afterwards that BlinderKitten has the change.
 
 ## Stage objects and IngeTrazo
@@ -116,9 +116,13 @@ Choose it under *⚙ Settings (top of the sidebar)*. If it runs below 25 fps for
 
 The panel at the bottom edge has the **standard views** – Audience, Top, Front, Left, Right (keys 1–5): the camera swings there and frames the fixtures and the set (what isn't locked). **Orthographic** draws without perspective, to scale. The exports (sidebar, *Export*) take the current view: from a standard view they are framed anew for the page, whatever the window's shape; after moving the camera by hand, what shows between the side panels. The printer symbol beside each stage object decides whether it is in the line drawings.
 
+<img src="website/assets/plan.jpg" width="720" alt="Fixture plan of the example from the top, 1:100">
+
 - **Fixture plan** (PDF or SVG, vector): every fixture as a symbol by its class with ID and name, type, universe/address and channel count; moving heads with the arrow of their middle direction. The set lies faint underneath. Orthographic views come out at a standard scale (1:20 … 1:500) with a scale bar.
 - **Screenshot** (PNG): the 3D view between the side panels, rendered at *High* for a moment.
 - **Set changes** (PDF, vector): a page per scene – the base scene first, then by cue, with scene, cue and chapter – all in the same frame and scale, the set as a line drawing for printing with little ink. Hidden lines are dashed or left out. Face-me figures (often the costume designs) keep their picture, so you see who stands where; from above they are a circle with their name.
+
+<img src="website/assets/changes.jpg" width="720" alt="Set change of the party scene from the front, 1:50, without the auditorium (left out of print)">
 
 ## Navigation, SpaceMouse and shortcuts
 
