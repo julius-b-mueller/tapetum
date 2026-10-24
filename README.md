@@ -21,12 +21,13 @@ Website and downloads: **https://tapetum.org/**
 5. [Fixtures](#fixtures)
 6. [Fixture library](#fixture-library)
 7. [Quality levels](#quality-levels)
-8. [Navigation, SpaceMouse and shortcuts](#navigation-spacemouse-and-shortcuts)
-9. [Files](#files)
-10. [Tested versions](#tested-versions)
-11. [Development and build](#development-and-build)
-12. [Security](#security)
-13. [License and credits](#license-and-credits)
+8. [Views and plans](#views-and-plans)
+9. [Navigation, SpaceMouse and shortcuts](#navigation-spacemouse-and-shortcuts)
+10. [Files](#files)
+11. [Tested versions](#tested-versions)
+12. [Development and build](#development-and-build)
+13. [Security](#security)
+14. [License and credits](#license-and-credits)
 
 ---
 
@@ -40,7 +41,7 @@ Website and downloads: **https://tapetum.org/**
 3. **Connect BlinderKitten** – the *Getting started* window in the middle of the screen walks you through it (it comes up by itself while something is missing; the sidebar shows the state under *BlinderKitten*):
    1. In BlinderKitten: *File → Preferences → OSC Remote Control* → tick *Enabled* (once, for all shows).
    2. Open the same show in BlinderKitten.
-   3. Click *Add the Tapetum interfaces in BK*. Tapetum adds an Art-Net interface “Tapetum …” for every DMX interface of the show, with a pass-through from the original one. Patch and hardware stay unchanged; BlinderKitten saves and reloads the show, a backup is left as `.olga.bak`.
+   3. Click *Add the Tapetum interfaces in BK*. Tapetum adds an Art-Net interface “Tapetum …” for every DMX interface of the show, with a pass-through from the original one. Patch and hardware stay unchanged; BlinderKitten saves and reloads the show (a notice asks first: running cues go off, so not during a performance), a backup is left as `.olga.bak`.
    4. Run a cue or set a value in the programmer – the light appears.
 4. **Place fixtures:** fixtures without a position in BlinderKitten are lined up automatically. Click one and drag the arrows (move) or rings (turn); Tapetum writes the position back to BlinderKitten – save there to keep it.
 5. **Add your set:** *Stage objects → Import …* an IngeTrazo file (`.igz`) or glTF/OBJ/STL.
@@ -55,6 +56,8 @@ Without BlinderKitten running, Tapetum still shows the show from the file and ke
 - **Art-Net on localhost:** one-click mirror interfaces with pass-through, so the real hardware keeps getting its data.
 - **Live remote:** Tapetum talks to BlinderKitten's OSC Remote Control (port 42000): groups appear live, the current cue of the main conductor cuelist is followed, fixture positions and the pan/tilt/zoom *Physical range* are written back.
 - **Selection:** a click selects a fixture, a right click its BlinderKitten group (a menu asks if it's in several), Shift/Cmd adds.
+- **2D plans:** BlinderKitten lays its 2D plans out from coordinates only when importing an MVR and never updates them. *Lay out from positions* (sidebar, under *BlinderKitten*) writes “Tapetum Front”, “Tapetum Top” and “Tapetum Side” with a point per fixture at the positions Tapetum shows; run it again after moving fixtures. Your own plans stay untouched.
+- **Changing the show safely:** whatever needs BlinderKitten to save and reload the show (interfaces, 2D plans) asks first, waits until BlinderKitten has saved completely and finished loading, gives up without touching anything if the show in BlinderKitten changed meanwhile, and checks afterwards that BlinderKitten has the change.
 
 ## Stage objects and IngeTrazo
 
@@ -98,14 +101,23 @@ Set a fixture type up once and use it in every show: the fixture library keeps t
 
 ## Quality levels
 
-| | Low – older computers | Medium – standard | High – strong graphics |
-|---|---|---|---|
-| Beams in haze | simpler, no noise | smooth (TAA) | finer |
-| Shadows / beams end at objects | – | main beam of each fixture | every beam and cell |
-| Bloom, house light | off, even light | on, ceiling lights | on, ceiling lights |
-| 3D resolution (automatic) | ¾ of the screen | screen (half on Retina) | full Retina, up to 4K |
+| | Draft – very weak computers, battery | Low – older computers | Medium – standard | High – strong graphics |
+|---|---|---|---|---|
+| Beams in haze | plain cones with their gobo | simpler, no noise | smooth (TAA) | finer |
+| Light on stage | – | yes | yes | yes |
+| Shadows / beams end at objects | – | – | main beam of each fixture | every beam and cell |
+| Bloom, house light | off, even light | off, even light | on, ceiling lights | on, ceiling lights |
+| 3D resolution (automatic) | ½ of the screen | ¾ of the screen | screen (half on Retina) | full Retina, up to 4K |
+| Frames | up to 30, a few while nothing changes | as fast as it goes | as fast as it goes | as fast as it goes |
 
 Choose it under *⚙ Settings (top of the sidebar)*. If it runs below 25 fps for a while, Tapetum offers to switch one level down.
+
+## Views and plans
+
+The panel at the bottom edge has the **standard views** – Audience, Top, Front, Left, Right (keys 1–5): the camera swings there and frames the fixtures and the set (what isn't locked). **Orthographic** draws without perspective, to scale. Exports take the current view:
+
+- **Fixture plan** (PDF or SVG, vector): every fixture as a symbol by its class with ID and name, type, universe/address and channel count; moving heads with the arrow of their middle direction. The set lies faint underneath. Orthographic views come out at a standard scale (1:20 … 1:500) with a scale bar.
+- **Set changes** (PDF, vector): a page per scene – the base scene first, then by cue, with scene, cue and chapter – all in the same frame and scale, the set as a line drawing for printing with little ink. Hidden lines are dashed or left out. Face-me figures (often the costume designs) keep their picture, so you see who stands where; from above they are a circle with their name.
 
 ## Navigation, SpaceMouse and shortcuts
 
@@ -116,6 +128,7 @@ Choose it under *⚙ Settings (top of the sidebar)*. If it runs below 25 fps for
 | Scroll | zoom |
 | Gizmo arrows / rings | move (Shift: 10 cm steps) / turn (15° steps, Shift: free) |
 | Cmd/Ctrl+Z, Shift+Cmd/Ctrl+Z, Ctrl+Y | undo / redo |
+| 1–5 | standard views (Audience, Top, Front, Left, Right) |
 | Esc | clear the selection |
 | ← → | previous / next scene |
 | Tab | hide/show the sidebar (also right after clicking a button) |
@@ -146,7 +159,7 @@ Linux needs `libudev-dev libx11-dev libxkbcommon-dev libwayland-dev`. The built-
 
 Crates: `bk-olga` (show file and BlinderKitten's naming), `bk-artnet` (receiver), `tapetum-project` (project file), `tapetum` (the app, Bevy + egui).
 
-Developer commands: `tapetum dump <show>`, `tapetum monitor --show <show>`, `tapetum test-send <show>` (Art-Net test pattern), `tapetum mirror <show> [--remove] [--offline]`.
+Developer commands: `tapetum dump <show>`, `tapetum monitor --show <show>`, `tapetum test-send <show>` (Art-Net test pattern), `tapetum mirror <show> [--remove] [--offline]`, `tapetum plans <show> [--remove] [--offline]` (2D plans in BlinderKitten).
 
 ## Security
 
