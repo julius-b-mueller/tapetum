@@ -3,7 +3,7 @@ resolver = "3"
 members = ["crates/bk-olga", "crates/bk-artnet", "crates/tapetum-project", "crates/tapetum"]
 
 [workspace.package]
-version = "1.2.0"
+version = "1.3.0"
 edition = "2024"
 license = "MIT"
 homepage = "https://tapetum.org"
