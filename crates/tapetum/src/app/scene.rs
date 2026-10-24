@@ -99,7 +99,7 @@ fn house_layout(lo: Vec3, hi: Vec3) -> ([Vec3; HOUSE_LIGHTS], f32) {
 
 /// Bloom's blur passes cost weak integrated graphics more than they give.
 fn bloom_on(r: &RenderSettings) -> bool {
-    r.bloom && r.quality != Quality::Low
+    r.bloom && r.quality > Quality::Low
 }
 
 /// Keeps the house lights over the scene as fixtures and objects move.
@@ -112,8 +112,8 @@ pub fn place_house_lights(
 ) {
     let (lo, hi) = super::orbit::scene_bounds(&fixtures, &occluders, placeholder.iter().any(|v| v.get()));
     let (spots, height) = house_layout(lo, hi);
-    // On Low the ambient light stands in (`apply_render_settings`).
-    let level = if state.project.render.quality == Quality::Low { 0.0 } else { house_level(state.project.render.ambient) };
+    // On Low (and Draft) the ambient light stands in (`apply_render_settings`).
+    let level = if state.project.render.quality <= Quality::Low { 0.0 } else { house_level(state.project.render.ambient) };
     for (light, mut spot, mut tf, mut vis) in &mut house {
         let p = spots[light.0];
         tf.set_if_neq(Transform::from_translation(p).looking_at(p - Vec3::Y, Vec3::NEG_Z));
@@ -176,7 +176,7 @@ pub fn setup_scene(
     if bloom_on(&state.project.render) {
         cam.insert(Bloom::NATURAL);
     }
-    if state.project.render.quality != Quality::Low {
+    if state.project.render.quality > Quality::Low {
         // Averages the beams' jittered ray marching over frames.
         cam.insert((TemporalAntiAliasing::default(), Msaa::Off));
     } else {
@@ -239,6 +239,7 @@ fn shadow_map_size(quality: Quality) -> usize {
 pub fn resolution_scale(r: &RenderSettings, scale_factor: f32, physical_pixels: f32) -> f32 {
     let logical = 1.0 / scale_factor.max(1.0);
     let auto = match r.quality {
+        Quality::Draft => logical * 0.5,
         Quality::Low => logical * 0.75,
         Quality::Medium => logical,
         Quality::High => (8.3e6 / physical_pixels.max(1.0)).sqrt().clamp(logical, 1.0),
@@ -292,7 +293,7 @@ pub fn apply_render_settings(
             _ => {}
         }
         // Re-inserting TAA would reset its history and bring the beam noise back.
-        match (r.quality != Quality::Low, has_taa) {
+        match (r.quality > Quality::Low, has_taa) {
             (true, false) => {
                 commands.entity(cam).remove::<Fxaa>().insert((TemporalAntiAliasing::default(), Msaa::Off));
             }
@@ -306,6 +307,6 @@ pub fn apply_render_settings(
     // little ambient stands in for what walls and floor bounce back. On Low the
     // ceiling lights would cost every pixel six more lights: plain ambient of
     // the same brightness instead (illuminance ≈ π × brightness).
-    ambient.brightness = house_level(r.ambient) * if r.quality == Quality::Low { 30.0 + HOUSE_LUX / std::f32::consts::PI } else { 30.0 };
+    ambient.brightness = house_level(r.ambient) * if r.quality <= Quality::Low { 30.0 + HOUSE_LUX / std::f32::consts::PI } else { 30.0 };
     ambient.color = house_color(r);
 }

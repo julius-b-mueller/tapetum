@@ -95,8 +95,11 @@ impl Default for SpaceMouseSettings {
     }
 }
 
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+/// Ordered from the lightest to the finest.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub enum Quality {
+    /// For very weak computers and the battery: beams as plain cones, no lights.
+    Draft,
     Low,
     #[default]
     Medium,

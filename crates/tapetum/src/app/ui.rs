@@ -308,10 +308,15 @@ pub fn panel(
                 }
                 // Running slowly for a while: offer the next lower quality.
                 let r = &mut project.render;
-                if *slow_since.get_or_insert(0.0) > 5.0 && r.quality != Quality::Low {
+                // Draft caps itself at 30 fps: that is no reason to go lower.
+                if *slow_since.get_or_insert(0.0) > 5.0 && r.quality > Quality::Draft {
                     ui.horizontal_wrapped(|ui| {
                         ui.colored_label(egui::Color32::LIGHT_YELLOW, trf!("Läuft langsam ({:.0} fps).", "Running slowly ({:.0} fps).", *fps));
-                        let lower = if r.quality == Quality::High { Quality::Medium } else { Quality::Low };
+                        let lower = match r.quality {
+                            Quality::High => Quality::Medium,
+                            Quality::Medium => Quality::Low,
+                            _ => Quality::Draft,
+                        };
                         if ui.small_button(trf!("Auf „{}“ stellen", "Switch to “{}”", super::settings::quality_label(lower))).clicked() {
                             r.quality = lower;
                             *slow_since = Some(0.0);

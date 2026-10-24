@@ -64,7 +64,7 @@ pub fn section(ui: &mut egui::Ui, project: &mut Project, spacemouse: Option<Stri
                 egui::ComboBox::from_label(tr("Qualität", "Quality"))
                     .selected_text(quality_label(r.quality))
                     .show_ui(ui, |ui| {
-                        for q in [Quality::Low, Quality::Medium, Quality::High] {
+                        for q in [Quality::Draft, Quality::Low, Quality::Medium, Quality::High] {
                             ui.selectable_value(&mut r.quality, q, quality_label(q)).on_hover_text(quality_hint(q));
                         }
                     })
@@ -107,6 +107,7 @@ pub fn section(ui: &mut egui::Ui, project: &mut Project, spacemouse: Option<Stri
 
 pub fn quality_label(q: Quality) -> &'static str {
     match q {
+        Quality::Draft => tr("Entwurf – sehr schwache Rechner, Akku", "Draft – very weak computers, battery"),
         Quality::Low => tr("Niedrig – ältere Rechner", "Low – older computers"),
         Quality::Medium => tr("Mittel – Standard", "Medium – standard"),
         Quality::High => tr("Hoch – starke Grafik", "High – strong graphics"),
@@ -115,6 +116,10 @@ pub fn quality_label(q: Quality) -> &'static str {
 
 fn quality_hint(q: Quality) -> &'static str {
     match q {
+        Quality::Draft => tr(
+            "Zum groben Programmieren auf sehr schwacher Hardware oder um Akku zu sparen: Lichtstrahlen als einfache Kegel (mit Gobo), aber kein Licht auf der Bühne, keine Schatten, 3D in halber Auflösung, höchstens 30 Bilder pro Sekunde – und kaum Arbeit, solange sich nichts ändert.",
+            "For rough programming on very weak hardware or to save battery: beams as plain cones (with their gobo), but no light on stage, no shadows, 3D at half resolution, at most 30 frames a second – and hardly any work while nothing changes.",
+        ),
         Quality::Low => tr("Für ältere oder günstige Rechner und integrierte Grafik: einfachere Lichtstrahlen, keine Schatten, kein Bloom, Saallicht als gleichmäßiges Licht, Kantenglättung FXAA, 3D etwas unter der Bildschirmauflösung.", "For older or low-cost computers and integrated graphics: simpler beams, no shadows, no bloom, house light as even light, FXAA anti-aliasing, 3D a bit below screen resolution."),
         Quality::Medium => tr("Für die meisten Rechner: weiche Lichtstrahlen (TAA), Strahlen enden an Bühnenobjekten und werfen dort Schatten.", "For most computers: smooth beams (TAA), beams end at stage objects and cast shadows there."),
         Quality::High => tr("Für starke Grafikkarten: feinere Strahlen, Schatten auch für jede einzelne Zelle, 3D in voller (Retina-)Auflösung.", "For strong graphics cards: finer beams, shadows for every single cell too, 3D at full (Retina) resolution."),

@@ -385,7 +385,7 @@ fn plan_emitters(spec: &FixtureSpec, positions: &[Vec2], quality: Quality) -> Ve
     let total = positions.len().max(1) as f32;
     let centroid = |ps: &[Vec2]| ps.iter().copied().sum::<Vec2>() / ps.len().max(1) as f32;
     // Low quality always mixes, since overlapping additive cones would wash out.
-    if spec.cell_mode == CellMode::Mixed || quality == Quality::Low || groups.len() <= 1 {
+    if spec.cell_mode == CellMode::Mixed || quality <= Quality::Low || groups.len() <= 1 {
         let c = centroid(positions);
         return vec![EmitterPlan {
             pos: c,
@@ -500,24 +500,28 @@ fn spawn_model(
         let half = (spec.beam_angle / 2.0).to_radians().min(SPOT_MAX_HALF);
         let radius = if plan.radius > 0.0 { plan.radius } else { lens_radius.max(0.03) * 0.9 };
         let material = mats.beam.add(BeamMaterial { params: BeamParams::default(), gobo: a.white.clone() });
-        commands
-            .spawn((
-                SpotLight {
-                    color: Color::WHITE,
-                    intensity: 0.0,
-                    range: LIGHT_RANGE,
-                    radius: 0.02,
-                    // Switched on per frame only while the beam meets a stage object
-                    // (`update_fixtures`): every shadow map costs a render pass.
-                    shadow_maps_enabled: false,
-                    outer_angle: half,
-                    inner_angle: half * inner,
-                    ..default()
-                },
-                Transform::from_xyz(-plan.pos.x, plan.pos.y, lens_z - 0.01),
-                Emitter { fixture: index, cells: plan.cells, weights: plan.weights, lumens: spec.lumens * plan.share, radius, main: i == 0, zoom: Axis::default() },
-                ChildOf(head),
-            ))
+        let mut emitter = commands.spawn((
+            Transform::from_xyz(-plan.pos.x, plan.pos.y, lens_z - 0.01),
+            Visibility::default(),
+            Emitter { fixture: index, cells: plan.cells, weights: plan.weights, lumens: spec.lumens * plan.share, radius, main: i == 0, zoom: Axis::default() },
+            ChildOf(head),
+        ));
+        // Draft lights nothing: no light to sort into clusters, nothing to shade.
+        if quality > Quality::Draft {
+            emitter.insert(SpotLight {
+                color: Color::WHITE,
+                intensity: 0.0,
+                range: LIGHT_RANGE,
+                radius: 0.02,
+                // Switched on per frame only while the beam meets a stage object
+                // (`update_fixtures`): every shadow map costs a render pass.
+                shadow_maps_enabled: false,
+                outer_angle: half,
+                inner_angle: half * inner,
+                ..default()
+            });
+        }
+        emitter
             .with_child((Mesh3d(a.cone.clone()), MeshMaterial3d(material.clone()), Transform::default(), Visibility::Hidden, BeamVolume { material }, NotShadowCaster))
             .with_child((
                 PointLight { intensity: 0.0, range: LIGHT_RANGE, radius: 0.02, shadow_maps_enabled: false, ..default() },
@@ -527,6 +531,9 @@ fn spawn_model(
             ));
     }
 }
+
+/// Haze density the cones of Draft show with while haze is off.
+const DRAFT_HAZE: f32 = 0.12;
 
 /// Inner (full intensity) cone relative to the outer edge.
 fn inner_ratio(beam: BeamKind) -> f32 {
@@ -662,7 +669,7 @@ pub fn update_fixtures(
     gobos: Res<GoboImages>,
     mut yokes: Query<(&mut Yoke, &mut Transform), (Without<Head>, Without<BeamVolume>)>,
     mut heads: Query<(&mut Head, &mut Transform), (Without<Yoke>, Without<BeamVolume>)>,
-    mut emitters: Query<(&mut Emitter, &mut SpotLight, &GlobalTransform, Option<&Children>)>,
+    mut emitters: Query<(&mut Emitter, Option<&mut SpotLight>, &GlobalTransform, Option<&Children>)>,
     mut beams: Query<(&BeamVolume, &mut Transform, &mut Visibility), (Without<Yoke>, Without<Head>)>,
     mut wide: Query<(&mut PointLight, &mut Visibility), (With<WideLight>, Without<BeamVolume>)>,
     mut surface_gobos: ResMut<SurfaceGobos>,
@@ -670,12 +677,14 @@ pub fn update_fixtures(
     occluders: Res<super::objects::Occluders>,
     mut lens_materials: ResMut<Assets<LensMaterial>>,
     mut beam_materials: ResMut<Assets<BeamMaterial>>,
-    assets: Res<FixtureAssets>,
+    (assets, mut activity): (Res<FixtureAssets>, ResMut<super::pacing::Activity>),
 ) {
     let render = &state.project.render;
     // Most steps a beam pixel may take (fewer on short stretches); negative =
     // no jitter, for Low, which has no TAA to smooth it out.
     let steps = match render.quality {
+        // Draft: hardly more than a cone, its gobo still readable.
+        Quality::Draft => -2.0,
         Quality::Low => -10.0,
         Quality::Medium => 24.0,
         Quality::High => 48.0,
@@ -705,6 +714,7 @@ pub fn update_fixtures(
 
     // Where each fixture's zoom is now, for the lens glare below.
     let mut zoom_now = std::collections::HashMap::new();
+    let draft = render.quality == Quality::Draft;
     for (mut em, mut spot, gt, children) in &mut emitters {
         let Beam { out, angle } = frame.beam(&mut em, dt);
         if em.main
@@ -722,7 +732,7 @@ pub fn update_fixtures(
         // Shadows (and beams ending at objects) only where a stage object is in the
         // cone: the main beam on Medium, every beam on High, none on Low.
         let may_shadow = match render.quality {
-            Quality::Low => false,
+            Quality::Draft | Quality::Low => false,
             Quality::Medium => em.main,
             Quality::High => true,
         };
@@ -732,7 +742,7 @@ pub fn update_fixtures(
         let lumens = em.lumens * out.intensity * (2.0 * TAU / solid_angle(half));
         for child in children.into_iter().flatten() {
             if let Ok((mut point, mut vis)) = wide.get_mut(*child) {
-                vis.set_if_neq(if all_round && lumens > 0.0 { Visibility::Inherited } else { Visibility::Hidden });
+                vis.set_if_neq(if all_round && lumens > 0.0 && !draft { Visibility::Inherited } else { Visibility::Hidden });
                 let color = Color::linear_rgb(out.color[0], out.color[1], out.color[2]);
                 // Shadows of all six cube faces only on High.
                 let point_shadows = all_round && shadows && render.quality == Quality::High;
@@ -743,26 +753,32 @@ pub fn update_fixtures(
                 }
             }
         }
-        let new = SpotLight {
-            shadow_maps_enabled: shadows && !all_round && half < BEAM_MAX_HALF,
-            outer_angle: half.min(SPOT_MAX_HALF),
-            inner_angle: half.min(SPOT_MAX_HALF) * (inner_ratio(beam) * (1.0 - frost) + inner_ratio(BeamKind::Wash) * frost),
-            color: Color::linear_rgb(out.color[0], out.color[1], out.color[2]),
-            intensity: if all_round { 0.0 } else { lumens },
-            ..*spot
-        };
-        // A changed light makes Bevy rebuild its shadow view; skip that for unchanged ones.
-        let same = spot.outer_angle == new.outer_angle
-            && spot.inner_angle == new.inner_angle
-            && spot.color == new.color
-            && spot.intensity == new.intensity
-            && spot.shadow_maps_enabled == new.shadow_maps_enabled;
-        if !same {
-            *spot = new;
+        let inner_angle = half.min(SPOT_MAX_HALF) * (inner_ratio(beam) * (1.0 - frost) + inner_ratio(BeamKind::Wash) * frost);
+        let mut casts = false;
+        if let Some(spot) = spot.as_deref_mut() {
+            let new = SpotLight {
+                shadow_maps_enabled: shadows && !all_round && half < BEAM_MAX_HALF,
+                outer_angle: half.min(SPOT_MAX_HALF),
+                inner_angle,
+                color: Color::linear_rgb(out.color[0], out.color[1], out.color[2]),
+                intensity: if all_round { 0.0 } else { lumens },
+                ..*spot
+            };
+            // A changed light makes Bevy rebuild its shadow view; skip that for unchanged ones.
+            let same = spot.outer_angle == new.outer_angle
+                && spot.inner_angle == new.inner_angle
+                && spot.color == new.color
+                && spot.intensity == new.intensity
+                && spot.shadow_maps_enabled == new.shadow_maps_enabled;
+            if !same {
+                *spot = new;
+            }
+            casts = spot.shadow_maps_enabled;
         }
 
-        // The main beam's gobo, for the surfaces it lights.
+        // The main beam's gobo, for the surfaces it lights (none in Draft).
         if em.main
+            && !draft
             && out.intensity > 0.0
             && half < BEAM_MAX_HALF
             && let Some(g) = frame.gobo(em.fixture)
@@ -780,7 +796,8 @@ pub fn update_fixtures(
 
         for child in children.into_iter().flatten() {
             let Ok((volume, mut tf, mut vis)) = beams.get_mut(*child) else { continue };
-            let shown = render.haze.enabled && out.intensity > 0.0 && render.haze.density > 0.0 && half < BEAM_MAX_HALF;
+            // Draft has nothing but the beams: they show without haze too.
+            let shown = (draft || render.haze.enabled && render.haze.density > 0.0) && out.intensity > 0.0 && half < BEAM_MAX_HALF;
             vis.set_if_neq(if shown { Visibility::Inherited } else { Visibility::Hidden });
             if !shown {
                 continue;
@@ -807,18 +824,23 @@ pub fn update_fixtures(
                 apex: (gt.transform_point(Vec3::Z * behind)).extend(behind),
                 axis: axis.extend(total),
                 up: gt.up().as_vec3().extend(tan_h),
-                color: Vec4::new(out.color[0] * candela, out.color[1] * candela, out.color[2] * candela, spot.inner_angle.cos()),
-                haze: Vec4::new(render.haze.density * HAZE_SCATTERING, render.haze.anisotropy, half.cos(), steps),
+                color: Vec4::new(out.color[0] * candela, out.color[1] * candela, out.color[2] * candela, inner_angle.cos()),
+                haze: Vec4::new(if draft && !render.haze.enabled { DRAFT_HAZE } else { render.haze.density } * HAZE_SCATTERING, render.haze.anisotropy, half.cos(), steps),
                 tint: Vec4::new(c[0], c[1], c[2], gobo_mode),
                 // Beams whose light casts shadows end at the objects in their way.
-                lens: gt.translation().extend(if spot.shadow_maps_enabled { 1.0 } else { 0.0 }),
+                lens: gt.translation().extend(if casts { 1.0 } else { 0.0 }),
             };
             let image = gobo.unwrap_or_else(|| assets.white.clone());
+            // Moving water is drawn by the shader: it changes without new values.
+            if gobo_mode == 2.0 {
+                activity.changed = true;
+            }
             if beam_materials.get(&volume.material).is_some_and(|m| m.params != params || m.gobo != image)
                 && let Some(mut m) = beam_materials.get_mut(&volume.material)
             {
                 m.params = params;
                 m.gobo = image;
+                activity.changed = true;
             }
         }
     }
@@ -849,6 +871,7 @@ pub fn update_fixtures(
             && let Some(mut m) = lens_materials.get_mut(&lens.material)
         {
             m.params = params;
+            activity.changed = true;
         }
     }
 }

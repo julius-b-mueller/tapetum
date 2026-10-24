@@ -11,6 +11,7 @@ mod gizmo;
 pub mod gobo;
 pub mod exports;
 pub mod layout;
+mod pacing;
 mod motion;
 pub mod objects;
 pub mod onboarding;
@@ -194,6 +195,7 @@ pub fn run(opts: Options) -> Result<()> {
     )
     .init_resource::<ui::TabKey>()
     .add_systems(PreUpdate, ui::take_tab.after(bevy_egui::EguiPreUpdateSet::ProcessInput).before(bevy_egui::EguiPreUpdateSet::BeginPass))
+    .init_resource::<pacing::Activity>()
     .init_resource::<exports::ExportRequest>()
     .init_resource::<exports::ExportDone>()
     .add_systems(Update, exports::run_export)
@@ -226,6 +228,10 @@ pub fn run(opts: Options) -> Result<()> {
                 exit.write(AppExit::Success);
             }
         });
+    }
+    // Test runs set their own pace.
+    if opts.screenshot.is_none() && opts.export.is_none() && !opts.bench {
+        app.add_systems(PostUpdate, pacing::pace);
     }
     if let Some((kind, path)) = opts.export {
         app.insert_resource(bevy::winit::WinitSettings { focused_mode: bevy::winit::UpdateMode::Continuous, unfocused_mode: bevy::winit::UpdateMode::Continuous });

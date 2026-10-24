@@ -97,7 +97,7 @@ pub fn faders(ctx: &egui::Context, project: &mut Project, spacemouse: bool, view
                         ui.add_space(4.0);
                         ui.toggle_value(&mut r.haze.enabled, "Haze");
                         ui.add_space(8.0);
-                        ui.add_enabled_ui(r.quality != Quality::Low, |ui| ui.toggle_value(&mut r.bloom, "Bloom"))
+                        ui.add_enabled_ui(r.quality > Quality::Low, |ui| ui.toggle_value(&mut r.bloom, "Bloom"))
                             .response
                             .on_disabled_hover_text(tr("Auf „Niedrig“ aus, um schwache Grafik zu entlasten.", "Off on “Low” to spare weak graphics."));
                     });
@@ -208,18 +208,21 @@ pub fn scene_order(project: &Project) -> Vec<usize> {
 fn glide(ctx: &egui::Context, id: egui::Id, target: f32, out: bool) -> f32 {
     const TIME: f64 = 0.25;
     let now = ctx.input(|i| i.time);
-    let (from, to, start): (f32, f32, f64) = ctx.data(|d| d.get_temp(id)).unwrap_or((target, target, now));
+    // At rest: arrived a while ago.
+    let rest = (target, target, now - TIME);
+    let (from, to, start): (f32, f32, f64) = ctx.data(|d| d.get_temp(id)).unwrap_or(rest);
     let x = ((now - start) / TIME).clamp(0.0, 1.0) as f32;
     let here = from + (to - from) * (x * x * (3.0 - 2.0 * x));
     let state = if !out {
-        (target, target, now)
+        rest
     } else if (to - target).abs() > 1e-3 {
         (here, target, now)
     } else {
         (from, to, start)
     };
     ctx.data_mut(|d| d.insert_temp(id, state));
-    if x < 1.0 {
+    // Only while it really moves: asking always would keep every frame coming.
+    if out && x < 1.0 && (to - from).abs() > 1e-3 {
         ctx.request_repaint();
     }
     if out { here } else { target }
