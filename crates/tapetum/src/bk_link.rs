@@ -206,7 +206,7 @@ pub fn run(show: &Path, remote_port: u16, edit: Edit, offline: bool, report: &dy
             Some(_) => {}
         }
         // The file as it was: BK saving while it still loads would write a gutted show.
-        let presave = std::fs::read(&show)?;
+        let presave = read_show(&show)?;
         if let Ok(on_disk) = serde_json::from_slice::<Value>(&presave) {
             let start = Instant::now();
             while still_loading(remote_port, &on_disk) {
@@ -227,7 +227,7 @@ pub fn run(show: &Path, remote_port: u16, edit: Edit, offline: bool, report: &dy
         }
         let checked = wait_until_complete(&show, Duration::from_secs(6)).and_then(|()| {
             let at = wait_saved(remote_port, &show, Duration::from_secs(3))?;
-            let saved: Value = serde_json::from_slice(&std::fs::read(&show)?)?;
+            let saved: Value = serde_json::from_slice(&read_show(&show)?)?;
             if !matches_bk(remote_port, &saved) {
                 bail!(
                     "{}",
@@ -243,7 +243,7 @@ pub fn run(show: &Path, remote_port: u16, edit: Edit, offline: bool, report: &dy
             Ok(at) => saved_at = Some(at),
             Err(e) => {
                 // An incomplete save (BK still loading) goes back to the file as it was.
-                let complete = std::fs::read(&show).ok().and_then(|b| serde_json::from_slice::<Value>(&b).ok()).is_some_and(|d| matches_bk(remote_port, &d));
+                let complete = read_show(&show).ok().and_then(|b| serde_json::from_slice::<Value>(&b).ok()).is_some_and(|d| matches_bk(remote_port, &d));
                 if !complete {
                     write_atomic_bytes(&show, &presave)?;
                 }
@@ -253,7 +253,7 @@ pub fn run(show: &Path, remote_port: u16, edit: Edit, offline: bool, report: &dy
     }
 
     report(Progress::Step(tr("Show-Datei wird angepasst …", "Adjusting the show file …").into()));
-    let text = std::fs::read_to_string(&show)?;
+    let text = String::from_utf8(read_show(&show)?).context(tr("Show-Datei ist kein gültiges JSON", "The show file isn't valid JSON"))?;
     let mut doc: Value = serde_json::from_str(&text).context(tr("Show-Datei ist kein gültiges JSON", "The show file isn't valid JSON"))?;
     let (summary, expect) = apply(&edit, &mut doc)?;
 
@@ -352,7 +352,7 @@ fn wait_until_complete(path: &Path, timeout: Duration) -> Result<()> {
     while start.elapsed() < timeout {
         let meta = std::fs::metadata(path)?;
         let now = (meta.len(), meta.modified()?);
-        if last == Some(now) && std::fs::read(path).is_ok_and(|b| serde_json::from_slice::<serde::de::IgnoredAny>(&b).is_ok()) {
+        if last == Some(now) && read_show(path).is_ok_and(|b| serde_json::from_slice::<serde::de::IgnoredAny>(&b).is_ok()) {
             return Ok(());
         }
         last = Some(now);
@@ -462,6 +462,11 @@ fn wait_reloaded(port: u16, show: &Path, written: i64, doc: &Value, timeout: Dur
             show.with_extension("olga.bak").display()
         )
     )
+}
+
+/// A show file, no bigger than any show is (like everywhere Tapetum reads one).
+fn read_show(path: &Path) -> std::io::Result<Vec<u8>> {
+    crate::stage::read_limited(path, 256 << 20)
 }
 
 fn modified(path: &Path) -> Result<SystemTime> {

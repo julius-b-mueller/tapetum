@@ -284,9 +284,11 @@ fn proposal(state: &ShowState, what: &str, ext: &str) -> String {
 }
 
 /// Asks for a file (unless given one) and writes the bytes there, off the main thread.
-fn save(done: &ExportDone, path: Option<PathBuf>, dir: Option<PathBuf>, name: String, ext: &'static str, bytes: Vec<u8>) {
+fn save(done: &ExportDone, path: Option<PathBuf>, dir: Option<PathBuf>, name: String, ext: &'static str, make: impl FnOnce() -> Vec<u8> + Send + 'static) {
     let slot = done.0.clone();
+    // Drawing a set can take a while (a big model): never on the main thread.
     std::thread::spawn(move || {
+        let bytes = make();
         let path = path.or_else(|| {
             let mut dialog = rfd::FileDialog::new().set_file_name(&name).add_filter(ext.to_uppercase(), &[ext]);
             if let Some(d) = dir {
@@ -329,32 +331,36 @@ pub fn run_export(
             let what = tr("Scheinwerferplan", "Fixture plan");
             let view = plan_view(&state, &ec, what);
             let set = scene_surfaces(&state, &objs, scene_rt.active, ec.eye);
-            let page: Page = fixture_plan(&view, &plan_fixtures(&state), Some((&line_cam, &set)), tr("Kanäle", "ch"), ec.frame);
-            if kind == ExportKind::PlanPdf {
-                save(&done, path, dir, proposal(&state, what, "pdf"), "pdf", crate::export::pdf::write(&[page], &view.title));
-            } else {
-                save(&done, path, dir, proposal(&state, what, "svg"), "svg", crate::export::svg::write(&page, &view.title).into_bytes());
-            }
+            let fixtures = plan_fixtures(&state);
+            let (frame, svg) = (ec.frame, kind == ExportKind::PlanSvg);
+            let ext = if svg { "svg" } else { "pdf" };
+            save(&done, path, dir, proposal(&state, what, ext), ext, move || {
+                let page: Page = fixture_plan(&view, &fixtures, Some((&line_cam, &set)), tr("Kanäle", "ch"), frame);
+                if svg { crate::export::svg::write(&page, &view.title).into_bytes() } else { crate::export::pdf::write(&[page], &view.title) }
+            });
         }
         ExportKind::SetChangesPdf => {
             let what = tr("Umbauplan", "Set changes");
             let view = plan_view(&state, &ec, what);
             let scenes: Vec<(String, Vec<Surface>)> = scenes(&state).into_iter().map(|(id, name)| (name, scene_surfaces(&state, &objs, id, ec.eye))).collect();
-            // One frame for every page, so they lie on top of each other.
-            let probe = Mapping::probe(&view);
-            let points: Vec<Vec2> = scenes.iter().flat_map(|(_, s)| linework::picture_points(&probe, s)).collect();
-            let m = Mapping::fit(&view, &points, A3, FOOTER, ec.frame);
-            let pages: Vec<Page> = scenes
-                .iter()
-                .map(|(name, surfaces)| {
-                    let mut page = Page::new(A3);
-                    linework::draw(&mut page, &m, &line_cam, surfaces, Style::drawing(!state.project.view.omit_hidden));
-                    let page_view = PlanView { subtitle: format!("{} · {name}", view.subtitle), ..view.clone() };
-                    footer(&mut page, &page_view, m.ratio);
-                    page
-                })
-                .collect();
-            save(&done, path, dir, proposal(&state, what, "pdf"), "pdf", crate::export::pdf::write(&pages, &view.title));
+            let (frame, dashed) = (ec.frame, !state.project.view.omit_hidden);
+            save(&done, path, dir, proposal(&state, what, "pdf"), "pdf", move || {
+                // One frame for every page, so they lie on top of each other.
+                let probe = Mapping::probe(&view);
+                let points: Vec<Vec2> = scenes.iter().flat_map(|(_, s)| linework::picture_points(&probe, s)).collect();
+                let m = Mapping::fit(&view, &points, A3, FOOTER, frame);
+                let pages: Vec<Page> = scenes
+                    .iter()
+                    .map(|(name, surfaces)| {
+                        let mut page = Page::new(A3);
+                        linework::draw(&mut page, &m, &line_cam, surfaces, Style::drawing(dashed));
+                        let page_view = PlanView { subtitle: format!("{} · {name}", view.subtitle), ..view.clone() };
+                        footer(&mut page, &page_view, m.ratio);
+                        page
+                    })
+                    .collect();
+                crate::export::pdf::write(&pages, &view.title)
+            });
         }
         ExportKind::ScreenshotPng => {}
     }
