@@ -18,6 +18,8 @@ pub struct Show {
     pub cuelists: Vec<Cuelist>,
     /// Fixture groups, sorted by ID.
     pub groups: Vec<Group>,
+    /// Names of the 2D plans (BK's layouts).
+    pub plans: Vec<String>,
     /// Cuelist ID of the main conductor (project settings).
     pub conductor_id: i64,
     /// Non-fatal problems found while reading (unresolved references, ...).
@@ -183,6 +185,9 @@ impl Show {
         }
         if let Some(m) = root.0.get("group") {
             show.groups = parse_groups(Node(m), &show.fixtures);
+        }
+        if let Some(m) = root.0.get("2dPlans") {
+            show.plans = Node(m).items().filter_map(|n| n.str_param("name").map(str::to_string)).collect();
         }
         show
     }

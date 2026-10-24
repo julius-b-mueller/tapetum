@@ -6,6 +6,7 @@ pub mod mirror;
 pub mod model;
 pub mod organic;
 pub mod placement;
+pub mod plans;
 pub mod semantics;
 pub mod short_name;
 #[cfg(feature = "watch")]

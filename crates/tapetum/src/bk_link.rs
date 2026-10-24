@@ -148,6 +148,9 @@ fn unix_ms(t: SystemTime) -> i64 {
 pub enum Edit {
     AddMirrors { listen_port: u16 },
     RemoveMirrors,
+    /// Tapetum's 2D plans in BK from these fixtures (ID, position).
+    Plans { fixtures: Vec<(i64, [f32; 3])> },
+    RemovePlans,
 }
 
 impl Edit {
@@ -156,6 +159,11 @@ impl Edit {
         match self {
             Edit::AddMirrors { .. } => tr("Tapetum legt die Tapetum-Interfaces in der Show an oder bringt sie auf den neuesten Stand.", "Tapetum adds the Tapetum interfaces to the show or brings them up to date."),
             Edit::RemoveMirrors => tr("Tapetum entfernt die Tapetum-Interfaces aus der Show.", "Tapetum removes the Tapetum interfaces from the show."),
+            Edit::Plans { .. } => tr(
+                "Tapetum legt die 2D-Pläne „Tapetum Front“, „Tapetum Top“ und „Tapetum Side“ aus den Lampenpositionen an oder bringt sie auf den neuesten Stand. Deine eigenen Pläne bleiben, wie sie sind.",
+                "Tapetum lays out the 2D plans “Tapetum Front”, “Tapetum Top” and “Tapetum Side” from the fixture positions, or brings them up to date. Your own plans stay as they are.",
+            ),
+            Edit::RemovePlans => tr("Tapetum entfernt seine 2D-Pläne aus der Show.", "Tapetum removes its 2D plans from the show."),
         }
     }
 }
@@ -314,6 +322,20 @@ fn apply(edit: &Edit, doc: &mut Value) -> Result<(String, Vec<(String, bool)>)> 
             let expect = removed.iter().map(|n| (format!("/interfaces/{}", short(n)), false)).collect();
             (trf!("Entfernt: {}", "Removed: {}", removed.join(", ")), expect)
         }
+        Edit::Plans { fixtures } => {
+            let plans = bk_olga::plans::set_plans(doc, fixtures).map_err(anyhow::Error::msg)?;
+            let names: Vec<&str> = plans.iter().map(|(_, n)| n.as_str()).collect();
+            let expect = plans.iter().map(|(id, n)| (bk_olga::plans::remote_path(*id, n), true)).collect();
+            (trf!("2D-Pläne angelegt: {} ({} Lampen)", "2D plans laid out: {} ({} fixtures)", names.join(", "), fixtures.len()), expect)
+        }
+        Edit::RemovePlans => {
+            let removed = bk_olga::plans::remove_plans(doc);
+            if removed.is_empty() {
+                bail!("{}", tr("keine 2D-Pläne von Tapetum vorhanden", "no 2D plans of Tapetum present"));
+            }
+            let expect = removed.iter().map(|(id, n)| (bk_olga::plans::remote_path(*id, n), false)).collect();
+            (trf!("Entfernt: {}", "Removed: {}", removed.iter().map(|(_, n)| n.as_str()).collect::<Vec<_>>().join(", ")), expect)
+        }
     })
 }
 
@@ -387,7 +409,7 @@ fn bk_items(port: u16, path: &str) -> Option<usize> {
 }
 
 /// Managers BK reports item by item over its remote control.
-const MANAGERS: [&str; 12] = ["interfaces", "fixtureType", "channelFamilies", "group", "fixture", "preset", "cuelist", "effect", "carousel", "mapper", "layout", "tracker"];
+const MANAGERS: [&str; 12] = ["interfaces", "fixtureType", "channelFamilies", "group", "fixture", "preset", "cuelist", "effect", "carousel", "mapper", "2dPlans", "tracker"];
 
 /// What BK holds of a show file once it is loaded: (remote path, items), with
 /// the cues of every cuelist (BK loads them last).
@@ -435,8 +457,8 @@ fn wait_reloaded(port: u16, show: &Path, written: i64, doc: &Value, timeout: Dur
     bail!(
         "{}",
         trf!(
-            "BlinderKitten hat die geänderte Show nicht geladen. Bitte dort die Show neu öffnen; die Show vorher liegt als {} daneben.",
-            "BlinderKitten didn't load the changed show. Please open the show there again; the show as it was is next to it as {}.",
+            "BlinderKitten hat die geänderte Show nicht geladen. Fragt es dort, ob gespeichert werden soll, „Save“ wählen und es hier noch einmal versuchen; sonst die Show in BlinderKitten neu öffnen. Die Show vorher liegt als {} daneben.",
+            "BlinderKitten didn't load the changed show. If it asks there whether to save, choose “Save” and try again here; otherwise open the show in BlinderKitten again. The show as it was is next to it as {}.",
             show.with_extension("olga.bak").display()
         )
     )

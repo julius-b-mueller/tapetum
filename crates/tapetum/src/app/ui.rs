@@ -307,6 +307,23 @@ pub fn panel(
                         if let Some(a) = super::onboarding::steps(ui, &state, &link, bk.as_ref(), listen_port, receiving, false) {
                             setup_action = Some(a);
                         }
+                        ui.separator();
+                        ui.strong(tr("2D-Pläne in BlinderKitten", "2D plans in BlinderKitten"));
+                        let have = state.show.plans.iter().any(|n| bk_olga::plans::is_plan_name(n));
+                        ui.horizontal_wrapped(|ui| {
+                            let label = if have { tr("Aktualisieren", "Update") } else { tr("Aus Positionen anlegen", "Lay out from positions") };
+                            let tip = tr(
+                                "Legt in BlinderKitten die 2D-Pläne „Tapetum Front“, „Tapetum Top“ und „Tapetum Side“ mit einem Punkt je Lampe an – an den Positionen, die Tapetum zeigt. BlinderKitten macht das selbst nur beim MVR-Import und hält die Pläne danach nicht aktuell; nach dem Verschieben von Lampen hier einfach erneut ausführen. Eigene Pläne bleiben unberührt.\n\nBlinderKitten speichert und lädt die Show dafür neu.",
+                                "Lays out the 2D plans “Tapetum Front”, “Tapetum Top” and “Tapetum Side” in BlinderKitten, one point per fixture – at the positions Tapetum shows. BlinderKitten does this itself only when importing an MVR and doesn't keep the plans up to date; after moving fixtures, just run it again. Your own plans stay untouched.\n\nBlinderKitten saves and reloads the show for this.",
+                            );
+                            if ui.add_enabled(!link.busy() && !state.show.fixtures.is_empty(), egui::Button::new(label)).on_hover_text(tip).clicked() {
+                                let fixtures = super::layout::placements(&state.show, &state.project).iter().zip(&state.show.fixtures).map(|(p, f)| (f.id, p.position)).collect();
+                                setup_action = Some(SetupAction::Edit(Edit::Plans { fixtures }, false));
+                            }
+                            if have && ui.add_enabled(!link.busy(), egui::Button::new(tr("Entfernen", "Remove"))).clicked() {
+                                setup_action = Some(SetupAction::Edit(Edit::RemovePlans, false));
+                            }
+                        });
                         if ui.button(tr("Erste Schritte öffnen …", "Open getting started …")).clicked() {
                             super::onboarding::open(ui.ctx());
                         }

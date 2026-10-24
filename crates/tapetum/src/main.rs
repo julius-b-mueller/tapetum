@@ -131,6 +131,17 @@ enum Command {
         #[arg(long)]
         offline: bool,
     },
+    /// Lay out Tapetum's 2D plans in BlinderKitten from the fixture positions
+    /// (save → edit → reload, like `mirror`).
+    Plans {
+        show: PathBuf,
+        /// Remove Tapetum's 2D plans instead.
+        #[arg(long)]
+        remove: bool,
+        /// Edit the file without BlinderKitten (only while BK is closed).
+        #[arg(long)]
+        offline: bool,
+    },
     /// List HID devices and print what a SpaceMouse reports (for diagnosis).
     #[command(hide = true)]
     Hid {
@@ -147,7 +158,20 @@ fn main() -> Result<()> {
         Some(Command::Dump { show }) => dump(&show),
         Some(Command::Monitor { show, port, bind }) => monitor(show, bind, port),
         Some(Command::TestSend { show, target, fps }) => test_send(&show, target, fps),
-        Some(Command::Mirror { show, remove, offline }) => mirror(&show, remove, offline),
+        Some(Command::Mirror { show, remove, offline }) => {
+            let (_, project) = load(&show)?;
+            let edit = if remove { bk_link::Edit::RemoveMirrors } else { bk_link::Edit::AddMirrors { listen_port: project.artnet.listen_port } };
+            edit_show(&show, edit, offline)
+        }
+        Some(Command::Plans { show, remove, offline }) => {
+            let (s, project) = load(&show)?;
+            let edit = if remove {
+                bk_link::Edit::RemovePlans
+            } else {
+                bk_link::Edit::Plans { fixtures: app::layout::placements(&s, &project).iter().zip(&s.fixtures).map(|(p, f)| (f.id, p.position)).collect() }
+            };
+            edit_show(&show, edit, offline)
+        }
         Some(Command::Hid { seconds }) => app::spacemouse_diagnose(seconds),
         None => {
             let v = cli.view;
@@ -198,9 +222,8 @@ pub fn pick_show() -> Option<PathBuf> {
         .pick_file()
 }
 
-fn mirror(path: &PathBuf, remove: bool, offline: bool) -> Result<()> {
+fn edit_show(path: &PathBuf, edit: bk_link::Edit, offline: bool) -> Result<()> {
     let (_, project) = load(path)?;
-    let edit = if remove { bk_link::Edit::RemoveMirrors } else { bk_link::Edit::AddMirrors { listen_port: project.artnet.listen_port } };
     let report = |p| {
         if let bk_link::Progress::Step(s) = p {
             println!("{s}");
