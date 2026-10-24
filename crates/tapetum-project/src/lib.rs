@@ -387,6 +387,8 @@ pub struct PartOverride {
     pub visible: Option<bool>,
     /// Locked: not picked in the 3D view (an auditorium that stays put).
     pub locked: Option<bool>,
+    /// In the line drawings (plans, set changes); `None` = yes.
+    pub printed: Option<bool>,
 }
 
 impl Default for StageObject {

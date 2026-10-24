@@ -48,6 +48,11 @@ const SYMBOL: f32 = 2.6;
 const TEXT: f32 = 2.1;
 const SCALES: [f32; 10] = [10.0, 20.0, 25.0, 50.0, 75.0, 100.0, 150.0, 200.0, 250.0, 500.0];
 
+/// Width / height of a page's drawing area (what a view is framed for).
+pub fn drawing_aspect(page: [f32; 2]) -> f32 {
+    (page[0] - 2.0 * (MARGIN + LABEL_ROOM)) / (page[1] - FOOTER - 2.0 * (MARGIN + LABEL_ROOM))
+}
+
 /// From the camera's picture (x right in units of half its height, y down) to the page.
 pub struct Mapping {
     scale: f32,
@@ -85,12 +90,13 @@ impl Mapping {
     }
 
     /// Fits the points (picture coordinates) into the drawing area of a page;
-    /// orthographic at the largest standard scale that fits.
-    pub fn fit(view: &PlanView, points: &[Vec2], page: [f32; 2], footer: f32) -> Mapping {
+    /// orthographic at the largest standard scale that fits. Only what lies
+    /// in `frame` (picture coordinates) counts; by default the whole picture.
+    pub fn fit(view: &PlanView, points: &[Vec2], page: [f32; 2], footer: f32, frame: Option<(Vec2, Vec2)>) -> Mapping {
         let (lo, hi) = points.iter().fold((Vec2::splat(f32::MAX), Vec2::splat(f32::MIN)), |(lo, hi), p| (lo.min(*p), hi.max(*p)));
         // What the camera sees of it (the picture spans ±aspect × ±1).
-        let frame = Vec2::new(view.aspect, 1.0);
-        let (lo, hi) = if lo.x > hi.x { (-frame, frame) } else { (lo.clamp(-frame, frame), hi.clamp(-frame, frame)) };
+        let (fmin, fmax) = frame.unwrap_or((Vec2::new(-view.aspect, -1.0), Vec2::new(view.aspect, 1.0)));
+        let (lo, hi) = if lo.x > hi.x { (fmin, fmax) } else { (lo.clamp(fmin, fmax), hi.clamp(fmin, fmax)) };
         let area_min = Vec2::splat(MARGIN + LABEL_ROOM);
         let area_max = Vec2::new(page[0], page[1] - footer) - Vec2::splat(MARGIN + LABEL_ROOM);
         let size = (hi - lo).max(Vec2::splat(1e-3));
@@ -258,14 +264,14 @@ pub fn footer(page: &mut Page, view: &PlanView, ratio: Option<f32>) {
 
 /// The fixture plan on an A3 page, the set faint underneath; `channels` is
 /// the word for channels.
-pub fn fixture_plan(view: &PlanView, fixtures: &[PlanFixture], set: Option<(&Camera, &[Surface])>, channels: &str) -> Page {
+pub fn fixture_plan(view: &PlanView, fixtures: &[PlanFixture], set: Option<(&Camera, &[Surface])>, channels: &str, frame: Option<(Vec2, Vec2)>) -> Page {
     let mut page = Page::new(A3);
     let probe = Mapping::probe(view);
     let mut points: Vec<Vec2> = fixtures.iter().filter_map(|f| probe.picture(f.position)).collect();
     if let Some((_, surfaces)) = set {
         points.extend(picture_points(&probe, surfaces));
     }
-    let m = Mapping::fit(view, &points, page.size, FOOTER);
+    let m = Mapping::fit(view, &points, page.size, FOOTER, frame);
     if let Some((cam, surfaces)) = set {
         draw(&mut page, &m, cam, surfaces, Style::background());
     }
@@ -304,7 +310,7 @@ mod tests {
     #[test]
     fn a_plan_to_scale_with_every_label() {
         let fixtures: Vec<PlanFixture> = (0..8).map(|i| head(i, -3.5 + i as f32)).collect();
-        let page = fixture_plan(&top_view(), &fixtures, None, "Kanäle");
+        let page = fixture_plan(&top_view(), &fixtures, None, "Kanäle", None);
         let texts: Vec<&str> = page.items.iter().filter_map(|i| if let Item::Text { text, .. } = i { Some(text.as_str()) } else { None }).collect();
         for i in 0..8 {
             assert!(texts.contains(&format!("{i} MH {i}").as_str()), "{texts:?}");
@@ -317,7 +323,7 @@ mod tests {
     #[test]
     fn labels_dont_overlap() {
         let fixtures: Vec<PlanFixture> = (0..12).map(|i| head(i, -1.1 + i as f32 * 0.2)).collect();
-        let page = fixture_plan(&top_view(), &fixtures, None, "ch");
+        let page = fixture_plan(&top_view(), &fixtures, None, "ch", None);
         // The white backgrounds of the labels.
         let boxes: Vec<(f32, f32, f32, f32)> = page
             .items

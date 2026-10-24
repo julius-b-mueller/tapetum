@@ -83,7 +83,7 @@ struct ViewArgs {
     /// Frame everything at start (for screenshots) from a standard view.
     #[arg(long, hide = true, value_parser = ["audience", "top", "front", "left", "right"])]
     fit: Option<String>,
-    /// Export the fixture plan (.pdf or .svg) from the start view and quit (for testing).
+    /// Export the fixture plan (.pdf or .svg) or a screenshot (.png) from the start view and quit (for testing).
     #[arg(long, hide = true)]
     export_plan: Option<PathBuf>,
     /// Export the set-change drawings (.pdf) from the start view and quit (for testing).
@@ -232,7 +232,14 @@ fn main() -> Result<()> {
             }
             app::run(app::Options { show, bind: v.bind, port: v.port, screenshot: v.screenshot, export: v
                     .export_plan
-                    .map(|p| (if p.extension().is_some_and(|e| e == "svg") { app::exports::ExportKind::PlanSvg } else { app::exports::ExportKind::PlanPdf }, p))
+                    .map(|p| {
+                        let kind = match p.extension().and_then(|e| e.to_str()) {
+                            Some("svg") => app::exports::ExportKind::PlanSvg,
+                            Some("png") => app::exports::ExportKind::ScreenshotPng,
+                            _ => app::exports::ExportKind::PlanPdf,
+                        };
+                        (kind, p)
+                    })
                     .or(v.export_changes.map(|p| (app::exports::ExportKind::SetChangesPdf, p))),
                 select: v.select, select_object: v.select_object, scene: v.scene, orbit: v.orbit, fit: v.fit.as_deref().map(standard_view), ortho: v.ortho, bench: v.bench })
         }

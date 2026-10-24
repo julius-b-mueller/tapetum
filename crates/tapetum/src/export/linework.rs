@@ -445,7 +445,7 @@ mod tests {
     #[test]
     fn a_cube_behind_a_cube_is_dashed() {
         let (view, cam) = front_view();
-        let m = Mapping::fit(&view, &[Vec2::new(-1.0, -1.0), Vec2::new(1.0, 1.0)], A3, 20.0);
+        let m = Mapping::fit(&view, &[Vec2::new(-1.0, -1.0), Vec2::new(1.0, 1.0)], A3, 20.0, None);
         let mut page = Page::new(A3);
         draw(&mut page, &m, &cam, &[cube(Vec3::ZERO)], Style::drawing(true));
         let (visible, hidden) = lines(&page);

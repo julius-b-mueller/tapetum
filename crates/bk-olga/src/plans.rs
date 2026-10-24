@@ -71,6 +71,24 @@ pub fn set_plans(doc: &mut Value, fixtures: &[(i64, [f32; 3])]) -> Result<Vec<(i
     Ok(written)
 }
 
+/// Whether the show's Tapetum plans show these fixtures where they are now:
+/// `None` without Tapetum plans.
+pub fn up_to_date(plans: &[crate::model::Plan], fixtures: &[(i64, [f32; 3])]) -> Option<bool> {
+    if !plans.iter().any(|p| is_plan_name(&p.name)) {
+        return None;
+    }
+    let round = |v: f32| (v * 1000.0).round() as i64;
+    Some(VIEWS.iter().all(|(view, a, b)| {
+        let name = format!("{PREFIX}{view}");
+        let Some(plan) = plans.iter().find(|p| p.name == name) else { return false };
+        let mut have: Vec<(i64, i64, i64)> = plan.points.iter().map(|(id, p)| (*id, round(p[0]), round(p[1]))).collect();
+        let mut want: Vec<(i64, i64, i64)> = fixtures.iter().map(|(id, p)| (*id, round(p[*a]), round(p[*b]))).collect();
+        have.sort_unstable();
+        want.sort_unstable();
+        have == want
+    }))
+}
+
 /// Removes Tapetum's plans; returns their IDs and names.
 pub fn remove_plans(doc: &mut Value) -> Vec<(i64, String)> {
     let Some(plans) = plans_mut(doc) else { return Vec::new() };
@@ -145,6 +163,18 @@ mod tests {
         assert_eq!(remove_plans(&mut doc).len(), 3);
         assert_eq!(doc["2dPlans"]["items"].as_array().unwrap().len(), 1, "the user's own plan stays");
         assert_eq!(remote_path(4, "Tapetum Front"), "/2dPlans/4_TapetumFront");
+    }
+
+    #[test]
+    fn plans_know_when_they_are_behind() {
+        let fixtures = [(11, [-4.8, 1.8, 6.65]), (12, [1.6, 1.8, 6.65])];
+        let mut doc = json!({ "2dPlans": { "items": [] } });
+        let show = |doc: &Value| crate::model::Show::from_json(doc).plans;
+        assert_eq!(up_to_date(&show(&doc), &fixtures), None);
+        set_plans(&mut doc, &fixtures).unwrap();
+        assert_eq!(up_to_date(&show(&doc), &fixtures), Some(true));
+        assert_eq!(up_to_date(&show(&doc), &[(11, [-4.8, 1.8, 6.65]), (12, [1.6, 2.0, 6.65])]), Some(false), "moved");
+        assert_eq!(up_to_date(&show(&doc), &fixtures[..1]), Some(false), "one fixture less");
     }
 
     #[test]

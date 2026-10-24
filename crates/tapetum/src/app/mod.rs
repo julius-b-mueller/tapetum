@@ -196,9 +196,11 @@ pub fn run(opts: Options) -> Result<()> {
     .init_resource::<ui::TabKey>()
     .add_systems(PreUpdate, ui::take_tab.after(bevy_egui::EguiPreUpdateSet::ProcessInput).before(bevy_egui::EguiPreUpdateSet::BeginPass))
     .init_resource::<pacing::Activity>()
+    .init_resource::<orbit::MovedByHand>()
     .init_resource::<exports::ExportRequest>()
     .init_resource::<exports::ExportDone>()
-    .add_systems(Update, exports::run_export)
+    .init_resource::<exports::ScreenshotJob>()
+    .add_systems(Update, (exports::run_export, exports::run_screenshot))
     .add_systems(EguiPrimaryContextPass, ui::panel);
     if let Some(w) = watch {
         app.insert_resource(w);

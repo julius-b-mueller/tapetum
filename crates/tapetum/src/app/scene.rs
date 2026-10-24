@@ -293,7 +293,9 @@ pub fn apply_render_settings(
             _ => {}
         }
         // Re-inserting TAA would reset its history and bring the beam noise back.
-        match (r.quality > Quality::Low, has_taa) {
+        // Not orthographic: Bevy jitters an orthographic view by depth, and with
+        // the camera far back the picture shakes (FXAA and steady beams instead).
+        match (r.quality > Quality::Low && !state.project.view.orthographic, has_taa) {
             (true, false) => {
                 commands.entity(cam).remove::<Fxaa>().insert((TemporalAntiAliasing::default(), Msaa::Off));
             }

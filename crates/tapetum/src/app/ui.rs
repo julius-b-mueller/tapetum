@@ -106,13 +106,13 @@ pub fn panel(
     mut ui_rects: ResMut<UiRects>,
     time: Res<Time>,
     mut fps: Local<f32>,
-    (mut sidebar_hidden, mut slow_since, tab, mut fit, mut export_request, export_done): (
+    (mut sidebar_hidden, mut slow_since, tab, mut fit, mut export_request, (export_done, mut moved)): (
         Local<bool>,
         Local<Option<f32>>,
         Res<TabKey>,
         ResMut<super::orbit::FitRequest>,
         ResMut<super::exports::ExportRequest>,
-        Res<super::exports::ExportDone>,
+        (Res<super::exports::ExportDone>, ResMut<super::orbit::MovedByHand>),
     ),
     mut windows: Query<&mut Window, With<PrimaryWindow>>,
 ) -> Result {
@@ -234,14 +234,14 @@ pub fn panel(
         view = ctx.input(|i| keys.iter().position(|k| i.key_pressed(*k) && !i.modifiers.any())).map(|n| tapetum_project::StandardView::ALL[n]);
     }
     let was_orthographic = project.view.orthographic;
+    // Moved by hand: no longer the standard view its button shows.
+    if std::mem::take(&mut moved.0) {
+        project.view.standard = None;
+    }
     let (scene_pick, bar) = if bare {
         (None, egui::Rect::NOTHING)
     } else {
-        let mut export = None;
-        rects.push(super::overlays::faders(ctx, &mut project, spacemouse_on, &mut view, &mut export));
-        if export.is_some() {
-            export_request.kind = export;
-        }
+        rects.push(super::overlays::faders(ctx, &mut project, spacemouse_on, &mut view));
         super::overlays::scene_bar(ctx, &state, &mut project, &scene_rt)
     };
     rects.push(bar);
@@ -300,6 +300,11 @@ pub fn panel(
             egui::ScrollArea::vertical().show(ui, |ui| {
                 ui.label(state.show_path.file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_default());
                 super::settings::section(ui, &mut project, spacemouse.device());
+                let mut export = None;
+                super::exports::section(ui, &mut project, &mut export);
+                if export.is_some() {
+                    export_request.kind = export;
+                }
                 if let Some(s) = &state.status {
                     ui.colored_label(egui::Color32::LIGHT_YELLOW, s);
                 }
@@ -344,9 +349,20 @@ pub fn panel(
                         if let Some(a) = super::onboarding::steps(ui, &state, &link, bk.as_ref(), listen_port, receiving, false) {
                             setup_action = Some(a);
                         }
+                        if ui.button(tr("Erste Schritte öffnen …", "Open getting started …")).clicked() {
+                            super::onboarding::open(ui.ctx());
+                        }
                         ui.separator();
                         ui.strong(tr("2D-Pläne in BlinderKitten", "2D plans in BlinderKitten"));
-                        let have = state.show.plans.iter().any(|n| bk_olga::plans::is_plan_name(n));
+                        let positions: Vec<(i64, [f32; 3])> = super::layout::placements(&state.show, &state.project).iter().zip(&state.show.fixtures).map(|(p, f)| (f.id, p.position)).collect();
+                        let current = bk_olga::plans::up_to_date(&state.show.plans, &positions);
+                        let have = current.is_some();
+                        match current {
+                            Some(true) => ui.colored_label(egui::Color32::LIGHT_GREEN, tr("✔ Pläne aktuell", "✔ Plans up to date")),
+                            Some(false) => ui.colored_label(egui::Color32::LIGHT_YELLOW, tr("⚠ Pläne veraltet: Lampen seitdem verschoben", "⚠ Plans out of date: fixtures moved since")),
+                            None => ui.colored_label(egui::Color32::GRAY, tr("Noch keine Tapetum-Pläne in BlinderKitten", "No Tapetum plans in BlinderKitten yet")),
+                        }
+                        .on_hover_text(tr("Verglichen mit der zuletzt gespeicherten Show.", "Compared with the show as last saved."));
                         ui.horizontal_wrapped(|ui| {
                             let label = if have { tr("Aktualisieren", "Update") } else { tr("Aus Positionen anlegen", "Lay out from positions") };
                             let tip = tr(
@@ -354,16 +370,12 @@ pub fn panel(
                                 "Lays out the 2D plans “Tapetum Front”, “Tapetum Top” and “Tapetum Side” in BlinderKitten, one point per fixture – at the positions Tapetum shows. BlinderKitten does this itself only when importing an MVR and doesn't keep the plans up to date; after moving fixtures, just run it again. Your own plans stay untouched.\n\nBlinderKitten saves and reloads the show for this.",
                             );
                             if ui.add_enabled(!link.busy() && !state.show.fixtures.is_empty(), egui::Button::new(label)).on_hover_text(tip).clicked() {
-                                let fixtures = super::layout::placements(&state.show, &state.project).iter().zip(&state.show.fixtures).map(|(p, f)| (f.id, p.position)).collect();
-                                setup_action = Some(SetupAction::Edit(Edit::Plans { fixtures }, false));
+                                setup_action = Some(SetupAction::Edit(Edit::Plans { fixtures: positions.clone() }, false));
                             }
                             if have && ui.add_enabled(!link.busy(), egui::Button::new(tr("Entfernen", "Remove"))).clicked() {
                                 setup_action = Some(SetupAction::Edit(Edit::RemovePlans, false));
                             }
                         });
-                        if ui.button(tr("Erste Schritte öffnen …", "Open getting started …")).clicked() {
-                            super::onboarding::open(ui.ctx());
-                        }
                     });
 
 
@@ -694,6 +706,17 @@ fn objects_section(ui: &mut egui::Ui, state: &ShowState, project: &mut tapetum_p
                     {
                         over.locked = (!locked).then_some(true);
                     }
+                    let printed = over.printed.unwrap_or(true);
+                    if printer_toggle(ui, printed)
+                        .on_hover_text(if printed {
+                            tr("Im Druck: erscheint in Scheinwerfer- und Umbauplänen. Klick nimmt es heraus.", "Printed: shows in fixture plans and set changes. Click to leave it out.")
+                        } else {
+                            tr("Nicht im Druck: fehlt in Scheinwerfer- und Umbauplänen (Screenshots zeigen es trotzdem). Klick nimmt es wieder auf.", "Not printed: left out of fixture plans and set changes (screenshots still show it). Click to put it back.")
+                        })
+                        .clicked()
+                    {
+                        over.printed = printed.then_some(false);
+                    }
                     let selected = state.selected_objects.contains(&key);
                     if ui.selectable_label(selected, &mo.name).clicked() {
                         let (shift, cmd) = ui.input(|i| (i.modifiers.shift, i.modifiers.command));
@@ -944,6 +967,30 @@ fn lock_toggle(ui: &mut egui::Ui, locked: bool) -> egui::Response {
     path.push(egui::pos2(cx + r, shoulder));
     path.push(egui::pos2(cx + r, body.top() + 1.0));
     painter.add(egui::Shape::line(path, egui::Stroke::new(1.5, color)));
+    resp
+}
+
+/// A printer, drawn like the padlock: light while the object is printed,
+/// dark and struck through while it isn't.
+fn printer_toggle(ui: &mut egui::Ui, printed: bool) -> egui::Response {
+    let (rect, resp) = ui.allocate_exact_size(egui::vec2(16.0, 16.0), egui::Sense::click());
+    let color = match (printed, resp.hovered()) {
+        (_, true) => egui::Color32::WHITE,
+        (true, false) => egui::Color32::from_gray(190),
+        (false, false) => egui::Color32::from_gray(90),
+    };
+    let painter = ui.painter();
+    let (x, y) = (rect.left().round(), rect.top().round());
+    let line = egui::Stroke::new(1.2, color);
+    let px = |x0: f32, y0: f32, x1: f32, y1: f32| egui::Rect::from_min_max(egui::pos2(x + x0, y + y0), egui::pos2(x + x1, y + y1));
+    // Paper going in, the body, paper coming out over it.
+    painter.rect_stroke(px(4.5, 1.5, 11.5, 6.0), egui::CornerRadius::ZERO, line, egui::StrokeKind::Middle);
+    painter.rect_filled(px(1.0, 6.0, 15.0, 12.0), egui::CornerRadius::same(2), color);
+    painter.rect_filled(px(4.0, 9.5, 12.0, 15.0), egui::CornerRadius::ZERO, ui.visuals().panel_fill);
+    painter.rect_stroke(px(4.5, 10.0, 11.5, 14.5), egui::CornerRadius::ZERO, line, egui::StrokeKind::Middle);
+    if !printed {
+        painter.line_segment([egui::pos2(x + 1.0, y + 15.0), egui::pos2(x + 15.0, y + 1.0)], egui::Stroke::new(1.6, egui::Color32::from_rgb(230, 90, 80)));
+    }
     resp
 }
 

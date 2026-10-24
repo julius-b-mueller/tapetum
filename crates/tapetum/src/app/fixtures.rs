@@ -689,6 +689,8 @@ pub fn update_fixtures(
         Quality::Medium => 24.0,
         Quality::High => 48.0,
     };
+    // Orthographic has no TAA to smooth jittered steps (see `apply_render_settings`).
+    let steps = if state.project.view.orthographic && steps > 0.0 { -steps } else { steps };
     let frame = Frame::new(&state, &dmx, time.elapsed_secs());
     let mut active_gobos = Vec::new();
 

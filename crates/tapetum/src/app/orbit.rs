@@ -6,6 +6,7 @@ use bevy::input::mouse::{AccumulatedMouseMotion, AccumulatedMouseScroll, MouseSc
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use bevy_egui::input::EguiWantsInput;
+use std::f32::consts::FRAC_PI_2;
 use tapetum_project::StandardView;
 
 use super::fixtures::FixtureRoot;
@@ -24,6 +25,10 @@ pub struct FitRequest {
     pub glide: bool,
 }
 
+/// The camera was moved by hand: it has left its standard view.
+#[derive(Resource, Default)]
+pub struct MovedByHand(pub bool);
+
 /// Seconds the camera takes to swing to a standard view.
 const GLIDE_SECS: f32 = 0.6;
 
@@ -32,13 +37,12 @@ const GLIDE_SECS: f32 = 0.6;
 const ORTHO_BACK: f32 = 150.0;
 
 /// Bevy's default vertical field of view is 45°.
-fn tan_half_fov() -> f32 {
+pub fn tan_half_fov() -> f32 {
     std::f32::consts::FRAC_PI_8.tan()
 }
 
 /// Yaw and pitch of a standard view (BK -Y, IngeTrazo's front, is the audience).
 pub fn angles(view: StandardView) -> (f32, f32) {
-    use std::f32::consts::FRAC_PI_2;
     match view {
         StandardView::Audience => (0.0, 0.18),
         StandardView::Top => (0.0, FRAC_PI_2),
@@ -103,7 +107,7 @@ impl OrbitCamera {
     }
 
     /// Orthographic: further back, same direction.
-    fn transform_ortho(&self) -> Transform {
+    pub fn transform_ortho(&self) -> Transform {
         let rot = self.rotation();
         Transform::from_translation(self.target + rot * Vec3::new(0.0, 0.0, self.distance + ORTHO_BACK)).with_rotation(rot)
     }
@@ -141,7 +145,7 @@ pub fn orbit_camera(
     window: Query<&Window, With<PrimaryWindow>>,
     gizmo: Res<GizmoState>,
     (spacemouse, state, time): (Res<SpaceMouse>, Res<ShowState>, Res<Time>),
-    (mut last_buttons, mut active, mut fit, mut glide): (Local<u32>, Local<Option<bool>>, ResMut<FitRequest>, Local<Option<Glide>>),
+    (mut last_buttons, mut active, mut fit, mut glide, mut moved): (Local<u32>, Local<Option<bool>>, ResMut<FitRequest>, Local<Option<Glide>>, ResMut<MovedByHand>),
     (fixtures, frames, placeholder): (Query<&GlobalTransform, With<FixtureRoot>>, Res<FrameBoxes>, Query<&ViewVisibility, With<Placeholder>>),
 ) {
     let Ok((mut cam, mut tf, mut projection)) = q.single_mut() else { return };
@@ -168,7 +172,7 @@ pub fn orbit_camera(
         cam.distance = (cam.distance * (a.translation.y * m * 1.5 * k).exp()).clamp(0.5, 200.0);
         // Twisting turns around the stage, tilting forward looks down.
         cam.yaw -= a.rotation.z * t * 1.5 * k;
-        cam.pitch = (cam.pitch + a.rotation.x * 1.2 * k).clamp(-1.5, 1.5);
+        cam.pitch = (cam.pitch + a.rotation.x * 1.2 * k).clamp(-FRAC_PI_2, FRAC_PI_2);
 
         let buttons = spacemouse.buttons();
         let pressed = buttons & !*last_buttons;
@@ -211,7 +215,7 @@ pub fn orbit_camera(
             cam.target += (-right * delta.x + up * delta.y) * k;
         } else if buttons.pressed(MouseButton::Left) && !gizmo.active() {
             cam.yaw -= delta.x * 0.005;
-            cam.pitch = (cam.pitch + delta.y * 0.005).clamp(-1.5, 1.5);
+            cam.pitch = (cam.pitch + delta.y * 0.005).clamp(-FRAC_PI_2, FRAC_PI_2);
         }
         let lines = match scroll.unit {
             MouseScrollUnit::Line => scroll.delta.y,
@@ -224,6 +228,7 @@ pub fn orbit_camera(
     }
     if by_hand {
         *glide = None;
+        moved.0 = true;
     }
     if let Some(g) = &*glide {
         let t = ((time.elapsed_secs() - g.start) / GLIDE_SECS).clamp(0.0, 1.0);
@@ -234,17 +239,19 @@ pub fn orbit_camera(
     }
     // Orthographic: as much in view as perspective shows at the target's distance.
     let height = 2.0 * cam.distance * tan_half_fov();
-    match (&mut *projection, orthographic) {
-        (Projection::Orthographic(o), true) => {
-            if !matches!(o.scaling_mode, ScalingMode::FixedVertical { viewport_height } if viewport_height == height) {
-                o.scaling_mode = ScalingMode::FixedVertical { viewport_height: height };
-            }
-        }
-        (Projection::Orthographic(_), false) => *projection = Projection::Perspective(PerspectiveProjection::default()),
-        (_, true) => {
-            *projection = Projection::Orthographic(OrthographicProjection { scaling_mode: ScalingMode::FixedVertical { viewport_height: height }, far: ORTHO_BACK * 2.0 + 200.0, ..OrthographicProjection::default_3d() });
-        }
-        _ => {}
+    // Read first: touching it mutably marks it changed every frame.
+    let wanted = match (&*projection, orthographic) {
+        (Projection::Orthographic(o), true) if matches!(o.scaling_mode, ScalingMode::FixedVertical { viewport_height } if viewport_height == height) => None,
+        (Projection::Orthographic(_), false) => Some(Projection::Perspective(PerspectiveProjection::default())),
+        (_, true) => Some(Projection::Orthographic(OrthographicProjection {
+            scaling_mode: ScalingMode::FixedVertical { viewport_height: height },
+            far: ORTHO_BACK * 2.0 + 200.0,
+            ..OrthographicProjection::default_3d()
+        })),
+        _ => None,
+    };
+    if let Some(p) = wanted {
+        *projection = p;
     }
     *tf = if orthographic { cam.transform_ortho() } else { cam.transform() };
 }

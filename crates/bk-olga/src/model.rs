@@ -18,8 +18,8 @@ pub struct Show {
     pub cuelists: Vec<Cuelist>,
     /// Fixture groups, sorted by ID.
     pub groups: Vec<Group>,
-    /// Names of the 2D plans (BK's layouts).
-    pub plans: Vec<String>,
+    /// The 2D plans (BK's layouts).
+    pub plans: Vec<Plan>,
     /// Cuelist ID of the main conductor (project settings).
     pub conductor_id: i64,
     /// Non-fatal problems found while reading (unresolved references, ...).
@@ -187,7 +187,7 @@ impl Show {
             show.groups = parse_groups(Node(m), &show.fixtures);
         }
         if let Some(m) = root.0.get("2dPlans") {
-            show.plans = Node(m).items().filter_map(|n| n.str_param("name").map(str::to_string)).collect();
+            show.plans = Node(m).items().map(parse_plan).collect();
         }
         show
     }
@@ -209,6 +209,30 @@ impl Show {
     pub fn conductor(&self) -> Option<&Cuelist> {
         self.cuelists.iter().find(|c| c.id == self.conductor_id)
     }
+}
+
+/// A 2D plan: its name and the fixtures of its point paths.
+#[derive(Clone, Debug, PartialEq)]
+pub struct Plan {
+    pub name: String,
+    /// (fixture ID, position) of every path that is one fixture.
+    pub points: Vec<(i64, [f32; 2])>,
+}
+
+fn parse_plan(n: Node) -> Plan {
+    let points = n
+        .container("paths")
+        .into_iter()
+        .flat_map(Node::items)
+        .filter_map(|p| {
+            let position = p.f32_array_param::<2>("position")?;
+            let mut sel = p.container("selections")?.items();
+            let s = sel.next()?;
+            let one = sel.next().is_none() && s.str_param("targetType").is_none_or(|t| t == "Fixture") && s.bool_param("thru") != Some(true);
+            one.then(|| Some((s.i64_param("id")?, position))).flatten()
+        })
+        .collect();
+    Plan { name: n.str_param("name").unwrap_or_default().to_string(), points }
 }
 
 fn nice_name_or(n: Node, fallback: &str) -> String {
