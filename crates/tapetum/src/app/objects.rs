@@ -554,6 +554,33 @@ pub fn select_scene(mut rt: ResMut<SceneRuntime>, state: Res<ShowState>, bk: Res
     }
 }
 
+/// The visible stage objects of a scene as they stand there: the object and
+/// its transform from model to BK space; face-me figures turned towards
+/// `camera` (BK space), and whether it is one. For exports.
+pub fn placed<'a>(state: &ShowState, objs: &'a StageObjects, scene: Option<u64>, camera: Vec3) -> Vec<(&'a ModelObject, Mat4, bool)> {
+    let mut out = Vec::new();
+    for file in state.project.objects.iter().filter(|f| f.visible) {
+        let base = file_transform(file).to_matrix();
+        for mo in objs.objects(file.id) {
+            let key = format!("{}/{}", file.id, mo.key);
+            let s = scene_state(state, scene, &key);
+            let shown = s.visible && file.parts.get(&mo.key).and_then(|p| p.visible).unwrap_or(true);
+            let Some(pivot) = objs.pivot(&key).filter(|_| shown) else { continue };
+            let pos = pivot + Vec3::from(s.offset);
+            let mut rot = placement_rotation(s.rotation);
+            let billboard = objs.spawned.get(&key).and_then(|sp| sp.billboard);
+            if let Some(facing) = billboard {
+                let to_cam = (camera - pos).with_z(0.0);
+                if to_cam.length_squared() > 1e-6 {
+                    rot = Quat::from_rotation_z(to_cam.y.atan2(to_cam.x) - facing.y.atan2(facing.x)) * rot;
+                }
+            }
+            out.push((mo, Mat4::from_rotation_translation(rot, pos) * Mat4::from_translation(-pivot) * base, billboard.is_some()));
+        }
+    }
+    out
+}
+
 /// Puts every object where the active scene wants it, gliding during a transition.
 pub fn apply_scene(
     mut rt: ResMut<SceneRuntime>,

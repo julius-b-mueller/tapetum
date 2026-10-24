@@ -8,6 +8,7 @@ mod i18n;
 mod app;
 mod bk_link;
 mod example;
+mod export;
 mod fixture_library;
 mod routing;
 mod stage;
@@ -82,6 +83,12 @@ struct ViewArgs {
     /// Frame everything at start (for screenshots) from a standard view.
     #[arg(long, hide = true, value_parser = ["audience", "top", "front", "left", "right"])]
     fit: Option<String>,
+    /// Export the fixture plan (.pdf or .svg) from the start view and quit (for testing).
+    #[arg(long, hide = true)]
+    export_plan: Option<PathBuf>,
+    /// Export the set-change drawings (.pdf) from the start view and quit (for testing).
+    #[arg(long, hide = true)]
+    export_changes: Option<PathBuf>,
     /// Orthographic projection at start (for screenshots).
     #[arg(long, hide = true)]
     ortho: bool,
@@ -223,7 +230,11 @@ fn main() -> Result<()> {
                 settings.last_show = Some(remembered);
                 settings.save();
             }
-            app::run(app::Options { show, bind: v.bind, port: v.port, screenshot: v.screenshot, select: v.select, select_object: v.select_object, scene: v.scene, orbit: v.orbit, fit: v.fit.as_deref().map(standard_view), ortho: v.ortho, bench: v.bench })
+            app::run(app::Options { show, bind: v.bind, port: v.port, screenshot: v.screenshot, export: v
+                    .export_plan
+                    .map(|p| (if p.extension().is_some_and(|e| e == "svg") { app::exports::ExportKind::PlanSvg } else { app::exports::ExportKind::PlanPdf }, p))
+                    .or(v.export_changes.map(|p| (app::exports::ExportKind::SetChangesPdf, p))),
+                select: v.select, select_object: v.select_object, scene: v.scene, orbit: v.orbit, fit: v.fit.as_deref().map(standard_view), ortho: v.ortho, bench: v.bench })
         }
     }
 }

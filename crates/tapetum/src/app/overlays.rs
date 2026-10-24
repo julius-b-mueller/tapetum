@@ -60,7 +60,7 @@ pub fn view_label(v: StandardView) -> &'static str {
 
 /// Light and haze at the bottom edge, and the standard views (a click sets
 /// `view`). Returns the area it covers.
-pub fn faders(ctx: &egui::Context, project: &mut Project, spacemouse: bool, view: &mut Option<StandardView>) -> egui::Rect {
+pub fn faders(ctx: &egui::Context, project: &mut Project, spacemouse: bool, view: &mut Option<StandardView>, export: &mut Option<super::exports::ExportKind>) -> egui::Rect {
     let id = egui::Id::new("faders");
     let t = openness(ctx, id, false);
     let screen = ctx.content_rect();
@@ -132,6 +132,32 @@ pub fn faders(ctx: &egui::Context, project: &mut Project, spacemouse: bool, view
                             "Ohne Perspektive: maßstäblich, für Pläne. Die Ansichten oben richten Exporte gerade aus.",
                             "Without perspective: to scale, for plans. The views above line exports up straight.",
                         ));
+                        ui.add_space(4.0);
+                        ui.label(egui::RichText::new(tr("Export aus dieser Ansicht", "Export from this view")).small());
+                        ui.horizontal(|ui| {
+                            use super::exports::ExportKind;
+                            let tip = tr(
+                                "Scheinwerferplan: jede Lampe als Symbol mit Typ, Universum/Adresse und Kanalzahl, bei Moving Heads die Hängerichtung. Orthografisch im Maßstab.",
+                                "Fixture plan: every fixture as a symbol with type, universe/address and channel count, for moving heads the hanging direction. Orthographic to scale.",
+                            );
+                            if ui.button(tr("Plan PDF", "Plan PDF")).on_hover_text(tip).clicked() {
+                                *export = Some(ExportKind::PlanPdf);
+                            }
+                            if ui.button("SVG").on_hover_text(tip).clicked() {
+                                *export = Some(ExportKind::PlanSvg);
+                            }
+                        });
+                        let tip = tr(
+                            "Umbaupläne: je Szene eine Seite mit dem Bühnenbild als Linienzeichnung, alle im selben Ausschnitt. Figuren behalten ihr Bild.",
+                            "Set changes: a page per scene with the set as a line drawing, all in the same frame. Figures keep their picture.",
+                        );
+                        if ui.button(tr("Umbaupläne PDF", "Set changes PDF")).on_hover_text(tip).clicked() {
+                            *export = Some(super::exports::ExportKind::SetChangesPdf);
+                        }
+                        let mut dashed = !project.view.omit_hidden;
+                        if ui.checkbox(&mut dashed, tr("Verdeckte Linien gestrichelt", "Hidden lines dashed")).on_hover_text(tr("Sonst fehlen sie.", "Otherwise they are left out.")).changed() {
+                            project.view.omit_hidden = !dashed;
+                        }
                     });
                 });
             });

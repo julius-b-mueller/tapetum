@@ -9,6 +9,7 @@ mod beam;
 mod fixtures;
 mod gizmo;
 pub mod gobo;
+pub mod exports;
 pub mod layout;
 mod motion;
 pub mod objects;
@@ -64,6 +65,8 @@ pub struct Options {
     pub port: Option<u16>,
     /// Save a screenshot after this many frames and quit (for testing).
     pub screenshot: Option<(PathBuf, u32)>,
+    /// Export this after a while and quit (for testing).
+    pub export: Option<(exports::ExportKind, PathBuf)>,
     pub select: Option<i64>,
     pub select_object: Option<String>,
     pub scene: Option<u64>,
@@ -84,6 +87,9 @@ pub fn run(opts: Options) -> Result<()> {
     let mut project = Project::load_or_default(&project_path)?;
     if opts.ortho {
         project.view.orthographic = true;
+    }
+    if opts.fit.is_some() {
+        project.view.standard = opts.fit;
     }
     // Fixture types not set up in this project take what the fixture library has for them.
     let project_dir = project_path.parent().map(std::path::PathBuf::from).unwrap_or_default();
@@ -188,6 +194,9 @@ pub fn run(opts: Options) -> Result<()> {
     )
     .init_resource::<ui::TabKey>()
     .add_systems(PreUpdate, ui::take_tab.after(bevy_egui::EguiPreUpdateSet::ProcessInput).before(bevy_egui::EguiPreUpdateSet::BeginPass))
+    .init_resource::<exports::ExportRequest>()
+    .init_resource::<exports::ExportDone>()
+    .add_systems(Update, exports::run_export)
     .add_systems(EguiPrimaryContextPass, ui::panel);
     if let Some(w) = watch {
         app.insert_resource(w);
@@ -214,6 +223,21 @@ pub fn run(opts: Options) -> Result<()> {
             if *n == 600 {
                 let ms = start.map_or(0.0, |s| s.elapsed().as_secs_f64() * 1000.0 / 300.0);
                 println!("BENCH {ms:.2} ms/frame ({:.0} fps)", 1000.0 / ms.max(1e-6));
+                exit.write(AppExit::Success);
+            }
+        });
+    }
+    if let Some((kind, path)) = opts.export {
+        app.insert_resource(bevy::winit::WinitSettings { focused_mode: bevy::winit::UpdateMode::Continuous, unfocused_mode: bevy::winit::UpdateMode::Continuous });
+        app.add_systems(PostStartup, render_offscreen);
+        app.add_systems(Update, move |mut n: Local<u32>, mut request: ResMut<exports::ExportRequest>, mut exit: MessageWriter<AppExit>| {
+            *n += 1;
+            // After --fit (120 frames) and loading the set.
+            if *n == 200 {
+                let _ = std::fs::remove_file(&path);
+                *request = exports::ExportRequest { kind: Some(kind), path: Some(path.clone()) };
+            }
+            if *n > 200 && (path.exists() || *n > 1200) {
                 exit.write(AppExit::Success);
             }
         });

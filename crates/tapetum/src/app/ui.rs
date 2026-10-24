@@ -106,7 +106,14 @@ pub fn panel(
     mut ui_rects: ResMut<UiRects>,
     time: Res<Time>,
     mut fps: Local<f32>,
-    (mut sidebar_hidden, mut slow_since, tab, mut fit): (Local<bool>, Local<Option<f32>>, Res<TabKey>, ResMut<super::orbit::FitRequest>),
+    (mut sidebar_hidden, mut slow_since, tab, mut fit, mut export_request, export_done): (
+        Local<bool>,
+        Local<Option<f32>>,
+        Res<TabKey>,
+        ResMut<super::orbit::FitRequest>,
+        ResMut<super::exports::ExportRequest>,
+        Res<super::exports::ExportDone>,
+    ),
     mut windows: Query<&mut Window, With<PrimaryWindow>>,
 ) -> Result {
     link.poll();
@@ -169,6 +176,12 @@ pub fn panel(
         let name = file.file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_else(|| trf!("Datei {id}", "File {id}", id = id));
         project.objects.push(tapetum_project::StageObject { id, name, model: stored_path(&state, &file), unit_scale, up, ..Default::default() });
     }
+    if let Some(done) = export_done.0.lock().ok().and_then(|mut d| d.take()) {
+        state.status = Some(match done {
+            Ok(file) => trf!("Exportiert: {}", "Exported: {}", file.display()),
+            Err(e) => trf!("Export fehlgeschlagen: {e}", "Export failed: {e}", e = e),
+        });
+    }
     library_offers(ctx, &mut offers, &mut project, &mut state);
     export_notice(ctx);
     reload_notice(ctx, &mut link, &state);
@@ -224,7 +237,11 @@ pub fn panel(
     let (scene_pick, bar) = if bare {
         (None, egui::Rect::NOTHING)
     } else {
-        rects.push(super::overlays::faders(ctx, &mut project, spacemouse_on, &mut view));
+        let mut export = None;
+        rects.push(super::overlays::faders(ctx, &mut project, spacemouse_on, &mut view, &mut export));
+        if export.is_some() {
+            export_request.kind = export;
+        }
         super::overlays::scene_bar(ctx, &state, &mut project, &scene_rt)
     };
     rects.push(bar);

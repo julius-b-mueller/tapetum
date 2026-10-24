@@ -5541,6 +5541,7 @@ dependencies = [
  "bk-artnet",
  "bk-olga",
  "clap",
+ "flate2",
  "gltf",
  "hidapi",
  "image",

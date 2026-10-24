@@ -72,6 +72,8 @@ pub struct ViewSettings {
     pub standard: Option<StandardView>,
     /// Orthographic projection: true to scale, for plans.
     pub orthographic: bool,
+    /// Set-change drawings leave hidden lines out instead of dashing them.
+    pub omit_hidden: bool,
 }
 
 /// 3Dconnexion SpaceMouse driving the camera.
