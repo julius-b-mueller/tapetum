@@ -29,6 +29,45 @@ pub fn hide_ui() {
     hide_sidebar_at_start();
 }
 
+/// Before BK saves and reloads the show: what happens, and not during a performance.
+fn reload_notice(ctx: &egui::Context, link: &mut BkLink, state: &ShowState) {
+    let Some(edit) = link.needs_confirm.clone() else { return };
+    let mut go = false;
+    let mut cancel = ctx.input(|i| i.key_pressed(egui::Key::Escape));
+    egui::Window::new(egui::RichText::new(tr("Show in BlinderKitten neu laden?", "Reload the show in BlinderKitten?")).size(18.0).strong())
+        .collapsible(false)
+        .resizable(false)
+        .order(egui::Order::Foreground)
+        .anchor(egui::Align2::CENTER_CENTER, egui::vec2(0.0, 0.0))
+        .show(ctx, |ui| {
+            ui.set_width(440.0);
+            ui.label(edit.describe());
+            ui.add_space(4.0);
+            ui.label(tr(
+                "Dafür speichert BlinderKitten die Show, Tapetum ändert die Datei und BlinderKitten lädt sie neu. Laufende Cues und Effekte gehen dabei aus.",
+                "For this, BlinderKitten saves the show, Tapetum changes the file and BlinderKitten reloads it. Running cues and effects go off.",
+            ));
+            ui.add_space(4.0);
+            ui.colored_label(
+                egui::Color32::LIGHT_YELLOW,
+                tr(
+                    "Bitte BlinderKitten in den nächsten Sekunden nicht bedienen – und nicht während einer Vorstellung ausführen.",
+                    "Please don't operate BlinderKitten for the next few seconds – and don't do this during a performance.",
+                ),
+            );
+            ui.add_space(8.0);
+            ui.horizontal(|ui| {
+                go = ui.button(egui::RichText::new(tr("Jetzt ausführen", "Do it now")).strong()).clicked();
+                cancel |= ui.button(tr("Abbrechen", "Cancel")).clicked();
+            });
+        });
+    if go {
+        link.start(state, edit, false);
+    } else if cancel {
+        link.needs_confirm = None;
+    }
+}
+
 /// Tab pressed this frame, for the sidebar.
 #[derive(Resource, Default)]
 pub struct TabKey(pub bool);
@@ -132,6 +171,7 @@ pub fn panel(
     }
     library_offers(ctx, &mut offers, &mut project, &mut state);
     export_notice(ctx);
+    reload_notice(ctx, &mut link, &state);
     match library.poll() {
         Some(LibraryDone::Exported(short, file, source, modified, mochi_error)) => {
             let short_for_notice = short.clone();
@@ -454,14 +494,14 @@ pub fn panel(
             if let Edit::AddMirrors { listen_port } = edit {
                 project.artnet.listen_port = listen_port;
             }
-            link.start(&state, edit, offline);
+            link.request(&state, edit, offline);
         }
         Some(SetupAction::ChangePort(port)) => match dmx.restart(port) {
             Ok(()) => {
                 project.artnet.listen_port = port;
                 // Existing mirrors must send to the new port.
                 if state.show.interfaces.iter().any(|i| bk_olga::mirror::is_mirror_name(&i.name)) {
-                    link.start(&state, Edit::AddMirrors { listen_port: port }, false);
+                    link.request(&state, Edit::AddMirrors { listen_port: port }, false);
                 }
             }
             Err(e) => state.status = Some(trf!("Port {port} ist belegt: {e}", "Port {port} is in use: {e}", port = port, e = e)),

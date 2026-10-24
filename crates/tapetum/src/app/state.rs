@@ -338,13 +338,28 @@ pub struct BkLink {
     pub job: Option<(Edit, Mutex<mpsc::Receiver<Progress>>)>,
     /// Edit waiting for the user to allow changing the file without BK.
     pub needs_offline: Option<Edit>,
+    /// Edit waiting for the user to confirm that BK may reload the show.
+    pub needs_confirm: Option<Edit>,
     /// Last message and whether it is an error.
     pub message: Option<(String, bool)>,
 }
 
 impl BkLink {
+    /// Starts an edit; one that makes BK reload the show waits for the user
+    /// to confirm (see `ui::reload_notice`).
+    pub fn request(&mut self, state: &ShowState, edit: Edit, offline: bool) {
+        if offline {
+            self.start(state, edit, true);
+        } else {
+            self.needs_confirm = Some(edit);
+            self.needs_offline = None;
+            self.message = None;
+        }
+    }
+
     pub fn start(&mut self, state: &ShowState, edit: Edit, offline: bool) {
-        let rx = crate::bk_link::spawn(state.show_path.clone(), state.project.artnet.bk_remote_port, edit, offline);
+        self.needs_confirm = None;
+        let rx = crate::bk_link::spawn(state.show_path.clone(), state.project.artnet.bk_remote_port, edit.clone(), offline);
         self.job = Some((edit, Mutex::new(rx)));
         self.needs_offline = None;
         self.message = None;
@@ -357,7 +372,7 @@ impl BkLink {
     /// Collects progress of the running job.
     pub fn poll(&mut self) {
         let Some((edit, job)) = &self.job else { return };
-        let edit = *edit;
+        let edit = edit.clone();
         let Ok(rx) = job.lock() else { return };
         let mut finished = false;
         while let Ok(p) = rx.try_recv() {
@@ -373,7 +388,7 @@ impl BkLink {
                 }
                 Progress::NoAnswer => {
                     self.message = None;
-                    self.needs_offline = Some(edit);
+                    self.needs_offline = Some(edit.clone());
                     finished = true;
                 }
             }

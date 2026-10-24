@@ -173,15 +173,15 @@ pub fn steps(ui: &mut egui::Ui, state: &ShowState, link: &BkLink, bk: Option<&Ho
             if let Some((msg, error)) = &link.message {
                 ui.colored_label(if link.busy() { egui::Color32::LIGHT_YELLOW } else if *error { BAD } else { OK }, msg);
             }
-            if let Some(edit) = link.needs_offline {
+            if let Some(edit) = &link.needs_offline {
                 ui.colored_label(BAD, tr("BlinderKitten antwortet nicht (Schritt 1).", "BlinderKitten doesn't answer (step 1)."));
                 ui.label(tr("Ist BlinderKitten geschlossen, kann die Datei auch direkt geändert werden – sonst würde BK die Änderung beim nächsten Speichern überschreiben.", "With BlinderKitten closed, the file can also be changed directly – otherwise BK would overwrite the change the next time it saves."));
                 ui.horizontal(|ui| {
                     if ui.button(tr("Erneut versuchen", "Try again")).clicked() {
-                        action = Some(SetupAction::Edit(edit, false));
+                        action = Some(SetupAction::Edit(edit.clone(), false));
                     }
                     if ui.button(tr("Datei direkt ändern", "Change the file directly")).clicked() {
-                        action = Some(SetupAction::Edit(edit, true));
+                        action = Some(SetupAction::Edit(edit.clone(), true));
                     }
                 });
             }
