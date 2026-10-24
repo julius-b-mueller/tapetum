@@ -114,9 +114,10 @@ Choose it under *⚙ Settings (top of the sidebar)*. If it runs below 25 fps for
 
 ## Views and plans
 
-The panel at the bottom edge has the **standard views** – Audience, Top, Front, Left, Right (keys 1–5): the camera swings there and frames the fixtures and the set (what isn't locked). **Orthographic** draws without perspective, to scale. Exports take the current view:
+The panel at the bottom edge has the **standard views** – Audience, Top, Front, Left, Right (keys 1–5): the camera swings there and frames the fixtures and the set (what isn't locked). **Orthographic** draws without perspective, to scale. The exports (sidebar, *Export*) take the current view: from a standard view they are framed anew for the page, whatever the window's shape; after moving the camera by hand, what shows between the side panels. The printer symbol beside each stage object decides whether it is in the line drawings.
 
 - **Fixture plan** (PDF or SVG, vector): every fixture as a symbol by its class with ID and name, type, universe/address and channel count; moving heads with the arrow of their middle direction. The set lies faint underneath. Orthographic views come out at a standard scale (1:20 … 1:500) with a scale bar.
+- **Screenshot** (PNG): the 3D view between the side panels, rendered at *High* for a moment.
 - **Set changes** (PDF, vector): a page per scene – the base scene first, then by cue, with scene, cue and chapter – all in the same frame and scale, the set as a line drawing for printing with little ink. Hidden lines are dashed or left out. Face-me figures (often the costume designs) keep their picture, so you see who stands where; from above they are a circle with their name.
 
 ## Navigation, SpaceMouse and shortcuts
